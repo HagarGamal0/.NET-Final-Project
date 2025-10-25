@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickGo_backend", "PickGo_backend\PickGo_backend.csproj", "{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {027325E1-51C7-493C-AF12-B964D9E82471}
+	EndGlobalSection
+EndGlobal
