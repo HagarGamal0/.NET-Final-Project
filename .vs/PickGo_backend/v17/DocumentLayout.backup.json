@@ -78,8 +78,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -103,8 +107,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\User\\ApplicationUser.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T14:22:05.145Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T14:22:05.145Z"
             },
             {
               "$type": "Document",
@@ -116,8 +119,7 @@
               "RelativeToolTip": "PickGo_backend\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-10-25T14:01:41.751Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T14:01:41.751Z"
             },
             {
               "$type": "Document",
@@ -129,8 +131,7 @@
               "RelativeToolTip": "PickGo_backend\\Context\\DelieveryAppContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:54:50.908Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:54:50.908Z"
             },
             {
               "$type": "Document",
@@ -142,8 +143,7 @@
               "RelativeToolTip": "PickGo_backend\\Repositories\\IBaseRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:46:27.621Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:46:27.621Z"
             },
             {
               "$type": "Document",
@@ -155,8 +155,7 @@
               "RelativeToolTip": "PickGo_backend\\Repositories\\BaseRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:45:22.881Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:45:22.881Z"
             },
             {
               "$type": "Document",
@@ -168,8 +167,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\User\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:27:25.677Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:27:25.677Z"
             },
             {
               "$type": "Document",
@@ -181,21 +179,19 @@
               "RelativeToolTip": "PickGo_backend\\Models\\Address\\Address.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:24:52.66Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:24:52.66Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "PickGo_backend",
+              "Title": "PickGo_backend.csproj",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\PickGo_backend.csproj",
               "RelativeDocumentMoniker": "PickGo_backend\\PickGo_backend.csproj",
               "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\PickGo_backend.csproj",
               "RelativeToolTip": "PickGo_backend\\PickGo_backend.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-10-25T13:53:49.769Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:53:49.769Z"
             },
             {
               "$type": "Document",
@@ -207,8 +203,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\Shipment\\Shipment.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:43:48.092Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:43:48.092Z"
             },
             {
               "$type": "Document",
@@ -220,8 +215,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\Payment\\Payment.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:43:22.421Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:43:22.421Z"
             },
             {
               "$type": "Document",
@@ -233,8 +227,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\Invoice\\Invoice.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:29:34.609Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:29:34.609Z"
             },
             {
               "$type": "Document",
@@ -246,8 +239,7 @@
               "RelativeToolTip": "PickGo_backend\\Controllers\\WeatherForecastController.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:25:12.754Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:25:12.754Z"
             },
             {
               "$type": "Document",
@@ -259,8 +251,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\Package\\Package.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:37:42.548Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:37:42.548Z"
             },
             {
               "$type": "Document",
@@ -272,8 +263,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:26:28.902Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:26:28.902Z"
             },
             {
               "$type": "Document",
@@ -285,8 +275,7 @@
               "RelativeToolTip": "PickGo_backend\\Models\\Order\\Order.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:24:56.418Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-10-25T13:24:56.418Z"
             },
             {
               "$type": "Document",
@@ -298,12 +287,7 @@
               "RelativeToolTip": "PickGo_backend\\PickGo_backend.http",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-10-25T13:23:01.446Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+              "WhenOpened": "2025-10-25T13:23:01.446Z"
             }
           ]
         }
