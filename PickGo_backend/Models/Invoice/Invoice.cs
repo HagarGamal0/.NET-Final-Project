@@ -1,4 +1,5 @@
 ﻿
+using PickGo_backend.Models.Enums;
 using System;
 
 namespace PickGo_backend.Models
@@ -6,12 +7,16 @@ namespace PickGo_backend.Models
 
     public class Invoice : BaseModel
     {
-        public int InvoiceId { get; set; }
-        public double Amount { get; set; }
-        public DateTime IssuanceDate { get; set; }
-        public int OrderId { get; set; }
-        public Order Order { get; set; }
-        public Payment Payment { get; set; }
+        public double Cost { get; set; }
+        public PaymentTypes PaymentType { get; set; }
+     
+        public string InvoiceNumber { get; set; }
+
+
+
+    public Request Request { get; set; }
+
+        public int RequestID { get; set;}
 
     }
 }

@@ -2,7 +2,7 @@
 
 namespace PickGo_backend.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class User : IdentityUser
     {
         public string? Address { get; set; }
         public DateTime? BirthDate { get; set; }

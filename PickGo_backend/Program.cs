@@ -2,12 +2,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PickGo_backend.Context;
 using PickGo_backend.Models;
+using PickGo_backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<UserRepositories>();
+builder.Services.AddScoped<PackageRepositories>();
+builder.Services.AddScoped<RequestRepositories>();
+builder.Services.AddScoped<InvoiceRepositories>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -15,7 +22,7 @@ builder.Services.AddDbContext<DelieveryAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<DelieveryAppContext>()
     .AddDefaultTokenProviders();
 var app = builder.Build();

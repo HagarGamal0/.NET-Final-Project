@@ -3,68 +3,76 @@
   "WorkspaceRootPath": "E:\\iti\\Final Project .NET\\PickGo_backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251113202128_AddAllTables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PickGo_backend\\Migrations\\20251113202128_AddAllTables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251113201430_initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PickGo_backend\\Migrations\\20251113201430_initial.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\address\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\address\\address.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\user\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\user\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\request\\request.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\request\\request.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\user\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\user\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\pickgo_backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\pickgo_backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\package\\package.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\package\\package.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\invoice\\invoice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\invoice\\invoice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\shipment\\shipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\shipment\\shipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\enums\\paymenttypes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\enums\\paymenttypes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\payment\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\payment\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\invoicerepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\invoicerepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\package\\package.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\package\\package.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\requestrepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\requestrepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\order\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\order\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\userrepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\userrepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\packagerepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\packagerepositories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\basemodel\\basemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\basemodel\\basemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\ibaserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\repositories\\baserepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\pickgo_backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\pickgo_backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\pickgo_backend.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
@@ -78,64 +86,214 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20251113202128_AddAllTables.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251113202128_AddAllTables.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251113202128_AddAllTables.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251113202128_AddAllTables.cs",
+              "RelativeToolTip": "PickGo_backend\\Migrations\\20251113202128_AddAllTables.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T20:21:29.023Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "20251113201430_initial.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251113201430_initial.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251113201430_initial.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251113201430_initial.cs",
+              "RelativeToolTip": "PickGo_backend\\Migrations\\20251113201430_initial.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T20:14:30.988Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "DelieveryAppContext.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "RelativeToolTip": "PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAADwvxAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T13:54:50.908Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Request.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Request\\Request.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Request\\Request.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Request\\Request.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\Request\\Request.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T13:24:56.418Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "User.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\User.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\User\\User.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\User.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\User\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T14:22:05.145Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\appsettings.json",
+              "RelativeDocumentMoniker": "PickGo_backend\\appsettings.json",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\appsettings.json",
+              "RelativeToolTip": "PickGo_backend\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-25T14:01:41.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Package.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Package\\Package.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Package\\Package.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Package\\Package.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\Package\\Package.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T13:37:42.548Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Program.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Program.cs",
               "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Program.cs",
               "RelativeToolTip": "PickGo_backend\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-10-25T14:34:10.237Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ApplicationUser.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\ApplicationUser.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\User\\ApplicationUser.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\ApplicationUser.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\User\\ApplicationUser.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAYAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "Invoice.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Invoice\\Invoice.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Invoice\\Invoice.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Invoice\\Invoice.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\Invoice\\Invoice.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T14:22:05.145Z"
+              "WhenOpened": "2025-10-25T13:29:34.609Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\appsettings.json",
-              "RelativeDocumentMoniker": "PickGo_backend\\appsettings.json",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\appsettings.json",
-              "RelativeToolTip": "PickGo_backend\\appsettings.json",
+              "DocumentIndex": 9,
+              "Title": "PaymentTypes.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Enums\\PaymentTypes.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Enums\\PaymentTypes.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Enums\\PaymentTypes.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\Enums\\PaymentTypes.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-10-25T14:01:41.751Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "DelieveryAppContext.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "RelativeToolTip": "PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:54:50.908Z"
+              "WhenOpened": "2025-11-13T18:55:29.194Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 12,
+              "Title": "UserRepositories.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\UserRepositories.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\UserRepositories.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\UserRepositories.cs",
+              "RelativeToolTip": "PickGo_backend\\Repositories\\UserRepositories.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T19:53:15.503Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "RequestRepositories.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\RequestRepositories.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\RequestRepositories.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\RequestRepositories.cs",
+              "RelativeToolTip": "PickGo_backend\\Repositories\\RequestRepositories.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T19:57:38.94Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "InvoiceRepositories.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\InvoiceRepositories.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\InvoiceRepositories.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\InvoiceRepositories.cs",
+              "RelativeToolTip": "PickGo_backend\\Repositories\\InvoiceRepositories.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T19:58:51.113Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "PackageRepositories.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\PackageRepositories.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\PackageRepositories.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\PackageRepositories.cs",
+              "RelativeToolTip": "PickGo_backend\\Repositories\\PackageRepositories.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-13T19:55:49.768Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "BaseModel.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-25T13:26:28.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
               "Title": "IBaseRepository.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\IBaseRepository.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\IBaseRepository.cs",
@@ -143,11 +301,12 @@
               "RelativeToolTip": "PickGo_backend\\Repositories\\IBaseRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:46:27.621Z"
+              "WhenOpened": "2025-10-25T13:46:27.621Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 16,
               "Title": "BaseRepository.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\BaseRepository.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\BaseRepository.cs",
@@ -155,35 +314,12 @@
               "RelativeToolTip": "PickGo_backend\\Repositories\\BaseRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:45:22.881Z"
+              "WhenOpened": "2025-10-25T13:45:22.881Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "User.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\User.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\User\\User.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\User.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\User\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:27:25.677Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Address.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Address\\Address.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Address\\Address.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Address\\Address.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Address\\Address.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:24:52.66Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 17,
               "Title": "PickGo_backend.csproj",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\PickGo_backend.csproj",
               "RelativeDocumentMoniker": "PickGo_backend\\PickGo_backend.csproj",
@@ -195,91 +331,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "Shipment.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Shipment\\Shipment.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Shipment\\Shipment.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Shipment\\Shipment.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Shipment\\Shipment.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:43:48.092Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "Payment.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Payment\\Payment.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Payment\\Payment.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Payment\\Payment.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Payment\\Payment.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:43:22.421Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Invoice.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Invoice\\Invoice.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Invoice\\Invoice.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Invoice\\Invoice.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Invoice\\Invoice.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:29:34.609Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "WeatherForecastController.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Controllers\\WeatherForecastController.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Controllers\\WeatherForecastController.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Controllers\\WeatherForecastController.cs",
-              "RelativeToolTip": "PickGo_backend\\Controllers\\WeatherForecastController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:25:12.754Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Package.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Package\\Package.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Package\\Package.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Package\\Package.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Package\\Package.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:37:42.548Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "BaseModel.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAfAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:26:28.902Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Order.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Order\\Order.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Order\\Order.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Order\\Order.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Order\\Order.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-25T13:24:56.418Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "PickGo_backend.http",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\PickGo_backend.http",
               "RelativeDocumentMoniker": "PickGo_backend\\PickGo_backend.http",
