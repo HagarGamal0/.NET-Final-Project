@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PickGo_backend.Context;
 using PickGo_backend.Models;
 using PickGo_backend.Repositories;
+using PickGo_backend.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,10 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<UserRepositories>();
-builder.Services.AddScoped<PackageRepositories>();
-builder.Services.AddScoped<RequestRepositories>();
-builder.Services.AddScoped<InvoiceRepositories>();
+builder.Services.AddScoped<UnitOfWork>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

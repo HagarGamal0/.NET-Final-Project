@@ -21,6 +21,5 @@ namespace PickGo_backend.Repositries
         public async Task AddAsync(TEntity entity) => await _table.AddAsync(entity);
         public void Update(TEntity entity) => _table.Update(entity);
         public void Delete(TEntity entity) => _table.Remove(entity);
-        public async Task SaveAsync() => await _context.SaveChangesAsync();
     }
 }
