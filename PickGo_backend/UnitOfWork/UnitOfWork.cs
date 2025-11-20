@@ -3,7 +3,7 @@ using PickGo_backend.Models;
 using PickGo_backend.Repositories;
 using PickGo_backend.Repositries;
 
-namespace PickGo_backend.UnitOfWork
+namespace PickGo_backend
 {
     public class UnitOfWork
     {
@@ -29,6 +29,37 @@ namespace PickGo_backend.UnitOfWork
                 return _userRepo;
             }
         }
+
+
+        private SupplierRepository _supplierRepo;
+
+        public SupplierRepository SupplierRepo
+        {
+            get
+            {
+                if (_supplierRepo == null)
+                    _supplierRepo = new SupplierRepository(_db);
+                return _supplierRepo;
+            }
+        }
+
+
+        private RoleRepository _roleRepo;
+
+        public RoleRepository RoleRepo
+        {
+            get
+            {
+                if (_roleRepo == null)
+                    _roleRepo = new RoleRepository(_db);
+                return _roleRepo;
+            }
+        }
+
+
+
+
+
 
         public PackageRepositories PackageRepo
         {
@@ -66,6 +97,11 @@ namespace PickGo_backend.UnitOfWork
         public void Save()
         {
             _db.SaveChanges();
+        }
+
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
         }
     }
 }
