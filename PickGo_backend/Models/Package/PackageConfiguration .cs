@@ -9,32 +9,31 @@ namespace PickGo_backend.Configurations
     {
         public void Configure(EntityTypeBuilder<Package> builder)
         {
-            builder.HasKey(p => p.Id); // Primary key from BaseModel
+            builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.Description)
-                   .IsRequired()
-                   .HasMaxLength(500);
-
-            builder.Property(p => p.Weight)
-                   .IsRequired();
-
-            builder.Property(p => p.Fragile)
-                   .IsRequired();
-
-            builder.Property(p => p.ExpireDate)
-                   .IsRequired();
-
-            builder.Property(p => p.ShipmentCost)
-                   .IsRequired();
-
-            builder.Property(p => p.InvoiveImage)
-                   .HasMaxLength(250);
-
-            // Many Packages -> One Request
+            // Package → Request (Many Packages per Request)
             builder.HasOne(p => p.Request)
-                   .WithMany(r => r.Packages)   // Request should have ICollection<Package> Packages
-                   .HasForeignKey(p => p.RequestID)
-                   .OnDelete(DeleteBehavior.Cascade); // Delete packages if request is deleted
+                   .WithMany(r => r.Packages)
+                   .HasForeignKey(p => p.RequestID).OnDelete(DeleteBehavior.Restrict);
+            ;
+
+            // Package → Customer (Many Packages per Customer)
+            builder.HasOne(p => p.Customer)
+                   .WithMany(c => c.Packages)
+                   .HasForeignKey(p => p.CustomerID).OnDelete(DeleteBehavior.NoAction);
+            ;
+
+            // Package → Courier (Many Packages per Courier, optional)
+            builder.HasOne(p => p.Courier)
+                   .WithMany(c => c.Packages)
+                   .HasForeignKey(p => p.CourierID)
+                   .OnDelete(DeleteBehavior.SetNull);
+
+            // Enum configuration for Status (optional)
+            builder.Property(p => p.Status)
+                   .HasConversion<string>()
+                   .HasMaxLength(20);
         }
     }
+    
 }

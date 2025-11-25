@@ -1,7 +1,7 @@
 ﻿using PickGo_backend.Context;
 using PickGo_backend.Models;
 using PickGo_backend.Repositories;
-using PickGo_backend.Repositries;
+using System.Threading.Tasks;
 
 namespace PickGo_backend
 {
@@ -9,10 +9,18 @@ namespace PickGo_backend
     {
         private readonly DelieveryAppContext _db;
 
+        // Repositories
         private UserRepositories _userRepo;
-        private PackageRepositories _packageRepo;
-        private RequestRepositories _requestRepo;
-        private InvoiceRepositories _invoiceRepo;
+        private PackageRepository _packageRepo;
+        private RequestRepository _requestRepo;
+        private InvoiceRepository _invoiceRepo;
+        private DeliveryProofRepository _deliveryProofRepo;
+        private CourierLocationRepository _courierLocationRepo;
+        private SupplierRepository _supplierRepo;
+        private CourierRepository _courierRepo;
+        private CourierTransactionRepository _courierTransactionRepo;
+        private CustomerRepository _customerRepo;
+        private RoleRepository _roleRepo;
 
         public UnitOfWork(DelieveryAppContext db)
         {
@@ -25,13 +33,9 @@ namespace PickGo_backend
             {
                 if (_userRepo == null)
                     _userRepo = new UserRepositories(_db);
-
                 return _userRepo;
             }
         }
-
-
-        private SupplierRepository _supplierRepo;
 
         public SupplierRepository SupplierRepo
         {
@@ -43,9 +47,6 @@ namespace PickGo_backend
             }
         }
 
-
-        private RoleRepository _roleRepo;
-
         public RoleRepository RoleRepo
         {
             get
@@ -56,44 +57,87 @@ namespace PickGo_backend
             }
         }
 
-
-
-
-
-
-        public PackageRepositories PackageRepo
+        public PackageRepository PackageRepo
         {
             get
             {
                 if (_packageRepo == null)
-                    _packageRepo = new PackageRepositories(_db);
-
+                    _packageRepo = new PackageRepository(_db);
                 return _packageRepo;
             }
         }
 
-        public RequestRepositories RequestRepo
+        public RequestRepository RequestRepo
         {
             get
             {
                 if (_requestRepo == null)
-                    _requestRepo = new RequestRepositories(_db);
-
+                    _requestRepo = new RequestRepository(_db);
                 return _requestRepo;
             }
         }
 
-        public InvoiceRepositories InvoiceRepo
+        public InvoiceRepository InvoiceRepo
         {
             get
             {
                 if (_invoiceRepo == null)
-                    _invoiceRepo = new InvoiceRepositories(_db);
-
+                    _invoiceRepo = new InvoiceRepository(_db);
                 return _invoiceRepo;
             }
         }
 
+        public DeliveryProofRepository DeliveryProofRepo
+        {
+            get
+            {
+                if (_deliveryProofRepo == null)
+                    _deliveryProofRepo = new DeliveryProofRepository(_db);
+                return _deliveryProofRepo;
+            }
+        }
+
+        public CourierLocationRepository CourierLocationRepo
+        {
+            get
+            {
+                if (_courierLocationRepo == null)
+                    _courierLocationRepo = new CourierLocationRepository(_db);
+                return _courierLocationRepo;
+            }
+        }
+
+        public CourierRepository CourierRepo
+        {
+            get
+            {
+                if (_courierRepo == null)
+                    _courierRepo = new CourierRepository(_db);
+                return _courierRepo;
+            }
+        }
+
+        public CourierTransactionRepository CourierTransactionRepo
+        {
+            get
+            {
+                if (_courierTransactionRepo == null)
+                    _courierTransactionRepo = new CourierTransactionRepository(_db);
+                return _courierTransactionRepo;
+            }
+        }
+
+        public CustomerRepository CustomerRepo
+        {
+            get
+            {
+                if (_customerRepo == null)
+                    _customerRepo = new CustomerRepository(_db);
+                return _customerRepo;
+            }
+        }
+
+        // Save changes
         public void Save()
         {
             _db.SaveChanges();

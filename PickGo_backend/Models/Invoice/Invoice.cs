@@ -7,16 +7,13 @@ namespace PickGo_backend.Models
 
     public class Invoice : BaseModel
     {
-        public double Cost { get; set; }
-        public PaymentTypes PaymentType { get; set; }
-     
-        public string InvoiceNumber { get; set; }
+        public int Id { get; set; }
+        public float Cost { get; set; }
+        public string? PaymentType { get; set; } 
+        public string? InvoiceNumber { get; set; } 
+        public int PackageID { get; set; }
 
-
-
-    public Request Request { get; set; }
-
-        public int RequestID { get; set;}
+        public Package? Package { get; set; }
 
     }
 }

@@ -10,16 +10,10 @@ namespace PickGo_backend.Configurations
         {
             builder.HasKey(r => r.Id);
 
-            builder.Property(r => r.CreatedAt).IsRequired();
-            builder.Property(r => r.Source).IsRequired().HasMaxLength(200);
-            builder.Property(r => r.Destination).IsRequired().HasMaxLength(200);
-            builder.Property(r => r.ShipmentCost).IsRequired().HasMaxLength(50);
-
-            // Relation with User (many Requests -> one User)
-            builder.HasOne(r => r.User)
-                   .WithMany() // You can add ICollection<Request> in User if needed
-                   .HasForeignKey(r => r.UserID)
-                   .OnDelete(DeleteBehavior.Cascade);
+            // Request → Supplier (Many Requests per Supplier)
+            builder.HasOne(r => r.Supplier)
+                   .WithMany(s => s.Requests);
+          
         }
     }
 }

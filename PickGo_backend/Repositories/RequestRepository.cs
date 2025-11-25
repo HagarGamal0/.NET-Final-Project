@@ -6,9 +6,9 @@ using PickGo_backend.Repositries;
 
 namespace PickGo_backend.Repositories
 {
-    public class RequestRepositories : BaseRepository<Request>
+    public class RequestRepository : BaseRepository<Request>
         {
-            public RequestRepositories(DelieveryAppContext context) : base(context) { }
+            public RequestRepository(DelieveryAppContext context) : base(context) { }
 
 
        

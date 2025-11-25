@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using PickGo_backend;
+using PickGo_backend.DTOs.Courier;
+using PickGo_backend.DTOs.Supplier;
 using PickGo_backend.DTOs.User;
 using PickGo_backend.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,129 +19,141 @@ namespace PickGo_backend.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly UnitOfWork _unitOfWork;
-        private readonly IConfiguration configuration;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<User> userManager, IMapper mapper, UnitOfWork unitOfWork , IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, IMapper mapper, UnitOfWork unitOfWork, IConfiguration configuration)
         {
             _userManager = userManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
-            this.configuration = configuration;
+            _configuration = configuration;
         }
 
-        // GET: /api/Auth/Register
-        [HttpGet("Roles")]
-        public async Task<IActionResult> GetRoles()
+        // -------------------- Registration --------------------
+
+        [HttpPost("Register/Supplier")]
+        public async Task<IActionResult> RegisterSupplier(SupplierRegisterDTO dto)
         {
-            var rolesList = await _unitOfWork.RoleRepo.GetAllAsync();
-
-            var roles = rolesList.Select(r => r.Name).ToList();
-
-            return Ok(new { roles });
-        }
-
-        // POST: /api/Auth/Register
-        [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserRegisterDTO userRegisterDTO)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = _mapper.Map<User>(userRegisterDTO);
-
-            var result = await _userManager.CreateAsync(user, userRegisterDTO.Password);
-
-            if (!result.Succeeded)
+            // 1. Create Identity user
+            var user = new User
             {
-                foreach (var error in result.Errors)
-                    ModelState.AddModelError(error.Code, error.Description);
-
-                return BadRequest(ModelState);
-            }
-
-            if (!string.IsNullOrEmpty(userRegisterDTO.Role))
-            {
-                var roles = await _unitOfWork.RoleRepo.GetAllAsync();
-                if (!roles.Any(r => r.Name == userRegisterDTO.Role))
-                {
-                    await _unitOfWork.RoleRepo.AddAsync(new IdentityRole(userRegisterDTO.Role));
-                }
-
-                await _userManager.AddToRoleAsync(user, userRegisterDTO.Role);
-            }
-
-
-            if (userRegisterDTO.Role == "Supplier")
-            {
-                await _unitOfWork.SupplierRepo.AddAsync(new Supplier
-                {
-                    UserId = user.Id,
-                });
-            }
-
-            _unitOfWork.SaveAsync();
-
-            return Ok(new
-            {
-                message = "User registered successfully",
-                userId = user.Id,
-                role = userRegisterDTO.Role
-            });
-        }
-
-
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(UserLoginDTO userFromRequest)
-        {
-            //check
-            var userFromDb = await _userManager.FindByNameAsync(userFromRequest.UserName);
-            if (userFromDb == null)
-                userFromDb = await _userManager.FindByEmailAsync(userFromRequest.UserName);
-
-            if (userFromDb == null)
-                return Unauthorized("User not found.");
-
-            var isPasswordValid = await _userManager.CheckPasswordAsync(userFromDb, userFromRequest.Password);
-            if (!isPasswordValid)
-                return Unauthorized("Invalid password.");
-
-            // Get user roles
-            var roles = await _userManager.GetRolesAsync(userFromDb);
-
-
-
-
-
-
-
-            // Create JWT token
-            var claims = new List<Claim>
-    {
-                  new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, userFromDb.Id),
-            new Claim(ClaimTypes.Name, userFromDb.UserName),
-             new Claim(ClaimTypes.Email, userFromDb.Email)
+                UserName = dto.UserName,
+                Email = dto.Email,
+                Address = dto.Address,
+                BirthDate = dto.BirthDate,
+                Gender = dto.Gender
             };
 
-            foreach (var role in roles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
+            // 2. Add role if not exists
+            if (!await _userManager.IsInRoleAsync(user, "Supplier"))
+                await _userManager.AddToRoleAsync(user, "Supplier");
+
+            // 3. Create Supplier with FK to User
+            var supplier = new Supplier
+            {
+                UserId = user.Id,
+                ShopName = dto.ShopName,
+                IsDeleted = false
+            };
+            await _unitOfWork.SupplierRepo.AddAsync(supplier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { userId = user.Id, role = "Supplier" });
+        }
+
+        [HttpPost("Register/Courier")]
+        public async Task<IActionResult> RegisterCourier(CourierRegisterDTO dto)
+        {
+            var user = new User
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+                Address = dto.Address,
+                BirthDate = dto.BirthDate,
+                Gender = dto.Gender
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            if (!await _userManager.IsInRoleAsync(user, "Courier"))
+                await _userManager.AddToRoleAsync(user, "Courier");
+
+            var courier = new Courier
+            {
+                UserId = user.Id,
+                VehicleType = dto.VehicleType,
+                LicenseNumber = dto.LicenseNumber,
+                MaxWeight = dto.MaxWeight,
+                IsAvailable = true,
+                IsOnline = false,
+                Rating = 0
+            };
+
+            await _unitOfWork.CourierRepo.AddAsync(courier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { userId = user.Id, role = "Courier" });
+        }
+
+        // -------------------- Login --------------------
+
+        [HttpPost("Login/Supplier")]
+        public async Task<IActionResult> LoginSupplier(UserLoginDTO dto)
+        {
+            return await LoginUser(dto, "Supplier");
+        }
+
+        [HttpPost("Login/Courier")]
+        public async Task<IActionResult> LoginCourier(UserLoginDTO dto)
+        {
+            return await LoginUser(dto, "Courier");
+        }
+
+        private async Task<IActionResult> LoginUser(UserLoginDTO dto, string role)
+        {
+            var user = await _userManager.FindByNameAsync(dto.UserName)
+                       ?? await _userManager.FindByEmailAsync(dto.UserName);
+
+            if (user == null)
+                return Unauthorized("User not found.");
+
+            if (!await _userManager.CheckPasswordAsync(user, dto.Password))
+                return Unauthorized("Invalid password.");
+
+            if (!await _userManager.IsInRoleAsync(user, role))
+                return Unauthorized($"User is not a {role}.");
+
+            // JWT creation
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, role)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(
-                issuer: configuration["Jwt:Issuer"],
-                audience: configuration["Jwt:Audience"],
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(int.Parse(configuration["Jwt:ExpiresInMinutes"])),
+                expires: DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:ExpiresInMinutes"])),
                 signingCredentials: creds
             );
 
             return Ok(new
             {
                 token = new JwtSecurityTokenHandler().WriteToken(token),
-                expiration = token.ValidTo
+                expiration = token.ValidTo,
+                role
             });
         }
     }

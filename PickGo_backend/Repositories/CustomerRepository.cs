@@ -6,12 +6,13 @@ using PickGo_backend.Repositries;
 
 namespace PickGo_backend.Repositories
 {
-    public class PackageRepositories : BaseRepository<Package>
+    public class CustomerRepository : BaseRepository<Customer>
         {
-            public PackageRepositories(DelieveryAppContext context) : base(context) { }
+            public CustomerRepository(DelieveryAppContext context) : base(context) { }
 
 
-      
+       
+
         }
     }
 

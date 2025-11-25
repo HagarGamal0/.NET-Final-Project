@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using PickGo_backend.Models;
 
-namespace PickGo_backend.Configurations
+namespace PickGo_backend.Models
 {
     public class SupplierConfiguration : IEntityTypeConfiguration<Supplier>
     {
@@ -10,17 +9,12 @@ namespace PickGo_backend.Configurations
         {
             builder.HasKey(s => s.Id);
 
-            builder.Property(s => s.UserId)
-                   .IsRequired();
-
-            builder.Property(s => s.IsDeleted)
-                   .IsRequired();
-
-            // One-to-one with User
+            // Supplier → User (One-to-One)
             builder.HasOne(s => s.User)
                    .WithOne(u => u.Supplier)
-                   .HasForeignKey<Supplier>(s => s.UserId)
-                   .OnDelete(DeleteBehavior.Cascade);
+                   .HasForeignKey<Supplier>(s => s.UserId);
+
         }
     }
 }
+

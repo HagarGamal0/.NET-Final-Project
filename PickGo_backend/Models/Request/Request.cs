@@ -7,19 +7,15 @@ using System.Collections.Generic;
 
     public class Request : BaseModel
 	{
-		public DateTime CreatedAt { get; set; }
-		public string Source { get; set; }
-		public string Destination { get; set; }
-        public string ShipmentCost { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string Source { get; set; } = null!;
+        public int SupplierId { get; set; }
 
-        public Invoice Invoice { get; set; }
-
-        public User User { get; set; }
-		public string UserID { get; set; }
-
-        public ICollection<Package> Packages { get; set; } = new List<Package>();
-
-
-
+        public Supplier Supplier { get; set; } = null!;
+        public ICollection<Package>? Packages { get; set; }
     }
+
+
+
+
 }

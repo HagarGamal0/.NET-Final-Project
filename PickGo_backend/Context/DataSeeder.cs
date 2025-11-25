@@ -41,7 +41,13 @@ namespace PickGo_backend.Context
                     Id = "3",
                     Name = "Supplier",
                     NormalizedName = "SUPPLIER"
-                }
+                },
+                 new IdentityRole
+                 {
+                     Id = "4",
+                     Name = "Courier",
+                     NormalizedName = "Courier"
+                 }
             );
         }
         //public static void SeedSupplier(this ModelBuilder modelBuilder)
