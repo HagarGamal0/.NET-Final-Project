@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PickGo_backend.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,70 @@ namespace PickGo_backend.Context
                  }
             );
         }
+
+
+
+
+        public static void SeedSubscription(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Subscription>().HasData(
+                new Subscription
+                {
+                    Id = 1,
+                    Name = "Basic",
+                    Price = 0,
+                    UserType = "Courier",
+                    MaxOrders = 5,
+                    Description = "Basic package for couriers with 5 allowed orders"
+                },
+                new Subscription
+                {
+                    Id = 2,
+                    Name = "Standard",
+                    Price = 50,
+                    UserType = "Courier",
+                    MaxOrders = 10,
+                    Description = "Standard package for couriers with 10 allowed orders"
+                },
+                new Subscription
+                {
+                    Id = 3,
+                    Name = "Premium",
+                    Price = 100,
+                    UserType = "Courier",
+                    MaxOrders = 20,
+                    Description = "Premium package for couriers with 20 allowed orders"
+                },
+                new Subscription
+                {
+                    Id = 4,
+                    Name = "Basic",
+                    Price = 0,
+                    UserType = "Supplier",
+                    MaxOrders = 5,
+                    Description = "Basic package for suppliers with 5 allowed orders"
+                },
+                new Subscription
+                {
+                    Id = 5,
+                    Name = "Standard",
+                    Price = 50,
+                    UserType = "Supplier",
+                    MaxOrders = 10,
+                    Description = "Standard package for suppliers with 10 allowed orders"
+                },
+                new Subscription
+                {
+                    Id = 6,
+                    Name = "Premium",
+                    Price = 100,
+                    UserType = "Supplier",
+                    MaxOrders = 20,
+                    Description = "Premium package for suppliers with 20 allowed orders"
+                }
+            );
+        }
+
         //public static void SeedSupplier(this ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<Supplier>().HasData(

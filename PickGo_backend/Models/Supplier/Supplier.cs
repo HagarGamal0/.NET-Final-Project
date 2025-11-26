@@ -19,5 +19,8 @@ namespace PickGo_backend.Models
         public virtual ICollection<Courier> Couriers { get; set; }
         public ICollection<Request>? Requests { get; set; } = new List<Request>();
 
+        public ICollection<SupplierSubscription>? SupplierSubscriptions { get; set; } = new List<SupplierSubscription>();
+
+
     }
 }

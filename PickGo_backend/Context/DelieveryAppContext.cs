@@ -52,6 +52,8 @@ namespace PickGo_backend.Context
 
 
             modelBuilder.SeedRole();
+            modelBuilder.SeedSubscription(); 
+
             //modelBuilder.SeedSupplier();    
             //modelBuilder.SeedProduct();
 

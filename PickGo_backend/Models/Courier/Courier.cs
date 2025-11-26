@@ -1,4 +1,5 @@
-﻿namespace PickGo_backend.Models
+﻿
+namespace PickGo_backend.Models
 {
     public class Courier :BaseModel
     {
@@ -16,5 +17,7 @@
         public ICollection<Package>? Packages { get; set; }
         public ICollection<DeliveryProof>? DeliveryProofs { get; set; }
         public ICollection<CourierTransaction>? Transactions { get; set; }
+        public ICollection<CourierSubscription>? CourierSubscriptions { get; set; } = new List<CourierSubscription>();
+
     }
 }
