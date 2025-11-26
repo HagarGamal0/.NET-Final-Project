@@ -2,6 +2,7 @@
 using PickGo_backend.Context;
 using PickGo_backend.Repository;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace PickGo_backend.Repositries
 {
@@ -21,5 +22,9 @@ namespace PickGo_backend.Repositries
         public async Task AddAsync(TEntity entity) => await _table.AddAsync(entity);
         public void Update(TEntity entity) => _table.Update(entity);
         public void Delete(TEntity entity) => _table.Remove(entity);
+        public async Task<TEntity> GetByExpressionAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _table.FirstOrDefaultAsync(predicate);
+        }
     }
 }

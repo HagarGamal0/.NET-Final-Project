@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "E:\\iti\\Final Project .NET\\PickGo_backend\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\context\\dataseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\context\\dataseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -194,7 +198,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -202,7 +206,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "20251126175135_jjjjjjj.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs",
+              "RelativeToolTip": "PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T17:51:36.075Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "CourierSubscription.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscription.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\CourierSubscription.cs",
@@ -215,7 +232,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "CourierSubscriptionConfiguration.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
@@ -228,7 +245,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "SupplierSubscription.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\SupplierSubscription.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\SupplierSubscription.cs",
@@ -241,7 +258,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "DataSeeder.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DataSeeder.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Context\\DataSeeder.cs",
@@ -254,7 +271,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "DelieveryAppContext.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Context\\DelieveryAppContext.cs",
@@ -267,7 +284,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Subscription .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\Subscription .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\Subscription .cs",
@@ -280,7 +297,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "SupplierSubscriptionConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\SupplierSubscriptionConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\SupplierSubscriptionConfiguration .cs",
@@ -297,7 +314,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Courier.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Courier\\Courier.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Courier\\Courier.cs",
@@ -310,7 +327,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Supplier.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Supplier\\Supplier.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Supplier\\Supplier.cs",
@@ -323,7 +340,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "20251125214808_kkddd.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125214808_kkddd.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125214808_kkddd.cs",
@@ -340,7 +357,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "20251125214752_kkddd.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125214752_kkddd.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125214752_kkddd.cs",
@@ -351,7 +368,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "UserConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\UserConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\User\\UserConfiguration .cs",
@@ -364,7 +381,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "SupplierConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Supplier\\SupplierConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Supplier\\SupplierConfiguration .cs",
@@ -377,7 +394,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "RequestConfiguration.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Request\\RequestConfiguration.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Request\\RequestConfiguration.cs",
@@ -390,7 +407,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "PackageConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Package\\PackageConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Package\\PackageConfiguration .cs",
@@ -403,7 +420,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "Request.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Request\\Request.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Request\\Request.cs",
@@ -416,7 +433,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "User.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\User\\User.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\User\\User.cs",
@@ -429,7 +446,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "InvoiceConfiguration.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Invoice\\InvoiceConfiguration.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Invoice\\InvoiceConfiguration.cs",
@@ -442,7 +459,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "Invoice.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Invoice\\Invoice.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Invoice\\Invoice.cs",
@@ -455,7 +472,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 23,
               "Title": "CustomerConfiguration.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Customer\\CustomerConfiguration.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Customer\\CustomerConfiguration.cs",
@@ -468,7 +485,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 22,
               "Title": "DeliveryProof.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\DeliveryProof\\DeliveryProof.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\DeliveryProof\\DeliveryProof.cs",
@@ -481,7 +498,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "Package.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Package\\Package.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Package\\Package.cs",
@@ -494,7 +511,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "CourierTransaction.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\CourierTransaction\\CourierTransaction.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\CourierTransaction\\CourierTransaction.cs",
@@ -507,7 +524,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 21,
               "Title": "DeliveryProofConfiguration.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\DeliveryProof\\DeliveryProofConfiguration.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\DeliveryProof\\DeliveryProofConfiguration.cs",
@@ -520,7 +537,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "CourierConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Courier\\CourierConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Courier\\CourierConfiguration .cs",
@@ -533,7 +550,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "CourierTransactionConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\CourierTransaction\\CourierTransactionConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\CourierTransaction\\CourierTransactionConfiguration .cs",
@@ -546,7 +563,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 24,
               "Title": "Customer.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Customer\\Customer.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Customer\\Customer.cs",
@@ -559,7 +576,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "CourierLocationConfiguration .cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\CourierLocation\\CourierLocationConfiguration .cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\CourierLocation\\CourierLocationConfiguration .cs",
@@ -572,7 +589,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "20251125163431_aaaaaaaa.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125163431_aaaaaaaa.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125163431_aaaaaaaa.cs",
@@ -583,7 +600,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "20251125163033_aaaaaaaa.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125163033_aaaaaaaa.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125163033_aaaaaaaa.cs",
@@ -594,7 +611,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "BaseModel.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\BaseModel\\BaseModel.cs",
@@ -607,7 +624,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "20251125161743_aaaaaaaa.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125161743_aaaaaaaa.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125161743_aaaaaaaa.cs",
@@ -618,7 +635,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "20251125161456_InitialCrea.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125161456_InitialCrea.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125161456_InitialCrea.cs",
@@ -629,7 +646,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 34,
               "Title": "20251125160747_InitialCreatee.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251125160747_InitialCreatee.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251125160747_InitialCreatee.cs",
@@ -640,7 +657,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 35,
               "Title": "AuthController.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Controllers\\AuthController.cs",
@@ -653,7 +670,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "UserLoginDTO.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\DTOs\\User\\UserLoginDTO.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\DTOs\\User\\UserLoginDTO.cs",
@@ -666,7 +683,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "UserRegisterDTO.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\DTOs\\User\\UserRegisterDTO.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\DTOs\\User\\UserRegisterDTO.cs",
@@ -679,7 +696,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "SupplierRepository.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\SupplierRepository.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\SupplierRepository.cs",
@@ -692,7 +709,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 39,
               "Title": "MapperConfig.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Configration\\MapperConfig.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Configration\\MapperConfig.cs",
@@ -705,7 +722,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 40,
               "Title": "SupplierRegisterDTO.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\DTOs\\Supplier\\SupplierRegisterDTO.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\DTOs\\Supplier\\SupplierRegisterDTO.cs",
@@ -718,7 +735,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 41,
               "Title": "SupplierLoginDTO.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\DTOs\\Supplier\\SupplierLoginDTO.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\DTOs\\Supplier\\SupplierLoginDTO.cs",
@@ -731,7 +748,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 42,
               "Title": "UnitOfWork.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\UnitOfWork\\UnitOfWork.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\UnitOfWork\\UnitOfWork.cs",
@@ -744,7 +761,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 43,
               "Title": "CourierRegisterDTO.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\DTOs\\Courier\\CourierRegisterDTO.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\DTOs\\Courier\\CourierRegisterDTO.cs",
@@ -757,7 +774,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 44,
               "Title": "CourierLoginDTO.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\DTOs\\Courier\\CourierLoginDTO.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\DTOs\\Courier\\CourierLoginDTO.cs",
@@ -770,7 +787,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 46,
               "Title": "RequestRepository.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\RequestRepository.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\RequestRepository.cs",
@@ -783,7 +800,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 45,
               "Title": "RoleRepository.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Repositories\\RoleRepository.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Repositories\\RoleRepository.cs",

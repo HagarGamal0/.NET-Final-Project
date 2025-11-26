@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "E:\\iti\\Final Project .NET\\PickGo_backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\subscription\\couriersubscriptionconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\subscription\\couriersubscriptionconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\context\\dataseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\context\\dataseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\subscription\\couriersubscription.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -17,14 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\subscription\\suppliersubscription.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\subscription\\suppliersubscription.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\subscription\\couriersubscriptionconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\models\\subscription\\couriersubscriptionconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|solutionrelative:pickgo_backend\\context\\delieveryappcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{1FBE3E91-838E-4DE0-BD2E-273E6CBEE4D0}|PickGo_backend\\PickGo_backend.csproj|e:\\iti\\final project .net\\pickgo_backend\\pickgo_backend\\models\\subscription\\subscription .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -198,7 +198,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -206,7 +206,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "20251126175135_jjjjjjj.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Migrations\\20251126175135_jjjjjjj.cs",
@@ -219,7 +219,46 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DelieveryAppContext.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "RelativeToolTip": "PickGo_backend\\Context\\DelieveryAppContext.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAkwDYAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T16:32:15.639Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "DataSeeder.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DataSeeder.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Context\\DataSeeder.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DataSeeder.cs",
+              "RelativeToolTip": "PickGo_backend\\Context\\DataSeeder.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAADwv3MAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-25T15:23:35.622Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CourierSubscriptionConfiguration.cs",
+              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
+              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
+              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
+              "RelativeToolTip": "PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-26T17:43:06.689Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "CourierSubscription.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscription.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\CourierSubscription.cs",
@@ -232,20 +271,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CourierSubscriptionConfiguration.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
-              "RelativeToolTip": "PickGo_backend\\Models\\Subscription\\CourierSubscriptionConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-26T17:43:06.689Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "SupplierSubscription.cs",
               "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Models\\Subscription\\SupplierSubscription.cs",
               "RelativeDocumentMoniker": "PickGo_backend\\Models\\Subscription\\SupplierSubscription.cs",
@@ -254,32 +280,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-26T17:40:53.09Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "DataSeeder.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DataSeeder.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Context\\DataSeeder.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DataSeeder.cs",
-              "RelativeToolTip": "PickGo_backend\\Context\\DataSeeder.cs",
-              "ViewState": "AgIAAFIAAAAAAAAAAADwv3MAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T15:23:35.622Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DelieveryAppContext.cs",
-              "DocumentMoniker": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "RelativeDocumentMoniker": "PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "ToolTip": "E:\\iti\\Final Project .NET\\PickGo_backend\\PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "RelativeToolTip": "PickGo_backend\\Context\\DelieveryAppContext.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAkwDYAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-25T16:32:15.639Z",
               "EditorCaption": ""
             },
             {
