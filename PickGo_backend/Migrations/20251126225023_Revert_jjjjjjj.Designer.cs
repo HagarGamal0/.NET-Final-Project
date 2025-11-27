@@ -12,8 +12,8 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    [Migration("20251126175135_jjjjjjj")]
-    partial class jjjjjjj
+    [Migration("20251126225023_Revert_jjjjjjj")]
+    partial class Revert_jjjjjjj
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,7 +115,7 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "4",
                             Name = "Courier",
-                            NormalizedName = "Courier"
+                            NormalizedName = "COURIER"
                         });
                 });
 
@@ -209,6 +209,13 @@ namespace PickGo_backend.Migrations
                     b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "1",
+                            RoleId = "1"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -317,6 +324,10 @@ namespace PickGo_backend.Migrations
 
                     b.Property<float>("Rating")
                         .HasColumnType("real");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
@@ -727,6 +738,24 @@ namespace PickGo_backend.Migrations
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "5dca1eb3-0fc5-455c-a495-298953cf9a5d",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIxY71Qo9fDa9nwaMed3Pl+BU7CNuaaFyNIFxsrbk5791FpvuICXmrxjVKGBuTIyww==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "4066f232-209c-4e82-a711-a81cece973c1",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("DeliveryProof", b =>

@@ -10,6 +10,7 @@ namespace PickGo_backend.Models
         public bool IsOnline { get; set; }
         public float Rating { get; set; }
         public float MaxWeight { get; set; }
+        public string Status { get; set; }
 
         public User? User { get; set; }
         public ICollection<CourierLocation> Locations { get; set; }

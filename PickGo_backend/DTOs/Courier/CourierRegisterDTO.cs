@@ -17,6 +17,9 @@ namespace PickGo_backend.DTOs.Courier
             public string? Address { get; set; }
             public DateTime? BirthDate { get; set; }
             public string? Gender { get; set; }
+            public string? Status { get; set; }
+           
+
         
 
     }

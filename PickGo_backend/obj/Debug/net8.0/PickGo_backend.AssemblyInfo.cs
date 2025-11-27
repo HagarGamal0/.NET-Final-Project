@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PickGo_backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c4e315120f648ae16d526838f450e8d5db4a1dc1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c6243045ca93f32c37a40d51c80d038e568adf5")]
 [assembly: System.Reflection.AssemblyProductAttribute("PickGo_backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PickGo_backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

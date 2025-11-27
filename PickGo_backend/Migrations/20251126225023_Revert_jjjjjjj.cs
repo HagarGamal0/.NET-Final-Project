@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PickGo_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class kkddd : Migration
+    public partial class Revert_jjjjjjj : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -53,6 +53,24 @@ namespace PickGo_backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Subscription",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    DurationInDays = table.Column<int>(type: "int", nullable: false),
+                    UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MaxOrders = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Subscription", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,6 +239,7 @@ namespace PickGo_backend.Migrations
                     IsOnline = table.Column<bool>(type: "bit", nullable: false),
                     Rating = table.Column<float>(type: "real", nullable: false),
                     MaxWeight = table.Column<float>(type: "real", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SupplierId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -261,6 +280,32 @@ namespace PickGo_backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SupplierSubscription",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SupplierSubscription", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SupplierSubscription_Subscription_SubscriptionId",
+                        column: x => x.SubscriptionId,
+                        principalTable: "Subscription",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SupplierSubscription_Supplier_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Supplier",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CourierLocations",
                 columns: table => new
                 {
@@ -279,6 +324,32 @@ namespace PickGo_backend.Migrations
                         column: x => x.CourierID,
                         principalTable: "Courier",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourierSubscription",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CourierId = table.Column<int>(type: "int", nullable: false),
+                    SubscriptionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourierSubscription", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourierSubscription_Courier_CourierId",
+                        column: x => x.CourierId,
+                        principalTable: "Courier",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourierSubscription_Subscription_SubscriptionId",
+                        column: x => x.SubscriptionId,
+                        principalTable: "Subscription",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -416,8 +487,31 @@ namespace PickGo_backend.Migrations
                     { "1", null, "Admin", "ADMIN" },
                     { "2", null, "Customer", "CUSTOMER" },
                     { "3", null, "Supplier", "SUPPLIER" },
-                    { "4", null, "Courier", "Courier" }
+                    { "4", null, "Courier", "COURIER" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "Address", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "1", 0, null, null, "5dca1eb3-0fc5-455c-a495-298953cf9a5d", "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEIxY71Qo9fDa9nwaMed3Pl+BU7CNuaaFyNIFxsrbk5791FpvuICXmrxjVKGBuTIyww==", null, false, "4066f232-209c-4e82-a711-a81cece973c1", false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "Subscription",
+                columns: new[] { "Id", "Description", "DurationInDays", "MaxOrders", "Name", "Price", "UserType" },
+                values: new object[,]
+                {
+                    { 1, "Basic package for couriers with 5 allowed orders", 0, 5, "Basic", 0m, "Courier" },
+                    { 2, "Standard package for couriers with 10 allowed orders", 0, 10, "Standard", 50m, "Courier" },
+                    { 3, "Premium package for couriers with 20 allowed orders", 0, 20, "Premium", 100m, "Courier" },
+                    { 4, "Basic package for suppliers with 5 allowed orders", 0, 5, "Basic", 0m, "Supplier" },
+                    { 5, "Standard package for suppliers with 10 allowed orders", 0, 10, "Standard", 50m, "Supplier" },
+                    { 6, "Premium package for suppliers with 20 allowed orders", 0, 20, "Premium", 100m, "Supplier" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId", "UserId1" },
+                values: new object[] { "1", "1", null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -492,6 +586,16 @@ namespace PickGo_backend.Migrations
                 column: "CourierID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CourierSubscription_CourierId",
+                table: "CourierSubscription",
+                column: "CourierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourierSubscription_SubscriptionId",
+                table: "CourierSubscription",
+                column: "SubscriptionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CourierTransactions_CourierID",
                 table: "CourierTransactions",
                 column: "CourierID");
@@ -555,6 +659,16 @@ namespace PickGo_backend.Migrations
                 table: "Supplier",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupplierSubscription_SubscriptionId",
+                table: "SupplierSubscription",
+                column: "SubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SupplierSubscription_SupplierId",
+                table: "SupplierSubscription",
+                column: "SupplierId");
         }
 
         /// <inheritdoc />
@@ -579,6 +693,9 @@ namespace PickGo_backend.Migrations
                 name: "CourierLocations");
 
             migrationBuilder.DropTable(
+                name: "CourierSubscription");
+
+            migrationBuilder.DropTable(
                 name: "CourierTransactions");
 
             migrationBuilder.DropTable(
@@ -588,10 +705,16 @@ namespace PickGo_backend.Migrations
                 name: "Invoices");
 
             migrationBuilder.DropTable(
+                name: "SupplierSubscription");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Packages");
+
+            migrationBuilder.DropTable(
+                name: "Subscription");
 
             migrationBuilder.DropTable(
                 name: "Courier");

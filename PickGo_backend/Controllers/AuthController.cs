@@ -66,7 +66,7 @@ namespace PickGo_backend.Controllers
         }
 
         [HttpPost("Register/Courier")]
-        public async Task<IActionResult> RegisterCourier(CourierRegisterDTO dto)
+        public async Task<IActionResult> RegisterCourier([FromBody] CourierRegisterDTO dto)
         {
             var user = new User
             {
@@ -92,7 +92,9 @@ namespace PickGo_backend.Controllers
                 MaxWeight = dto.MaxWeight,
                 IsAvailable = true,
                 IsOnline = false,
-                Rating = 0
+                Rating = 0,
+                Status = string.IsNullOrEmpty(dto.Status) ? "Pending" : dto.Status
+
             };
 
             await _unitOfWork.CourierRepo.AddAsync(courier);
@@ -100,6 +102,34 @@ namespace PickGo_backend.Controllers
 
             return Ok(new { userId = user.Id, role = "Courier" });
         }
+
+
+        // POST: api/Auth/Register/Admin
+        [HttpPost("Register/Admin")]
+        public async Task<IActionResult> RegisterAdmin(UserRegisterDTO dto)
+        {
+            var user = new User
+            {
+                UserName = dto.UserName,
+                Email = dto.Email,
+
+            };
+
+            var result = await _userManager.CreateAsync(user, dto.Password);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            if (!await _userManager.IsInRoleAsync(user, "Admin"))
+                await _userManager.AddToRoleAsync(user, "Admin");
+
+            return Ok(new { userId = user.Id, role = "Admin" });
+        }
+
+
+
+
+
+
 
         // -------------------- Login --------------------
 
@@ -113,6 +143,12 @@ namespace PickGo_backend.Controllers
         public async Task<IActionResult> LoginCourier(UserLoginDTO dto)
         {
             return await LoginUser(dto, "Courier");
+        }
+
+        [HttpPost("Login/Admin")]
+        public async Task<IActionResult> LoginAdmin(UserLoginDTO dto)
+        {
+            return await LoginUser(dto, "Admin");
         }
 
         private async Task<IActionResult> LoginUser(UserLoginDTO dto, string role)
@@ -129,6 +165,16 @@ namespace PickGo_backend.Controllers
             if (!await _userManager.IsInRoleAsync(user, role))
                 return Unauthorized($"User is not a {role}.");
 
+            if (role == "Courier")
+            {
+                var courier = (await _unitOfWork.CourierRepo.GetAllAsync())
+                              .FirstOrDefault(c => c.UserId == user.Id);
+
+                if (courier == null) return Unauthorized("Courier record not found.");
+                if (courier.Status != "Approved")
+                    return Unauthorized($"Your registration is {courier.Status}. Admin approval required.");
+            }
+
             // JWT creation
             var claims = new List<Claim>
             {
@@ -136,7 +182,7 @@ namespace PickGo_backend.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, role)
+new Claim(ClaimTypes.Role, role)  
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

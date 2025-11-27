@@ -11,7 +11,7 @@ namespace PickGo_backend.Context
 {
     public static class DataSeeder
     {
-      
+
         //public static void SeedUser(this ModelBuilder modelBuilder)
         //{
         //    modelBuilder.Entity<User>().HasData(
@@ -25,30 +25,40 @@ namespace PickGo_backend.Context
         public static void SeedRole(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<IdentityRole>().HasData(
-                new IdentityRole
+                new IdentityRole { Id = "1", Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "2", Name = "Customer", NormalizedName = "CUSTOMER" },
+                new IdentityRole { Id = "3", Name = "Supplier", NormalizedName = "SUPPLIER" },
+                new IdentityRole { Id = "4", Name = "Courier", NormalizedName = "COURIER" }
+            );
+        }
+
+
+        public static void SeedAdmin(this ModelBuilder modelBuilder)
+        {
+            var hasher = new PasswordHasher<User>();
+
+            var admin = new User
+            {
+                Id = "1",   // Id ثابت
+                UserName = "admin",
+                NormalizedUserName = "ADMIN",
+                Email = "admin@gmail.com",
+                NormalizedEmail = "ADMIN@GMAIL.COM",
+                EmailConfirmed = true,
+                SecurityStamp = Guid.NewGuid().ToString()
+            };
+
+            admin.PasswordHash = hasher.HashPassword(admin, "123456789"); // كلمة السر
+
+            modelBuilder.Entity<User>().HasData(admin);
+
+            // تأكدي من وجود دور Admin
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
                 {
-                    Id = "1",
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole
-                {
-                    Id = "2",
-                    Name = "Customer",
-                    NormalizedName = "CUSTOMER"
-                },
-                new IdentityRole
-                {
-                    Id = "3",
-                    Name = "Supplier",
-                    NormalizedName = "SUPPLIER"
-                },
-                 new IdentityRole
-                 {
-                     Id = "4",
-                     Name = "Courier",
-                     NormalizedName = "Courier"
-                 }
+                    RoleId = "1",   // Id الدور Admin من SeedRole
+                    UserId = admin.Id
+                }
             );
         }
 
