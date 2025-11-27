@@ -35,20 +35,23 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 builder.Services.AddAutoMapper(op => op.AddProfile<MapperConfig>());
 
 // JWT Authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultSignOutScheme = JwtBearerDefaults.AuthenticationScheme;
+    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer(options =>
     {
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = false,
             ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+                Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])
             ),
-            // Map the role claim to the correct URI in your JWT
-            RoleClaimType = ClaimTypes.Role  // ⚡ important
         };
     });
 
