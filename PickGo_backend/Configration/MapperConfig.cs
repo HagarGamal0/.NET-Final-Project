@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using PickGo_backend.DTOs.Courier;
-using PickGo_backend.DTOs.Supplier;
-using PickGo_backend.DTOs.User;
 using PickGo_backend.Models;
+using PickGo_backend.DTOs.Request;
+using PickGo_backend.DTOs.Package;
 
 namespace PickGo_backend.Configration
 {
@@ -10,13 +9,29 @@ namespace PickGo_backend.Configration
     {
         public MapperConfig()
         {
-            CreateMap<User, UserRegisterDTO>().ReverseMap();
-            CreateMap<Supplier, SupplierRegisterDTO>().ReverseMap();
-            CreateMap<Courier, CourierRegisterDTO>().ReverseMap();
+            // =======================
+            //        REQUEST
+            // =======================
+            CreateMap<Request, RequestReadDTO>()
+                .ForMember(dest => dest.Packages, opt => opt.MapFrom(src => src.Packages));
+
+            CreateMap<RequestCreateDTO, Request>();
+
+            CreateMap<RequestUpdateDTO, Request>();
 
 
+            // =======================
+            //        PACKAGE
+            // =======================
+            CreateMap<Package, PackageReadDTO>();
 
+            CreateMap<PackageCreateDTO, Package>();
 
+            CreateMap<PackageUpdateDTO, Package>();
+
+            // (Optional) if you want two-way mapping:
+            // CreateMap<RequestReadDTO, Request>();
+            // CreateMap<PackageReadDTO, Package>();
         }
     }
 }

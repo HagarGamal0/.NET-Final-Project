@@ -10,7 +10,12 @@ namespace PickGo_backend.Repositories
         {
             public RequestRepository(DelieveryAppContext context) : base(context) { }
 
-
+            public async Task<Request?> GetWithPackagesAsync(int id)
+        {
+            return await _context.Requests
+                                 .Include(r => r.Packages)
+                                 .FirstOrDefaultAsync(r => r.Id == id);
+        }
        
 
         }
