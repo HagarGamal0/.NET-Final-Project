@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PickGo_backend.Models;
 using System;
 
-namespace PickGo_backend.Models
+namespace PickGo_backend.Configurations
 {
     public class PackageConfiguration : IEntityTypeConfiguration<Package>
     {
@@ -14,7 +14,7 @@ namespace PickGo_backend.Models
             // Package → Request (Many Packages per Request)
             builder.HasOne(p => p.Request)
                    .WithMany(r => r.Packages)
-                   .HasForeignKey(p => p.RequestId).OnDelete(DeleteBehavior.Restrict);
+                   .HasForeignKey(p => p.RequestID).OnDelete(DeleteBehavior.Restrict);
             ;
 
             // Package → Customer (Many Packages per Customer)

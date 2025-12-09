@@ -1,7 +1,5 @@
 ﻿using PickGo_backend.Models;
 
-namespace PickGo_backend.Models
-{
 public class Package:BaseModel
 {
     public string Description { get; set; } = null!;
@@ -17,7 +15,7 @@ public class Package:BaseModel
     public float Rating { get; set; }
     public string? ShipmentNotes { get; set; }
 
-    public int RequestId { get; set; }   // FIXED
+    public int RequestID { get; set; }
     public int? CourierID { get; set; }
 
     public Request Request { get; set; } = null!;
@@ -27,5 +25,4 @@ public class Package:BaseModel
     public Invoice? Invoice { get; set; }
     public DeliveryProof? DeliveryProof { get; set; }
     public ICollection<CourierTransaction>? Transactions { get; set; }
-}
 }
