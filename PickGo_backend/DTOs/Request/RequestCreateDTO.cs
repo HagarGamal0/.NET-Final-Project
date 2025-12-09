@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-
-
-
-namespace PickGo_backend.Models
-
+namespace PickGo_backend.DTOs.Request
 {
-    public class Request : BaseModel
+    public class RequestCreateDTO
     {
-        public DateTime CreatedAt { get; set; }
-
         public string PickupAddress { get; set; }
         public double? PickupLat { get; set; }
         public double? PickupLng { get; set; }
@@ -23,12 +15,6 @@ namespace PickGo_backend.Models
 
         public string ItemsDescription { get; set; }
         public double CODAmount { get; set; }
-
         public string Notes { get; set; }
-
-        public string Status { get; set; } = "Pending";
-
-        public string UserID { get; set; }
-        public ICollection<Package>? Packages { get; set; }
     }
 }
