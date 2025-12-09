@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PickGo_backend.Models;
-using PickGo_backend.Models.Enums;
 
 namespace PickGo_backend.Configurations
 {

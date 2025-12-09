@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PickGo_backend.Context;
 
@@ -11,9 +12,11 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    partial class DelieveryAppContextModelSnapshot : ModelSnapshot
+    [Migration("20251209100947_111111")]
+    partial class _111111
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -264,11 +267,8 @@ namespace PickGo_backend.Migrations
                     b.Property<bool>("Fragile")
                         .HasColumnType("bit");
 
-                    b.Property<double?>("Lang")
-                        .HasColumnType("float");
-
-                    b.Property<double?>("Lat")
-                        .HasColumnType("float");
+                    b.Property<float>("Rating")
+                        .HasColumnType("real");
 
                     b.Property<int>("RequestID")
                         .HasColumnType("int");
@@ -281,9 +281,6 @@ namespace PickGo_backend.Migrations
 
                     b.Property<float>("ShipmentRating")
                         .HasColumnType("real");
-
-                    b.Property<int>("ShipmentReviewID")
-                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -499,18 +496,9 @@ namespace PickGo_backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Puck_up_lang")
-                        .HasColumnType("float");
-
-                    b.Property<double>("Puck_up_lat")
-                        .HasColumnType("float");
-
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.Property<int>("SupplierId")
                         .HasColumnType("int");
@@ -756,43 +744,18 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c226ddbb-ad1f-4ff3-9b9b-7de523f36add",
+                            ConcurrencyStamp = "e908b58f-7a40-4a32-81ba-cb9e62b2607d",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAECwDj4eoS12EIZoLNb9Cp9mat0LoulHoZ/VfJIMMH55ncFkwQPOt2ROIcyd9UHegKg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBxsAmTFz/R/607KXGZr/IM1AcKzQ0nC1msWbLnAG50aKk2OygtUl8pdvqHiqx882g==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "380b1fb1-01ce-4c87-9bd4-d670de5991c2",
+                            SecurityStamp = "2ccaca21-4e1c-45a1-b7d6-51a3a00f5caf",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
-                });
-
-            modelBuilder.Entity("ShipmentReview", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PackageID")
-                        .HasColumnType("int");
-
-                    b.Property<float>("Rating")
-                        .HasColumnType("real");
-
-                    b.Property<string>("ReviewText")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PackageID")
-                        .IsUnique();
-
-                    b.ToTable("ShipmentReview");
                 });
 
             modelBuilder.Entity("DeliveryProof", b =>
@@ -1027,24 +990,11 @@ namespace PickGo_backend.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("ShipmentReview", b =>
-                {
-                    b.HasOne("Package", "Package")
-                        .WithOne("ShipmentReview")
-                        .HasForeignKey("ShipmentReview", "PackageID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Package");
-                });
-
             modelBuilder.Entity("Package", b =>
                 {
                     b.Navigation("DeliveryProof");
 
                     b.Navigation("Invoice");
-
-                    b.Navigation("ShipmentReview");
 
                     b.Navigation("Transactions");
                 });

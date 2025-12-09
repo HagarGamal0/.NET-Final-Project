@@ -1,5 +1,4 @@
 ﻿
-using PickGo_backend.Models.Enums;
 using System;
 
 namespace PickGo_backend.Models

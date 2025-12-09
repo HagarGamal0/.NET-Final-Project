@@ -4,7 +4,7 @@ using PickGo_backend.Models;
 
 namespace PickGo_backend.Configurations
 {
-    public class RequestConfiguration : IEntityTypeConfiguration<Request>
+    public class ShipmentReviewConfiguration : IEntityTypeConfiguration<Request>
     {
         public void Configure(EntityTypeBuilder<Request> builder)
         {

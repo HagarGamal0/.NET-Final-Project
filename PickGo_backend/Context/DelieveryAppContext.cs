@@ -32,7 +32,7 @@ namespace PickGo_backend.Context
             base.OnModelCreating(modelBuilder); // important for Identity tables
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new RequestConfiguration());
+            modelBuilder.ApplyConfiguration(new ShipmentReviewConfiguration());
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new PackageConfiguration());
             modelBuilder.ApplyConfiguration(new SupplierConfiguration());

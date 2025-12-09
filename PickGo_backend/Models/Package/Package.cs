@@ -9,20 +9,30 @@ public class Package:BaseModel
     public float ShipmentCost { get; set; }
     public DateTime? DeliveredAt { get; set; }
     public string? Destination { get; set; }
+    public double? Lat { get; set; }
+
+    public double? Lang { get; set; }
+
+
 
     public PackageStatus Status { get; set; } 
     public float ShipmentRating { get; set; }
-    public float Rating { get; set; }
+
     public string? ShipmentNotes { get; set; }
 
     public int RequestID { get; set; }
     public int? CourierID { get; set; }
 
-    public Request Request { get; set; } = null!;
+    public virtual Request Request { get; set; } = null!;
     public int CustomerID { get; set; }  // match Customer.Id
-    public Customer Customer { get; set; } = null!;
-    public Courier? Courier { get; set; }
-    public Invoice? Invoice { get; set; }
-    public DeliveryProof? DeliveryProof { get; set; }
+    public virtual Customer Customer { get; set; } = null!;
+    public virtual Courier? Courier { get; set; }
+    public virtual Invoice? Invoice { get; set; }
+    public virtual DeliveryProof? DeliveryProof { get; set; }
     public ICollection<CourierTransaction>? Transactions { get; set; }
+
+    public int ShipmentReviewID { get; set; }
+    public virtual ShipmentReview? ShipmentReview { get; set; }
+
+
 }
