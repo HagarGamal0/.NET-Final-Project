@@ -13,8 +13,8 @@ using System.Collections.Generic;
         public DateTime CreatedAt { get; set; }
         public string Source { get; set; } = null!;
 
-        public double Puck_up_lat { get; set; }
-        public double Puck_up_lang { get; set; }
+        public double PickupLat { get; set; }
+        public double PickupLng { get; set; }
 
         public  int  SupplierId { get; set; }
 

@@ -10,7 +10,12 @@ namespace PickGo_backend.Repositories
         {
             public PackageRepository(DelieveryAppContext context) : base(context) { }
 
-
+            public async Task<IEnumerable<Package>> GetByRequestIdAsync(int requestId)
+        {
+            return await _context.Packages
+                                 .Where(p => p.RequestID == requestId)
+                                 .ToListAsync();
+        }
       
         }
     }

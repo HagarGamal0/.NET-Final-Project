@@ -19,12 +19,12 @@ namespace PickGo_backend.Models
 
 
         public User? User { get; set; }
-        public ICollection<CourierLocation> Locations { get; set; }
+        public virtual ICollection<CourierLocation> Locations { get; set; }
 
-        public ICollection<Package>? Packages { get; set; }
-        public ICollection<DeliveryProof>? DeliveryProofs { get; set; }
-        public ICollection<CourierTransaction>? Transactions { get; set; }
-        public ICollection<CourierSubscription>? CourierSubscriptions { get; set; } = new List<CourierSubscription>();
+        public virtual ICollection<Package>? Packages { get; set; }
+        public virtual ICollection<DeliveryProof>? DeliveryProofs { get; set; }
+        public virtual ICollection<CourierTransaction>? Transactions { get; set; }
+        public virtual ICollection<CourierSubscription>? CourierSubscriptions { get; set; } = new List<CourierSubscription>();
 
     }
 }
