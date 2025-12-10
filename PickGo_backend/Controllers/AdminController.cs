@@ -59,6 +59,17 @@ namespace PickGo_backend.Controllers
 
             return Ok(new { message = "Courier rejected successfully." });
         }
+        // -------------------- Get Online Couriers --------------------
+        [HttpGet("OnlineCouriers")]
+        public async Task<IActionResult> GetOnlineCouriers()
+        {
+            var onlineCouriers = (await _unitOfWork.CourierRepo.GetAllAsync())
+                                 .Where(c => c.IsOnline && c.Status == "Approved")
+                                 .ToList();
+
+            return Ok(onlineCouriers);
+        }
+
     }
 }
 
