@@ -13,6 +13,14 @@ namespace PickGo_backend.Configration
             CreateMap<User, UserRegisterDTO>().ReverseMap();
             CreateMap<Supplier, SupplierRegisterDTO>().ReverseMap();
             CreateMap<Courier, CourierRegisterDTO>().ReverseMap();
+            CreateMap<CourierCompleteProfileDTO, Courier>()
+    .ForAllMembers(opts =>
+        opts.Condition((src, dest, srcValue) =>
+            srcValue != null)); // Update only non-null fields
+
+            CreateMap<SupplierCompleteProfileDTO, Supplier>()
+    .ForAllMembers(opts =>
+        opts.Condition((src, dest, srcVal) => srcVal != null));
 
 
 

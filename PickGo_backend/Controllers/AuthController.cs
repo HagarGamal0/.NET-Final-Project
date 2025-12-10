@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -182,7 +183,7 @@ namespace PickGo_backend.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, role)  
+                new Claim(ClaimTypes.Role, role)
             };
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]));
@@ -202,5 +203,61 @@ namespace PickGo_backend.Controllers
                 role
             });
         }
+    
+
+
+    [Authorize(Roles = "Courier")]
+        [HttpPut("Courier/CompleteProfile")]
+        public async Task<IActionResult> CompleteCourierProfile([FromBody] CourierCompleteProfileDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var courier = (await _unitOfWork.CourierRepo.GetAllAsync())
+                            .FirstOrDefault(c => c.UserId == userId);
+
+            if (courier == null)
+                return NotFound("Courier not found.");
+
+            _mapper.Map(dto, courier);
+
+            _unitOfWork.CourierRepo.Update(courier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new
+            {
+                message = "Courier profile updated successfully",
+                courierId = courier.Id
+            });
+        }
+
+
+
+
+        [Authorize(Roles = "Supplier")]
+        [HttpPut("Supplier/CompleteProfile")]
+        public async Task<IActionResult> CompleteSupplierProfile([FromBody] SupplierCompleteProfileDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var supplier = (await _unitOfWork.SupplierRepo.GetAllAsync())
+                            .FirstOrDefault(s => s.UserId == userId);
+
+            if (supplier == null)
+                return NotFound("Supplier not found.");
+
+            // Apply updates
+            _mapper.Map(dto, supplier);
+
+             _unitOfWork.SupplierRepo.Update(supplier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new
+            {
+                message = "Supplier profile updated successfully",
+                supplierId = supplier.Id
+            });
+        }
+
+
     }
 }
