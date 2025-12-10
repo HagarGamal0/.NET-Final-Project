@@ -56,6 +56,8 @@ builder.Services.AddAuthentication(option =>
     });
 
 // Swagger
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

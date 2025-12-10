@@ -21,13 +21,16 @@ namespace PickGo_backend.Controllers
         private readonly IMapper _mapper;
         private readonly UnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public AuthController(UserManager<User> userManager, IMapper mapper, UnitOfWork unitOfWork, IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, IMapper mapper, IEmailService emailService , UnitOfWork unitOfWork, IConfiguration configuration)
         {
             _userManager = userManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _emailService = emailService;
+
         }
 
         // -------------------- Registration --------------------
@@ -211,6 +214,8 @@ namespace PickGo_backend.Controllers
         public async Task<IActionResult> CompleteCourierProfile([FromBody] CourierCompleteProfileDTO dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            Console.WriteLine($"UserIddddddddddddddddddddddddddd: {userId}");
+
 
             var courier = (await _unitOfWork.CourierRepo.GetAllAsync())
                             .FirstOrDefault(c => c.UserId == userId);
@@ -259,5 +264,70 @@ namespace PickGo_backend.Controllers
         }
 
 
+        [Authorize]
+        [HttpPut("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found.");
+
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return Ok(new { message = "Password changed successfully." });
+        }
+
+
+        [Authorize]
+        [HttpPut("EditProfile")]
+        public async Task<IActionResult> EditProfile([FromBody] EditProfileDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+                return NotFound("User not found.");
+
+            _mapper.Map(dto, user);
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest(result.Errors);
+
+            return Ok(new { message = "Profile updated successfully." });
+        }
+
+
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+        {
+            var user = await _userManager.FindByEmailAsync(dto.Email);
+            if (user == null)
+                return BadRequest("User not found.");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            var resetUrl = $"{_configuration["FrontendUrl"]}/reset-password?email={user.Email}&token={Uri.EscapeDataString(token)}";
+
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "PickGo Password Reset",
+                $"<p>Hello {user.UserName},</p>" +
+                "<p>You requested a password reset. Click below to reset it:</p>" +
+                $"<a href='{resetUrl}'>Reset Password</a>" +
+                "<p>If you didn't request this, ignore this email.</p>"
+            );
+
+            return Ok(new { message = "Password reset link sent to your email." });
+        }
     }
+
+
+
+
 }

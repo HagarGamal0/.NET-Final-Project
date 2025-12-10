@@ -23,6 +23,10 @@ namespace PickGo_backend.Configration
             CreateMap<SupplierCompleteProfileDTO, Supplier>()
     .ForAllMembers(opts =>
         opts.Condition((src, dest, srcVal) => srcVal != null));
+
+
+            CreateMap<EditProfileDTO, User>()
+    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
             // =======================
             //        REQUEST
             // =======================
