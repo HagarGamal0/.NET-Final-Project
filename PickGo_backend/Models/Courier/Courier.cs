@@ -11,14 +11,15 @@ namespace PickGo_backend.Models
         public float Rating { get; set; }
         public float MaxWeight { get; set; }
         public string Status { get; set; }
-        public string PhotoUrl { get; set; }
-        public string LicensePhotoFront { get; set; }
-        public string LicensePhotoBack { get; set; }
-        public string VehcelLicensePhotoBack { get; set; }
-        public string VehcelLicensePhotoFront { get; set; }
+        public string? PhotoUrl { get; set; }
+        public string? LicensePhotoFront { get; set; }
+        public string? LicensePhotoBack { get; set; }
+        public string? VehcelLicensePhotoBack { get; set; }
+        
+        public string? VehcelLicensePhotoFront { get; set; }
 
+        public virtual User User { get; set; }
 
-        public User? User { get; set; }
         public virtual ICollection<CourierLocation> Locations { get; set; }
 
         public virtual ICollection<Package>? Packages { get; set; }

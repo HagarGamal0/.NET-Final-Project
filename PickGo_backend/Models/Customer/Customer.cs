@@ -6,9 +6,9 @@ namespace PickGo_backend.Models
         public string UserId { get; set; } 
         public string Address { get; set; } = null!;
 
-        public User User { get; set; } = null!;
-        public ICollection<Package>? Packages { get; set; }
-        public ICollection<DeliveryProof>? DeliveryProofs { get; set; }
+        public virtual User User { get; set; } = null!;
+        public virtual ICollection<Package>? Packages { get; set; }
+        public virtual ICollection<DeliveryProof>? DeliveryProofs { get; set; }
 
     }
 }
