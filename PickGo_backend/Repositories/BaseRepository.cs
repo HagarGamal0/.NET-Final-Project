@@ -22,9 +22,28 @@ namespace PickGo_backend.Repositries
         public async Task AddAsync(TEntity entity) => await _table.AddAsync(entity);
         public void Update(TEntity entity) => _table.Update(entity);
         public void Delete(TEntity entity) => _table.Remove(entity);
+
         public async Task<TEntity> GetByExpressionAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return await _table.FirstOrDefaultAsync(predicate);
+        }
+
+        // ------------------------------
+        // Added for controller compatibility
+        // ------------------------------
+
+        // Equivalent to GetByIdAsync
+        public async Task<TEntity?> GetAsync(int id)
+        {
+            return await _table.FindAsync(id);
+        }
+
+        // Delete by ID (controller friendly)
+        public async Task DeleteAsync(int id)
+        {
+            var entity = await _table.FindAsync(id);
+            if (entity != null)
+                _table.Remove(entity);
         }
     }
 }

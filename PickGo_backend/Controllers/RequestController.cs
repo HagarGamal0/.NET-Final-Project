@@ -1,13 +1,16 @@
-using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PickGo_backend;
+using AutoMapper;
 using PickGo_backend.DTOs.Request;
+using PickGo_backend.DTOs.Package;
 using PickGo_backend.Models;
+using System.Security.Claims;
 
 namespace PickGo_backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize(Roles = "Supplier")] // supplier = business owner
     public class RequestController : ControllerBase
     {
         private readonly UnitOfWork _unitOfWork;
@@ -19,72 +22,128 @@ namespace PickGo_backend.Controllers
             _mapper = mapper;
         }
 
-        // POST: api/Request
+        // --------------------------------------------------------
+        // CREATE Request
+        // --------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> Create(RequestCreateDTO dto)
+        public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
         {
+            var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
             var request = _mapper.Map<Request>(dto);
+            request.SupplierId = supplierId;
             request.CreatedAt = DateTime.UtcNow;
+            request.Status = RequestStatus.Pending;
 
             await _unitOfWork.RequestRepo.AddAsync(request);
             await _unitOfWork.SaveAsync();
 
-            var result = _mapper.Map<RequestReadDTO>(request);
-            return Ok(result);
+            return Ok(_mapper.Map<RequestReadDTO>(request));
         }
 
-        // GET: api/Request
+        // --------------------------------------------------------
+        // GET all Requests for logged-in Supplier
+        // --------------------------------------------------------
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            string? search,
+            string? sortBy = "date",
+            string sortDir = "desc")
         {
-            var requests = await _unitOfWork.RequestRepo.GetAllAsync();
-            var result = _mapper.Map<IEnumerable<RequestReadDTO>>(requests);
-            return Ok(result);
+            var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplierId);
+
+            // Filtering
+            if (!string.IsNullOrEmpty(search))
+                requests = requests.Where(r =>
+                    r.Source.Contains(search) ||
+                    r.Packages.Any(p => p.Description.Contains(search))
+                ).ToList();
+
+            // Sorting
+            requests = sortBy switch
+            {
+                "status" => (sortDir == "asc"
+                        ? requests.OrderBy(r => r.Status)
+                        : requests.OrderByDescending(r => r.Status)).ToList(),
+
+                _ => (sortDir == "asc"
+                        ? requests.OrderBy(r => r.CreatedAt)
+                        : requests.OrderByDescending(r => r.CreatedAt)).ToList()
+            };
+
+            return Ok(_mapper.Map<List<RequestReadDTO>>(requests));
         }
 
-        // GET: api/Request/5
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
+        // --------------------------------------------------------
+        // GET request details
+        // --------------------------------------------------------
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOne(int id)
         {
-            var request = await _unitOfWork.RequestRepo.GetWithPackagesAsync(id);
+            var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(id);
             if (request == null) return NotFound();
 
-            var result = _mapper.Map<RequestReadDTO>(request);
-            return Ok(result);
+            return Ok(_mapper.Map<RequestReadDTO>(request));
         }
 
-        // PUT: api/Request/5
-        [HttpPut("{id:int}")]
+        // --------------------------------------------------------
+        // UPDATE Request
+        // --------------------------------------------------------
+        [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, RequestUpdateDTO dto)
         {
-            var request = await _unitOfWork.RequestRepo.GetByIdAsync(id);
+            var request = await _unitOfWork.RequestRepo.GetAsync(id);
             if (request == null) return NotFound();
 
-            // Manual partial update to avoid null overwrites
-            if (dto.Source != null) request.Source = dto.Source;
-            if (dto.PickupLat.HasValue) request.PickupLat = dto.PickupLat.Value;
-            if (dto.PickupLng.HasValue) request.PickupLng = dto.PickupLng.Value;
-            if (dto.SupplierId.HasValue) request.SupplierId = dto.SupplierId.Value;
-            if (dto.Status.HasValue) request.Status = dto.Status.Value;
+            _mapper.Map(dto, request);
 
-            _unitOfWork.RequestRepo.Update(request);
             await _unitOfWork.SaveAsync();
-
-            var result = _mapper.Map<RequestReadDTO>(request);
-            return Ok(result);
+            return Ok(_mapper.Map<RequestReadDTO>(request));
         }
 
-        // DELETE: api/Request/5
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        // --------------------------------------------------------
+        // DELETE Request
+        // --------------------------------------------------------
+        [HttpDelete("{id}")]
+public async Task<IActionResult> Delete(int id)
+{
+    var request = await _unitOfWork.RequestRepo.GetByIdAsync(id);
+    if (request == null)
+        return NotFound();
+
+    _unitOfWork.RequestRepo.Delete(request);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(new { message = "Request deleted" });
+}
+
+
+        // --------------------------------------------------------
+        // ASSIGN Rider
+        // --------------------------------------------------------
+        [HttpPut("{requestId}/assign/{courierId}")]
+        public async Task<IActionResult> AssignRider(int requestId, int courierId)
         {
-            var request = await _unitOfWork.RequestRepo.GetByIdAsync(id);
-            if (request == null) return NotFound();
+            var request = await _unitOfWork.RequestRepo.GetAsync(requestId);
+            if (request == null) return NotFound("Request not found");
 
-            _unitOfWork.RequestRepo.Delete(request);
+            if (request.Status != RequestStatus.Pending)
+                return BadRequest("Only pending requests can be assigned.");
+
+            var courier = await _unitOfWork.CourierRepo.GetAsync(courierId);
+            if (courier == null || !courier.IsAvailable)
+                return BadRequest("Courier unavailable");
+
+            // Assign logic
+            foreach (var pkg in request.Packages)
+                pkg.CourierID = courierId;
+
+            request.Status = RequestStatus.Assigned;
+
             await _unitOfWork.SaveAsync();
-
-            return Ok(new { message = "Request deleted successfully" });
+            return Ok(new { message = "Rider assigned successfully" });
         }
     }
 }

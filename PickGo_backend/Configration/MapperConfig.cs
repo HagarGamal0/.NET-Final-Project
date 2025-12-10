@@ -32,6 +32,15 @@ namespace PickGo_backend.Configration
             // (Optional) if you want two-way mapping:
             // CreateMap<RequestReadDTO, Request>();
             // CreateMap<PackageReadDTO, Package>();
+
+            CreateMap<Request, RequestReadDTO>().ReverseMap();
+            CreateMap<RequestCreateDTO, Request>();
+            CreateMap<RequestUpdateDTO, Request>();
+
+            CreateMap<Package, PackageReadDTO>().ReverseMap();
+            CreateMap<PackageCreateDTO, Package>();
+            CreateMap<PackageUpdateDTO, Package>();
+
         }
     }
 }

@@ -17,6 +17,21 @@ namespace PickGo_backend.Repositories
                                  .FirstOrDefaultAsync(r => r.Id == id);
         }
        
+        public async Task<List<Request>> GetBySupplierAsync(int supplierId)
+{
+    return await _context.Requests
+        .Where(r => r.SupplierId == supplierId)
+        .Include(r => r.Packages)
+        .ToListAsync();
+}
+
+public async Task<Request?> GetFullRequestAsync(int id)
+{
+    return await _context.Requests
+        .Include(r => r.Packages)
+        .FirstOrDefaultAsync(r => r.Id == id);
+}
+
 
         }
     }
