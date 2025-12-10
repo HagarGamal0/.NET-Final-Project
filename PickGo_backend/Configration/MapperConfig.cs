@@ -2,6 +2,9 @@
 using PickGo_backend.Models;
 using PickGo_backend.DTOs.Request;
 using PickGo_backend.DTOs.Package;
+using PickGo_backend.DTOs.Courier;
+using PickGo_backend.DTOs.Supplier;
+using PickGo_backend.DTOs.User;
 
 namespace PickGo_backend.Configration
 {
