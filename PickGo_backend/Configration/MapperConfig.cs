@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using PickGo_backend.Models;
+using PickGo_backend.DTOs.User;
+using PickGo_backend.DTOs.Supplier;
+using PickGo_backend.DTOs.Courier;
 using PickGo_backend.DTOs.Request;
 using PickGo_backend.DTOs.Package;
-using PickGo_backend.DTOs.Courier;
-using PickGo_backend.DTOs.Supplier;
-using PickGo_backend.DTOs.User;
+using PickGo_backend.Models;
+
 
 namespace PickGo_backend.Configration
 {
@@ -16,17 +17,13 @@ namespace PickGo_backend.Configration
             CreateMap<Supplier, SupplierRegisterDTO>().ReverseMap();
             CreateMap<Courier, CourierRegisterDTO>().ReverseMap();
             CreateMap<CourierCompleteProfileDTO, Courier>()
-    .ForAllMembers(opts =>
-        opts.Condition((src, dest, srcValue) =>
-            srcValue != null)); // Update only non-null fields
+                .ForAllMembers(opts =>
+                    opts.Condition((src, dest, srcValue) =>
+                        srcValue != null)); // Update only non-null fields
 
             CreateMap<SupplierCompleteProfileDTO, Supplier>()
-    .ForAllMembers(opts =>
-        opts.Condition((src, dest, srcVal) => srcVal != null));
-
-
-            CreateMap<EditProfileDTO, User>()
-    .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForAllMembers(opts =>
+                    opts.Condition((src, dest, srcVal) => srcVal != null));
             // =======================
             //        REQUEST
             // =======================
