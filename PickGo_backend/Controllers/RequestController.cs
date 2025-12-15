@@ -1,3 +1,8 @@
+// BUSINESS RULES:
+// - Auto-assign rider ONLY if IsUrgent == false
+// - Urgent requests remain Pending
+// - Auto assignment is system-driven
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -26,20 +31,64 @@ namespace PickGo_backend.Controllers
         // CREATE Request
         // --------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
+public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
+{
+    var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+    // Create Request
+    var request = _mapper.Map<Request>(dto);
+    request.SupplierId = supplierId;
+    request.CreatedAt = DateTime.UtcNow;
+    request.Status = RequestStatus.Pending;
+
+    await _unitOfWork.RequestRepo.AddAsync(request);
+    await _unitOfWork.SaveAsync(); // get Request.Id
+
+    // Save Packages
+    foreach (var p in dto.Packages)
+    {
+        var package = _mapper.Map<Package>(p);
+        package.RequestID = request.Id;
+        package.Status = PackageStatus.Pending;
+
+        await _unitOfWork.PackageRepo.AddAsync(package);
+    }
+
+    await _unitOfWork.SaveAsync();
+
+    // -------------------------------------------------
+    // AUTO ASSIGN RIDER (NORMAL ONLY)
+    // -------------------------------------------------
+    if (!dto.IsUrgent)
+    {
+        var requestPackages = await _unitOfWork.PackageRepo
+            .GetAllAsync();
+
+        var packages = requestPackages
+            .Where(p => p.RequestID == request.Id)
+            .ToList();
+
+        double totalWeight = packages.Sum(p => p.Weight);
+
+        var courier = await FindNearestAvailableCourier(request);
+
+        if (courier != null)
         {
-            var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            foreach (var pkg in packages)
+            {
+                pkg.CourierID = courier.Id;
+            }
 
-            var request = _mapper.Map<Request>(dto);
-            request.SupplierId = supplierId;
-            request.CreatedAt = DateTime.UtcNow;
-            request.Status = RequestStatus.Pending;
-
-            await _unitOfWork.RequestRepo.AddAsync(request);
-            await _unitOfWork.SaveAsync();
-
-            return Ok(_mapper.Map<RequestReadDTO>(request));
+            request.Status = RequestStatus.Accepted;
+            courier.IsAvailable = false;
         }
+
+        await _unitOfWork.SaveAsync();
+    }
+
+    return Ok(_mapper.Map<RequestReadDTO>(request));
+}
+
 
         // --------------------------------------------------------
         // GET all Requests for logged-in Supplier
@@ -145,5 +194,104 @@ public async Task<IActionResult> Delete(int id)
             await _unitOfWork.SaveAsync();
             return Ok(new { message = "Rider assigned successfully" });
         }
+
+        private double CalculateDistance(
+    double lat1, double lon1,
+    double lat2, double lon2)
+{
+    const double R = 6371; // Earth radius (km)
+
+    double dLat = (lat2 - lat1) * Math.PI / 180;
+    double dLon = (lon2 - lon1) * Math.PI / 180;
+
+    double a =
+        Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+        Math.Cos(lat1 * Math.PI / 180) *
+        Math.Cos(lat2 * Math.PI / 180) *
+        Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+
+    double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+    return R * c;
+}
+
+
+private async Task<Courier?> FindNearestCourier(
+    double pickupLat,
+    double pickupLng,
+    double totalWeight)
+{
+    var couriers = await _unitOfWork.CourierRepo.GetAllAsync();
+
+    var eligibleCouriers = couriers
+        .Where(c =>
+            c.IsAvailable &&
+            c.IsOnline &&
+            c.MaxWeight >= totalWeight)
+        .ToList();
+
+    Courier? nearestCourier = null;
+    double minDistance = double.MaxValue;
+
+    foreach (var courier in eligibleCouriers)
+    {
+        var location = await _unitOfWork.CourierLocationRepo
+            .GetByExpressionAsync(l => l.CourierId == courier.Id);
+
+        if (location == null) continue;
+
+        double distance = CalculateDistance(
+            pickupLat, pickupLng,
+            location.Lat, location.Lng);
+
+        if (distance < minDistance)
+        {
+            minDistance = distance;
+            nearestCourier = courier;
+        }
+    }
+
+    return nearestCourier;
+}
+
+private async Task<Courier?> FindNearestAvailableCourier(Request request)
+{
+    var couriers = await _unitOfWork.CourierRepo.GetAllAsync();
+
+    var availableCouriers = couriers
+        .Where(c => c.Status == CourierStatus.Available)
+        .ToList();
+
+    if (!availableCouriers.Any())
+        return null;
+
+    Courier? nearest = null;
+    double minDistance = double.MaxValue;
+
+    foreach (var courier in availableCouriers)
+    {
+        var lastLocation = courier.Locations?
+            .OrderByDescending(l => l.Timestamp)
+            .FirstOrDefault();
+
+        if (lastLocation == null) continue;
+
+        double distance = CalculateDistance(
+            request.PickupLat,
+            request.PickupLng,
+            lastLocation.Lat,
+            lastLocation.Lng
+        );
+
+        if (distance < minDistance)
+        {
+            minDistance = distance;
+            nearest = courier;
+        }
+    }
+
+    return nearest;
+}
+
+
     }
 }

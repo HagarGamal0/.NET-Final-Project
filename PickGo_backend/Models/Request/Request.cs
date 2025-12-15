@@ -23,6 +23,8 @@ using System.Collections.Generic;
 
         public RequestStatus Status { get; set; }
         = RequestStatus.Pending; //passed on courrier accepntence
+        public bool IsUrgent { get; set; } = false;
+
     }
 
 
