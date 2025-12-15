@@ -1,5 +1,4 @@
-﻿using PickGo_backend.Models.Enums;
-
+﻿
 namespace PickGo_backend.Models
 {
     public class Courier : BaseModel
@@ -18,6 +17,9 @@ namespace PickGo_backend.Models
 
         public string? VehcelLicensePhotoFront { get; set; }
 
+        public string Status { get; set; }
+
+
         public virtual User User { get; set; }
 
         public virtual ICollection<CourierLocation> Locations { get; set; }
@@ -26,7 +28,6 @@ namespace PickGo_backend.Models
         public virtual ICollection<DeliveryProof>? DeliveryProofs { get; set; }
         public virtual ICollection<CourierTransaction>? Transactions { get; set; }
         public virtual ICollection<CourierSubscription>? CourierSubscriptions { get; set; } = new List<CourierSubscription>();
-        public virtual CourierStatus Status { get; set; } = CourierStatus.Available;
 
     }
 }

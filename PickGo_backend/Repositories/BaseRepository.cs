@@ -45,5 +45,10 @@ namespace PickGo_backend.Repositries
             if (entity != null)
                 _table.Remove(entity);
         }
+
+        public Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
