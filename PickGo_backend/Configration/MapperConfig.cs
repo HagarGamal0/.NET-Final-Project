@@ -56,6 +56,9 @@ namespace PickGo_backend.Configration
             CreateMap<PackageCreateDTO, Package>();
             CreateMap<PackageUpdateDTO, Package>();
 
+            CreateMap<CourierLocationDto, CourierLocation>()
+    .ForMember(dest => dest.RecordedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+
         }
     }
 }
