@@ -57,9 +57,12 @@ builder.Services.AddAuthentication(option =>
         };
     });
 
-// Swagger
+builder.Services.AddHostedService<CourierTrackingService>();
+
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpClient<IGraphHopperService, GraphHopperService>();
+builder.Services.AddSignalR();
+builder.Services.AddScoped<OrderNotificationService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -106,5 +109,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<CourierLocationHub>("/hubs/courier");
 
 app.Run();
