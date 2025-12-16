@@ -215,50 +215,14 @@ public async Task<IActionResult> Delete(int id)
 }
 
 
-private async Task<Courier?> FindNearestCourier(
-    double pickupLat,
-    double pickupLng,
-    double totalWeight)
-{
-    var couriers = await _unitOfWork.CourierRepo.GetAllAsync();
 
-    var eligibleCouriers = couriers
-        .Where(c =>
-            c.IsAvailable &&
-            c.IsOnline &&
-            c.MaxWeight >= totalWeight)
-        .ToList();
-
-    Courier? nearestCourier = null;
-    double minDistance = double.MaxValue;
-
-    foreach (var courier in eligibleCouriers)
-    {
-        var location = await _unitOfWork.CourierLocationRepo
-            .GetByExpressionAsync(l => l.CourierId == courier.Id);
-
-        if (location == null) continue;
-
-        double distance = CalculateDistance(
-            pickupLat, pickupLng,
-            location.Lat, location.Lng);
-
-        if (distance < minDistance)
-        {
-            minDistance = distance;
-            nearestCourier = courier;
-        }
-    }
-
-    return nearestCourier;
-}
 
 private async Task<Courier?> FindNearestAvailableCourier(Request request)
 {
     var couriers = await _unitOfWork.CourierRepo.GetAllAsync();
 
     var availableCouriers = couriers
-        .Where(c => c.Status == CourierStatus.Available)
+        .Where(c => c.Status == "Approved")
         .ToList();
 
     if (!availableCouriers.Any())
@@ -270,7 +234,7 @@ private async Task<Courier?> FindNearestAvailableCourier(Request request)
     foreach (var courier in availableCouriers)
     {
         var lastLocation = courier.Locations?
-            .OrderByDescending(l => l.Timestamp)
+            .OrderByDescending(l => l.RecordedAt)
             .FirstOrDefault();
 
         if (lastLocation == null) continue;

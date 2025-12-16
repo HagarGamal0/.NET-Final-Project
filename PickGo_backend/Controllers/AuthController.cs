@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
+using PickGo_backend.DTOs;
 using PickGo_backend.DTOs.Courier;
 using PickGo_backend.DTOs.Supplier;
 using PickGo_backend.DTOs.User;
@@ -23,7 +25,7 @@ namespace PickGo_backend.Controllers
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
 
-        public AuthController(UserManager<User> userManager, IMapper mapper, IEmailService emailService , UnitOfWork unitOfWork, IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, IMapper mapper, IEmailService emailService, UnitOfWork unitOfWork, IConfiguration configuration)
         {
             _userManager = userManager;
             _mapper = mapper;
@@ -206,10 +208,10 @@ namespace PickGo_backend.Controllers
                 role
             });
         }
-    
 
 
-    [Authorize(Roles = "Courier")]
+
+        [Authorize(Roles = "Courier")]
         [HttpPut("Courier/CompleteProfile")]
         public async Task<IActionResult> CompleteCourierProfile([FromBody] CourierCompleteProfileDTO dto)
         {
@@ -253,7 +255,7 @@ namespace PickGo_backend.Controllers
             // Apply updates
             _mapper.Map(dto, supplier);
 
-             _unitOfWork.SupplierRepo.Update(supplier);
+            _unitOfWork.SupplierRepo.Update(supplier);
             await _unitOfWork.SaveAsync();
 
             return Ok(new
@@ -325,8 +327,20 @@ namespace PickGo_backend.Controllers
 
             return Ok(new { message = "Password reset link sent to your email." });
         }
-    }
+    
 
+
+
+    [HttpPost("api/test/sendlocation")]
+        public async Task<IActionResult> TestSendLocation([FromBody] TestLocationDto dto,
+    [FromServices] IHubContext<CourierLocationHub> hubContext)
+        {
+            await hubContext.Clients.Group($"order-{dto.OrderId}")
+                .SendAsync("ReceiveLocation", dto.Lat, dto.Lng);
+
+            return Ok(new { message = "Location sent via Hub!" });
+        }
+    }
 
 
 

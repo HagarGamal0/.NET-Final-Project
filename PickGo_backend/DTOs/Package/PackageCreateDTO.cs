@@ -10,8 +10,6 @@ namespace PickGo_backend.DTOs.Package
         public string? Destination { get; set; }
         public double? Lat { get; set; }
         public double? Lang { get; set; }
-
         public int CustomerID { get; set; }
-        public int RequestID { get; set; }   // keep your current FK name
     }
 }

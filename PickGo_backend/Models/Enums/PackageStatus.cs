@@ -2,5 +2,8 @@
 {
     Pending,
     Available,
-    NotAvailable
+    NotAvailable,
+    Delivered,
+    Cancelled,
+    PickupInProgress
 }
