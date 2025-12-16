@@ -23,11 +23,11 @@ namespace PickGo_backend.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PackageCreateDTO dto)
         {
-            // Optional: validate Request exists
-            var request = await _unitOfWork.RequestRepo.GetByIdAsync(dto.RequestID);
-            if (request == null) return BadRequest("RequestID is invalid.");
+            var request = await _unitOfWork.RequestRepo.GetActiveRequestForCustomerAsync(dto.CustomerID);
+            if (request == null) return BadRequest("No active request found for this customer.");
 
             var package = _mapper.Map<Package>(dto);
+            package.RequestID = request.Id; // assign the RequestID here
 
             await _unitOfWork.PackageRepo.AddAsync(package);
             await _unitOfWork.SaveAsync();

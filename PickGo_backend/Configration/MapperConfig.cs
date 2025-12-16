@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
-using PickGo_backend.DTOs.User;
-using PickGo_backend.DTOs.Supplier;
 using PickGo_backend.DTOs.Courier;
-using PickGo_backend.DTOs.Request;
+using PickGo_backend.DTOs.Customer;
 using PickGo_backend.DTOs.Package;
+using PickGo_backend.DTOs.Request;
+using PickGo_backend.DTOs.Supplier;
+using PickGo_backend.DTOs.User;
 using PickGo_backend.Models;
 
 namespace PickGo_backend.Configration
@@ -39,9 +40,12 @@ namespace PickGo_backend.Configration
                 .ForMember(dest => dest.RecordedAt,
                     opt => opt.MapFrom(_ => DateTime.UtcNow));
 
+
             // =======================
             //        REQUEST
             // =======================
+
+
             CreateMap<Request, RequestReadDTO>()
                 .ForMember(dest => dest.Packages,
                     opt => opt.MapFrom(src => src.Packages));
@@ -56,6 +60,8 @@ namespace PickGo_backend.Configration
                 .ForMember(dest => dest.SupplierId, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
 
+           
+            
             // =======================
             //        PACKAGE
             // =======================
@@ -72,6 +78,22 @@ namespace PickGo_backend.Configration
             CreateMap<PackageUpdateDTO, Package>()
                 .ForMember(dest => dest.RequestID, opt => opt.Ignore())
                 .ForMember(dest => dest.CourierID, opt => opt.Ignore());
+
+
+            // =======================
+            //        CUSTOMER
+            // =======================
+
+            // Mapping with custom/nested properties
+            CreateMap<Customer, CustomerDto>()
+    .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.User.Address))
+    .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.PhoneNumber))
+    .ForMember(dest => dest.PackagesCount, opt => opt.MapFrom(src => src.Packages != null ? src.Packages.Count : 0))
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName)); // map from User.UserName
+
+            // Simple DTOs can use ReverseMap
+            CreateMap<CustomerJoinDto, Customer>().ReverseMap();
+            CreateMap<CustomerUpdateDto, Customer>().ReverseMap();
         }
     }
 }

@@ -1,4 +1,4 @@
-// BUSINESS RULES:
+﻿// BUSINESS RULES:
 // - Auto-assign rider ONLY if IsUrgent == false
 // - Urgent requests remain Pending
 // - Auto assignment is system-driven
@@ -31,64 +31,68 @@ namespace PickGo_backend.Controllers
         // CREATE Request
         // --------------------------------------------------------
         [HttpPost]
-public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
-{
-    var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-
-    // Create Request
-    var request = _mapper.Map<Request>(dto);
-    request.SupplierId = supplierId;
-    request.CreatedAt = DateTime.UtcNow;
-    request.Status = RequestStatus.Pending;
-
-    await _unitOfWork.RequestRepo.AddAsync(request);
-    await _unitOfWork.SaveAsync(); // get Request.Id
-
-    // Save Packages
-    foreach (var p in dto.Packages)
-    {
-        var package = _mapper.Map<Package>(p);
-        package.RequestID = request.Id;
-        package.Status = PackageStatus.Pending;
-
-        await _unitOfWork.PackageRepo.AddAsync(package);
-    }
-
-    await _unitOfWork.SaveAsync();
-
-    // -------------------------------------------------
-    // AUTO ASSIGN RIDER (NORMAL ONLY)
-    // -------------------------------------------------
-    if (!dto.IsUrgent)
-    {
-        var requestPackages = await _unitOfWork.PackageRepo
-            .GetAllAsync();
-
-        var packages = requestPackages
-            .Where(p => p.RequestID == request.Id)
-            .ToList();
-
-        double totalWeight = packages.Sum(p => p.Weight);
-
-        var courier = await FindNearestAvailableCourier(request);
-
-        if (courier != null)
+        [HttpPost]
+        public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
         {
-            foreach (var pkg in packages)
+            // 1️⃣ Get the logged-in supplier's UserId (string GUID)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            // 2️⃣ Get numeric Supplier Id from the Supplier table
+            var supplier = await _unitOfWork.SupplierRepo
+                .GetByExpressionAsync(s => s.UserId == userId);
+
+            if (supplier == null)
+                return BadRequest("Supplier not found.");
+
+            int supplierId = supplier.Id;
+
+            // 3️⃣ Create Request
+            var request = _mapper.Map<Request>(dto);
+            request.SupplierId = supplierId;
+            request.CreatedAt = DateTime.UtcNow;
+            request.Status = RequestStatus.Pending;
+
+            await _unitOfWork.RequestRepo.AddAsync(request);
+            await _unitOfWork.SaveAsync(); // get Request.Id
+
+            // 4️⃣ Save Packages
+            foreach (var p in dto.Packages)
             {
-                pkg.CourierID = courier.Id;
+                var package = _mapper.Map<Package>(p);
+                package.RequestID = request.Id;
+                package.Status = PackageStatus.Pending;
+
+                await _unitOfWork.PackageRepo.AddAsync(package);
             }
 
-            request.Status = RequestStatus.Accepted;
-            courier.IsAvailable = false;
+            await _unitOfWork.SaveAsync();
+
+            // 5️⃣ AUTO ASSIGN RIDER (for normal requests only)
+            if (!dto.IsUrgent)
+            {
+                var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+                    .Where(p => p.RequestID == request.Id)
+                    .ToList();
+
+                double totalWeight = packages.Sum(p => p.Weight);
+
+                var courier = await FindNearestAvailableCourier(request);
+
+                if (courier != null)
+                {
+                    foreach (var pkg in packages)
+                        pkg.CourierID = courier.Id;
+
+                    request.Status = RequestStatus.Accepted;
+                    courier.IsAvailable = false;
+                }
+
+                await _unitOfWork.SaveAsync();
+            }
+
+            // 6️⃣ Return mapped DTO
+            return Ok(_mapper.Map<RequestReadDTO>(request));
         }
-
-        await _unitOfWork.SaveAsync();
-    }
-
-    return Ok(_mapper.Map<RequestReadDTO>(request));
-}
-
 
         // --------------------------------------------------------
         // GET all Requests for logged-in Supplier
