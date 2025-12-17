@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PickGo_backend.DTOs.Courier;
+using PickGo_backend.DTOs.DeliveryProof;
 using PickGo_backend.Helpers;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
@@ -156,6 +157,174 @@ namespace PickGo_backend.Controllers
                 return NotFound("No available route found for nearby couriers.");
 
             return Ok(results.OrderBy(r => ((dynamic)r).EtaMinutes));
+        }
+
+
+
+
+
+
+        [HttpGet("MyAssignedPackages")]
+        public async Task<IActionResult> MyAssignedPackages()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var courier = await _unitOfWork.CourierRepo
+                .GetByExpressionAsync(c => c.UserId == userId);
+
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p => p.CourierID == courier.Id &&
+                       (p.Status == PackageStatus.Assigned ||
+                        p.Status == PackageStatus.PickupInProgress ||
+                        p.Status == PackageStatus.OutForDelivery))
+                .Select(p => new
+                {
+                    p.Id,
+                    Status = p.Status.ToString(),
+                    CODAmount = p.ShipmentCost,   // ✅ COD
+                    Destination = p.Destination,
+                    DropLat = p.Lat,
+                    DropLng = p.Lang
+                })
+                .ToList();
+
+            return Ok(packages);
+        }
+
+
+        [HttpPost("AcceptPackage/{packageId}")]
+        public async Task<IActionResult> AcceptPackage(int packageId)
+        {
+            var courier = await GetCourierFromToken();
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
+            if (package == null || package.CourierID != courier.Id)
+                return NotFound();
+
+            package.Status = PackageStatus.Assigned;
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Package accepted");
+        }
+
+
+        [HttpPost("RejectPackage/{packageId}")]
+        public async Task<IActionResult> RejectPackage(int packageId, [FromBody] string? reason)
+        {
+            var courier = await GetCourierFromToken();
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
+            if (package == null || package.CourierID != courier.Id)
+                return NotFound();
+
+            package.CourierID = null;
+            package.Status = PackageStatus.Pending;
+
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Package rejected");
+        }
+
+
+
+
+
+
+        private async Task<Courier> GetCourierFromToken()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+                throw new UnauthorizedAccessException("Invalid token");
+
+            var courier = await _unitOfWork.CourierRepo
+                .GetByExpressionAsync(c => c.UserId == userId);
+
+            if (courier == null)
+                throw new Exception("Courier profile not found");
+
+            return courier;
+        }
+
+
+        [HttpPost("UpdateStatus/{packageId}")]
+        public async Task<IActionResult> UpdateStatus(int packageId, PackageStatus status)
+        {
+            var courier = await GetCourierFromToken();
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
+            if (package == null || package.CourierID != courier.Id)
+                return NotFound();
+
+            package.Status = status;
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Status updated");
+        }
+
+
+        [HttpPost("DeliverPackage/{packageId}")]
+        public async Task<IActionResult> DeliverPackage(
+       int packageId,
+       [FromBody] DeliverPackageDto dto)
+        {
+            var courier = await GetCourierFromToken();
+
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            if (package == null)
+                return NotFound("Package not found");
+
+            if (package.CourierID != courier.Id)
+                return Forbid("Not your package");
+
+            if (package.Status != PackageStatus.OutForDelivery)
+                return BadRequest("Package not ready");
+
+            // MUST provide one
+            if (string.IsNullOrEmpty(dto.CustomerOTP) &&
+                string.IsNullOrEmpty(dto.SignatureUrl))
+                return BadRequest("OTP or Signature is required");
+
+            var proof = new DeliveryProof
+            {
+                PackageID = package.Id,
+                CourierID = courier.Id,
+                CustomerID = package.CustomerID,
+                CustomerOTP = dto.CustomerOTP,
+                SignatureUrl = dto.SignatureUrl,
+                DeliveredAt = DateTime.UtcNow
+            };
+
+            await _unitOfWork.DeliveryProofRepo.AddAsync(proof);
+
+            package.Status = PackageStatus.Delivered;
+            package.DeliveredAt = DateTime.UtcNow;
+
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Package delivered successfully");
+        }
+
+        [HttpPost("FailDelivery/{packageId}")]
+        public async Task<IActionResult> FailDelivery(int packageId, [FromBody] string reason)
+        {
+            var courier = await GetCourierFromToken();
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
+            if (package == null || package.CourierId != courier.Id)
+                return NotFound();
+
+            package.Status = PackageStatus.Failed;
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Delivery failed");
         }
     }
 }
