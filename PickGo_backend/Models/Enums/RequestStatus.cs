@@ -1,9 +1,9 @@
 ﻿public enum RequestStatus
 {
-    Pending,    // لسه متطلبش كورير
-    Assigned,   // اتعيّن لكورير (في انتظار ردّه)
-    Accepted,   // الكورير قبِل
-    Rejected,   // الكورير رفَض
-    InProgress, // استلم الشحنة
-    Delivered
+    Pending,            // created, not assigned
+    Assigned,           // supplier manually assigned courier
+    Accepted,           // courier accepted the order
+    PickupInProgress,   // courier picking up
+    Delivered,
+    Cancelled
 }
