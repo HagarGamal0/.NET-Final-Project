@@ -9,6 +9,7 @@ namespace PickGo_backend.DTOs.Customer
         [Required]
         public string PhoneNumber { get; set; } = null!;
         public string? UserName { get; set; } // optional username
+        public string? Email { get; set; } // optional username
 
         public string? UserId { get; set; }  // optional
 
