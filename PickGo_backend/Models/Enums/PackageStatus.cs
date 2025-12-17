@@ -1,8 +1,9 @@
 ﻿public enum PackageStatus
 {
-    Pending,           // created, not yet assigned
-    Assigned,          // courier assigned but not picked up yet
-    PickupInProgress,  // courier is picking up
+    Pending,           // created, not assigned
+    Assigned,          // assigned to courier
+    PickupInProgress,  // picked from supplier
+    OutForDelivery,    // going to customer
     Delivered,
     Cancelled,
     Failed

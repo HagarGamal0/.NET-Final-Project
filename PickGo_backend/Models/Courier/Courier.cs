@@ -27,6 +27,12 @@ namespace PickGo_backend.Models
 
         public virtual ICollection<CourierLocation> Locations { get; set; }
 
+
+        //   public int? CurrentPackageId { get; set; } // optional, active package
+        // public Package? CurrentPackage { get; set; } // optional
+
+        public int? CurrentSubscriptionId { get; set; }
+        public CourierSubscription? CurrentSubscription { get; set; }
         public virtual ICollection<Package>? Packages { get; set; }
         public virtual ICollection<DeliveryProof>? DeliveryProofs { get; set; }
         public virtual ICollection<CourierTransaction>? Transactions { get; set; }
