@@ -29,8 +29,6 @@ namespace PickGo_backend.Models
                    .HasForeignKey(p => p.CourierID)
                    .OnDelete(DeleteBehavior.SetNull);
 
-           
-
             // One-to-many: Courier → Locations
             builder.HasMany(c => c.Locations)
                    .WithOne(l => l.Courier)
@@ -44,18 +42,20 @@ namespace PickGo_backend.Models
             // One-to-many: Courier → Subscriptions
             builder.HasMany(c => c.CourierSubscriptions)
                    .WithOne(cs => cs.Courier)
-                   .HasForeignKey(cs => cs.CourierId);
+                   .HasForeignKey(cs => cs.CourierId)
+                   .OnDelete(DeleteBehavior.NoAction);
 
-
+            // One-to-one: Courier → CurrentSubscription
             builder.HasOne(c => c.CurrentSubscription)
-       .WithOne()
-       .HasForeignKey<Courier>(c => c.CurrentSubscriptionId)
-       .OnDelete(DeleteBehavior.SetNull);
+                   .WithOne()
+                   .HasForeignKey<Courier>(c => c.CurrentSubscriptionId)
+                   .OnDelete(DeleteBehavior.NoAction);
 
             // One-to-many: Courier → DeliveryProofs
             builder.HasMany(c => c.DeliveryProofs)
                    .WithOne(dp => dp.Courier)
                    .HasForeignKey(dp => dp.CourierID);
         }
+
     }
 }
