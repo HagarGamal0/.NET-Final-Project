@@ -18,6 +18,15 @@ namespace PickGo_backend.Repositories
                 .ToListAsync();
         }
 
+
+        public async Task<Courier?> GetByIdWithIncludesAsync(int id)
+        {
+            return await _context.Couriers
+                .Include(c => c.CourierSubscriptions)
+                .Include(c => c.CurrentSubscription)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
     }
     }
 

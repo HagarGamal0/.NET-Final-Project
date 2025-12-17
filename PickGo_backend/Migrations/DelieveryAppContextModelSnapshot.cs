@@ -622,7 +622,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 12, 17, 15, 9, 53, 881, DateTimeKind.Utc).AddTicks(3669),
+                            CreatedAt = new DateTime(2025, 12, 17, 16, 20, 59, 252, DateTimeKind.Utc).AddTicks(2584),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -633,7 +633,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 12, 17, 15, 9, 53, 881, DateTimeKind.Utc).AddTicks(3674),
+                            CreatedAt = new DateTime(2025, 12, 17, 16, 20, 59, 252, DateTimeKind.Utc).AddTicks(2592),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -644,7 +644,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 12, 17, 15, 9, 53, 881, DateTimeKind.Utc).AddTicks(3678),
+                            CreatedAt = new DateTime(2025, 12, 17, 16, 20, 59, 252, DateTimeKind.Utc).AddTicks(2595),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -655,7 +655,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 12, 17, 15, 9, 53, 881, DateTimeKind.Utc).AddTicks(3679),
+                            CreatedAt = new DateTime(2025, 12, 17, 16, 20, 59, 252, DateTimeKind.Utc).AddTicks(2596),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -666,7 +666,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 12, 17, 15, 9, 53, 881, DateTimeKind.Utc).AddTicks(3680),
+                            CreatedAt = new DateTime(2025, 12, 17, 16, 20, 59, 252, DateTimeKind.Utc).AddTicks(2597),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -677,7 +677,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 12, 17, 15, 9, 53, 881, DateTimeKind.Utc).AddTicks(3682),
+                            CreatedAt = new DateTime(2025, 12, 17, 16, 20, 59, 252, DateTimeKind.Utc).AddTicks(2598),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -831,15 +831,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b8636c87-177f-4a32-8b7c-80760ef359b7",
+                            ConcurrencyStamp = "11253b12-300f-469c-84b3-b9fd20a71914",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEE3QFSzet0RWwrRBRKdCqvCjYlK1VRqUkdsioBm4KuYev1DrEDyuGPCy3byh614GSA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECylDE2vjyhAY0CjO559V79BmIqTVOJWoveHOIR6zB/pwk+1BUiwqLbGStIuHQLHOg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "608ffeb1-989e-4541-b742-ad924f65d93c",
+                            SecurityStamp = "06473f43-81b1-46d0-a75c-f2d1b13aad45",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

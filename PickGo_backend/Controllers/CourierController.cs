@@ -326,5 +326,25 @@ namespace PickGo_backend.Controllers
 
             return Ok("Delivery failed");
         }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCourier(int id)
+        {
+            var courier = await _unitOfWork.CourierRepo.GetByIdWithIncludesAsync(id);
+            if (courier == null) return NotFound();
+
+            // Nullify dependent FKs
+            foreach (var cs in courier.CourierSubscriptions)
+                cs.CourierId = 0;
+
+            if (courier.CurrentSubscriptionId != null)
+                courier.CurrentSubscriptionId = null;
+
+            _unitOfWork.CourierRepo.Delete(courier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { message = "Courier deleted safely" });
+        }
     }
 }

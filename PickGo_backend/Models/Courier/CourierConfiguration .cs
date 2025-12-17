@@ -7,7 +7,9 @@ namespace PickGo_backend.Models
     {
         public void Configure(EntityTypeBuilder<Courier> builder)
         {
+            // --------------------
             // Optional properties
+            // --------------------
             builder.Property(c => c.LicensePhotoBack).IsRequired(false);
             builder.Property(c => c.LicensePhotoFront).IsRequired(false);
             builder.Property(c => c.VehcelLicensePhotoFront).IsRequired(false);
@@ -15,47 +17,66 @@ namespace PickGo_backend.Models
             builder.Property(c => c.PhotoUrl).IsRequired(false);
             builder.Property(c => c.RejectionReason).IsRequired(false);
 
-            // Primary key
+            // --------------------
+            // Primary Key
+            // --------------------
             builder.HasKey(c => c.Id);
 
-            // One-to-one with User
+            // --------------------
+            // One-to-One: Courier ↔ User
+            // --------------------
             builder.HasOne(c => c.User)
                    .WithOne(u => u.Courier)
-                   .HasForeignKey<Courier>(c => c.UserId);
+                   .HasForeignKey<Courier>(c => c.UserId)
+                   .OnDelete(DeleteBehavior.Cascade); // safe
 
-            // One-to-many: Courier → Packages
+            // --------------------
+            // One-to-Many: Courier → Packages
+            // --------------------
             builder.HasMany(c => c.Packages)
                    .WithOne(p => p.Courier)
                    .HasForeignKey(p => p.CourierID)
                    .OnDelete(DeleteBehavior.SetNull);
 
-            // One-to-many: Courier → Locations
+            // --------------------
+            // One-to-Many: Courier → Locations
+            // --------------------
             builder.HasMany(c => c.Locations)
                    .WithOne(l => l.Courier)
-                   .HasForeignKey(l => l.CourierID);
+                   .HasForeignKey(l => l.CourierID)
+                   .OnDelete(DeleteBehavior.NoAction); // avoid cascade conflict
 
-            // One-to-many: Courier → Transactions
+            // --------------------
+            // One-to-Many: Courier → Transactions
+            // --------------------
             builder.HasMany(c => c.Transactions)
                    .WithOne(t => t.Courier)
-                   .HasForeignKey(t => t.CourierID);
+                   .HasForeignKey(t => t.CourierID)
+                   .OnDelete(DeleteBehavior.NoAction);
 
-            // One-to-many: Courier → Subscriptions
+            // --------------------
+            // One-to-Many: Courier → Subscriptions
+            // --------------------
             builder.HasMany(c => c.CourierSubscriptions)
                    .WithOne(cs => cs.Courier)
                    .HasForeignKey(cs => cs.CourierId)
-                   .OnDelete(DeleteBehavior.NoAction);
+                   .OnDelete(DeleteBehavior.NoAction); // crucial for SQL Server
 
-            // One-to-one: Courier → CurrentSubscription
+            // --------------------
+            // One-to-One: Courier → CurrentSubscription
+            // --------------------
             builder.HasOne(c => c.CurrentSubscription)
                    .WithOne()
                    .HasForeignKey<Courier>(c => c.CurrentSubscriptionId)
-                   .OnDelete(DeleteBehavior.NoAction);
+                   .OnDelete(DeleteBehavior.NoAction); // crucial for SQL Server
 
-            // One-to-many: Courier → DeliveryProofs
+            // --------------------
+            // One-to-Many: Courier → DeliveryProofs
+            // --------------------
             builder.HasMany(c => c.DeliveryProofs)
                    .WithOne(dp => dp.Courier)
-                   .HasForeignKey(dp => dp.CourierID);
+                   .HasForeignKey(dp => dp.CourierID)
+                   .OnDelete(DeleteBehavior.NoAction); // safe
         }
-
     }
 }
