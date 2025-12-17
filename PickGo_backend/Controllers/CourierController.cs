@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PickGo_backend.DTOs.Courier;
 using PickGo_backend.Helpers;
 using PickGo_backend.Models;
+using PickGo_backend.Models.Enums;
 using PickGo_backend.Services;
 using System.Security.Claims;
 
@@ -28,7 +29,7 @@ namespace PickGo_backend.Controllers
         public async Task<IActionResult> GetOnlineCouriers()
         {
             var couriers = (await _unitOfWork.CourierRepo.GetAllAsync())
-                .Where(c => c.IsOnline && c.Status == "Approved")
+                .Where(c => c.IsOnline && c.Status == CourierStatus.Approved)
                 .Select(c => new
                 {
                     c.Id,
@@ -79,7 +80,7 @@ namespace PickGo_backend.Controllers
 
             var courier = await _unitOfWork.CourierRepo.GetByExpressionAsync(c => c.UserId == userId);
             if (courier == null) return NotFound("Courier profile not found.");
-            if (courier.Status != "Approved") return BadRequest("Courier is not approved yet.");
+            if (courier.Status != CourierStatus.Approved) return BadRequest("Courier is not approved yet.");
 
             courier.IsOnline = !courier.IsOnline;
             _unitOfWork.CourierRepo.Update(courier);
@@ -99,7 +100,7 @@ namespace PickGo_backend.Controllers
             var couriers = await _unitOfWork.CourierRepo.GetAllWithLocationsAsync();
 
             var nearby = couriers
-       .Where(c => c.IsOnline && c.Status == "Approved" && c.Locations.Any())
+       .Where(c => c.IsOnline && c.Status == CourierStatus.Approved && c.Locations.Any())
        .Select(c =>
        {
            var loc = c.Locations.OrderByDescending(l => l.RecordedAt).First();

@@ -5,5 +5,6 @@
     NotAvailable,
     Delivered,
     Cancelled,
-    PickupInProgress
+    PickupInProgress ,
+    Failed
 }

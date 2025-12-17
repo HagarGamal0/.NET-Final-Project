@@ -1,4 +1,6 @@
 ﻿
+using PickGo_backend.Models.Enums;
+
 namespace PickGo_backend.Models
 {
     public class Courier : BaseModel
@@ -17,7 +19,8 @@ namespace PickGo_backend.Models
 
         public string? VehcelLicensePhotoFront { get; set; }
 
-        public string Status { get; set; }
+        public CourierStatus Status { get; set; }
+        public string? RejectionReason { get; set; }
 
 
         public virtual User User { get; set; }

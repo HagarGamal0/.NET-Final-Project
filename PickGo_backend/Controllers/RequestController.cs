@@ -10,6 +10,7 @@ using PickGo_backend.DTOs.Request;
 using PickGo_backend.DTOs.Package;
 using PickGo_backend.Models;
 using System.Security.Claims;
+using PickGo_backend.Models.Enums;
 
 namespace PickGo_backend.Controllers
 {
@@ -226,7 +227,7 @@ private async Task<Courier?> FindNearestAvailableCourier(Request request)
     var couriers = await _unitOfWork.CourierRepo.GetAllAsync();
 
     var availableCouriers = couriers
-        .Where(c => c.Status == "Approved")
+        .Where(c => c.Status == CourierStatus.Approved)
         .ToList();
 
     if (!availableCouriers.Any())

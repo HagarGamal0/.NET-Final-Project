@@ -9,6 +9,7 @@ using PickGo_backend.DTOs.Courier;
 using PickGo_backend.DTOs.Supplier;
 using PickGo_backend.DTOs.User;
 using PickGo_backend.Models;
+using PickGo_backend.Models.Enums;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -99,7 +100,7 @@ namespace PickGo_backend.Controllers
                 IsAvailable = true,
                 IsOnline = false,
                 Rating = 0,
-                Status = string.IsNullOrEmpty(dto.Status) ? "Pending" : dto.Status
+                Status = CourierStatus.Pending
 
             };
 
@@ -177,7 +178,7 @@ namespace PickGo_backend.Controllers
                               .FirstOrDefault(c => c.UserId == user.Id);
 
                 if (courier == null) return Unauthorized("Courier record not found.");
-                if (courier.Status != "Approved")
+                if (courier.Status != CourierStatus.Approved)
                     return Unauthorized($"Your registration is {courier.Status}. Admin approval required.");
             }
 
@@ -327,21 +328,11 @@ namespace PickGo_backend.Controllers
 
             return Ok(new { message = "Password reset link sent to your email." });
         }
-    
 
 
 
-    [HttpPost("api/test/sendlocation")]
-        public async Task<IActionResult> TestSendLocation([FromBody] TestLocationDto dto,
-    [FromServices] IHubContext<CourierLocationHub> hubContext)
-        {
-            await hubContext.Clients.Group($"order-{dto.OrderId}")
-                .SendAsync("ReceiveLocation", dto.Lat, dto.Lng);
 
-            return Ok(new { message = "Location sent via Hub!" });
-        }
+
+
     }
-
-
-
 }
