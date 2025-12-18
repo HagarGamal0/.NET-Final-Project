@@ -17,8 +17,15 @@ builder.Services.AddScoped<UnitOfWork>();
 
 // Database
 builder.Services.AddDbContext<DelieveryAppContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,                 // try 5 times
+            maxRetryDelay: TimeSpan.FromSeconds(10), // wait 10s between tries
+            errorNumbersToAdd: null            // can add specific SQL error codes if needed
+        )
+    )
+);
 // Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>
 {

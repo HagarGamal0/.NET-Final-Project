@@ -547,7 +547,8 @@ namespace PickGo_backend.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("DurationInDays")
                         .HasColumnType("int");
@@ -557,14 +558,17 @@ namespace PickGo_backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("UserType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -771,15 +775,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ba824b45-c2c9-4327-b7bb-ac2d27388fdd",
+                            ConcurrencyStamp = "d5d1cfad-18ea-4365-9499-17e0ae75a415",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMOXqsSchOeZc05df96BItZDLthbp20jbjbpG8z8oevhmcpACrCdm+TmdMYajUz+/g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOC/+w0d2a47auNJXzr3Ed25D5zWO49SIC0Q3iziMNY7qwzh2pnPyNbc2JFMv0FrTg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "71494f6f-8c43-47e0-ad92-7ed09fcf6823",
+                            SecurityStamp = "95ac5186-336e-4774-bdfe-d324689a9fc6",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace PickGo_backend.Migrations
 {
     /// <inheritdoc />
-    public partial class Revert_jjjjjjj : Migration
+    public partial class hdhbdxcvj4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,11 +61,11 @@ namespace PickGo_backend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,4)", precision: 18, scale: 4, nullable: false),
                     DurationInDays = table.Column<int>(type: "int", nullable: false),
-                    UserType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     MaxOrders = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -240,6 +240,11 @@ namespace PickGo_backend.Migrations
                     Rating = table.Column<float>(type: "real", nullable: false),
                     MaxWeight = table.Column<float>(type: "real", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LicensePhotoFront = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LicensePhotoBack = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VehcelLicensePhotoBack = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VehcelLicensePhotoFront = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SupplierId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -266,7 +271,10 @@ namespace PickGo_backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Source = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SupplierId = table.Column<int>(type: "int", nullable: false)
+                    PickupLat = table.Column<double>(type: "float", nullable: false),
+                    PickupLng = table.Column<double>(type: "float", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -365,13 +373,15 @@ namespace PickGo_backend.Migrations
                     ShipmentCost = table.Column<float>(type: "real", nullable: false),
                     DeliveredAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Destination = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Lat = table.Column<double>(type: "float", nullable: true),
+                    Lang = table.Column<double>(type: "float", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     ShipmentRating = table.Column<float>(type: "real", nullable: false),
-                    Rating = table.Column<float>(type: "real", nullable: false),
                     ShipmentNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     RequestID = table.Column<int>(type: "int", nullable: false),
                     CourierID = table.Column<int>(type: "int", nullable: true),
-                    CustomerID = table.Column<int>(type: "int", nullable: false)
+                    CustomerID = table.Column<int>(type: "int", nullable: false),
+                    ShipmentReviewID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -479,6 +489,27 @@ namespace PickGo_backend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ShipmentReview",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Rating = table.Column<float>(type: "real", nullable: false),
+                    ReviewText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PackageID = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShipmentReview", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShipmentReview_Packages_PackageID",
+                        column: x => x.PackageID,
+                        principalTable: "Packages",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
@@ -493,7 +524,7 @@ namespace PickGo_backend.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "Address", "BirthDate", "ConcurrencyStamp", "Email", "EmailConfirmed", "Gender", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "1", 0, null, null, "5dca1eb3-0fc5-455c-a495-298953cf9a5d", "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEIxY71Qo9fDa9nwaMed3Pl+BU7CNuaaFyNIFxsrbk5791FpvuICXmrxjVKGBuTIyww==", null, false, "4066f232-209c-4e82-a711-a81cece973c1", false, "admin" });
+                values: new object[] { "1", 0, null, null, "d5d1cfad-18ea-4365-9499-17e0ae75a415", "admin@gmail.com", true, null, false, null, "ADMIN@GMAIL.COM", "ADMIN", "AQAAAAIAAYagAAAAEOC/+w0d2a47auNJXzr3Ed25D5zWO49SIC0Q3iziMNY7qwzh2pnPyNbc2JFMv0FrTg==", null, false, "95ac5186-336e-4774-bdfe-d324689a9fc6", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "Subscription",
@@ -655,6 +686,12 @@ namespace PickGo_backend.Migrations
                 column: "SupplierId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShipmentReview_PackageID",
+                table: "ShipmentReview",
+                column: "PackageID",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Supplier_UserId",
                 table: "Supplier",
                 column: "UserId",
@@ -703,6 +740,9 @@ namespace PickGo_backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "Invoices");
+
+            migrationBuilder.DropTable(
+                name: "ShipmentReview");
 
             migrationBuilder.DropTable(
                 name: "SupplierSubscription");

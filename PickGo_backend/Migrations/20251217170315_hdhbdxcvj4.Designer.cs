@@ -12,8 +12,8 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    [Migration("20251209105139_1111")]
-    partial class _1111
+    [Migration("20251217170315_hdhbdxcvj4")]
+    partial class hdhbdxcvj4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -325,8 +325,17 @@ namespace PickGo_backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LicensePhotoBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LicensePhotoFront")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<float>("MaxWeight")
                         .HasColumnType("real");
+
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<float>("Rating")
                         .HasColumnType("real");
@@ -341,6 +350,12 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("VehcelLicensePhotoBack")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VehcelLicensePhotoFront")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("VehicleType")
                         .IsRequired()
@@ -502,10 +517,10 @@ namespace PickGo_backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Puck_up_lang")
+                    b.Property<double>("PickupLat")
                         .HasColumnType("float");
 
-                    b.Property<double>("Puck_up_lat")
+                    b.Property<double>("PickupLng")
                         .HasColumnType("float");
 
                     b.Property<string>("Source")
@@ -535,7 +550,8 @@ namespace PickGo_backend.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("DurationInDays")
                         .HasColumnType("int");
@@ -545,14 +561,17 @@ namespace PickGo_backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("UserType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -759,15 +778,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c226ddbb-ad1f-4ff3-9b9b-7de523f36add",
+                            ConcurrencyStamp = "d5d1cfad-18ea-4365-9499-17e0ae75a415",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAECwDj4eoS12EIZoLNb9Cp9mat0LoulHoZ/VfJIMMH55ncFkwQPOt2ROIcyd9UHegKg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOC/+w0d2a47auNJXzr3Ed25D5zWO49SIC0Q3iziMNY7qwzh2pnPyNbc2JFMv0FrTg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "380b1fb1-01ce-4c87-9bd4-d670de5991c2",
+                            SecurityStamp = "95ac5186-336e-4774-bdfe-d324689a9fc6",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

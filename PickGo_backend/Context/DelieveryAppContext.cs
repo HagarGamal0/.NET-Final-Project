@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PickGo_backend.Configurations;
 using PickGo_backend.Models;
@@ -31,10 +32,14 @@ namespace PickGo_backend.Context
         {
             base.OnModelCreating(modelBuilder); // important for Identity tables
 
+         
+
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new ShipmentReviewConfiguration());
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new PackageConfiguration());
+            modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
+
             modelBuilder.ApplyConfiguration(new SupplierConfiguration());
             modelBuilder.ApplyConfiguration(new CourierConfiguration());
             modelBuilder.ApplyConfiguration(new CourierLocationConfiguration());
