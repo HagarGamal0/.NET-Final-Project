@@ -32,8 +32,9 @@ namespace PickGo_backend.Context
         {
             base.OnModelCreating(modelBuilder); // important for Identity tables
 
-         
 
+            // Explicitly map Identity relationships
+     
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new ShipmentReviewConfiguration());
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());

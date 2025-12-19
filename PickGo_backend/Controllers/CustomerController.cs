@@ -189,8 +189,7 @@ namespace PickGo_backend.Controllers
 
             return Ok(result);
         }
-        [HttpGet("{customerId}/packages")]
-
+        [HttpGet("{customerId}/packages/track")]
 
         // -------------------- UC-CUS-03: Track Package (Real-time) --------------------
         [HttpGet("TrackPackage/{packageId}")]

@@ -20,12 +20,7 @@ builder.Services.AddScoped<UnitOfWork>();
 // Database
 builder.Services.AddDbContext<DelieveryAppContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,                 // try 5 times
-            maxRetryDelay: TimeSpan.FromSeconds(10), // wait 10s between tries
-            errorNumbersToAdd: null            // can add specific SQL error codes if needed
-        )
+        builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );
 // Identity
@@ -103,11 +98,15 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 // Middleware pipeline
-if (app.Environment.IsDevelopment())
-{
+ // (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PickGo API V1");
+        c.RoutePrefix = "swagger"; 
+    });
+//}
 
 app.UseHttpsRedirection();
 
@@ -118,4 +117,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<CourierLocationHub>("/hubs/courier");
 
-app.Run();
+    app.Run();
