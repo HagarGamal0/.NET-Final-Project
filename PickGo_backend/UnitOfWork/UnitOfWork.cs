@@ -21,6 +21,7 @@ namespace PickGo_backend
         private CourierTransactionRepository _courierTransactionRepo;
         private CustomerRepository _customerRepo;
         private RoleRepository _roleRepo;
+        private DisputeRepository _disputeRepo;
 
         public UnitOfWork(DelieveryAppContext db)
         {
@@ -84,6 +85,18 @@ namespace PickGo_backend
                 if (_invoiceRepo == null)
                     _invoiceRepo = new InvoiceRepository(_db);
                 return _invoiceRepo;
+            }
+        }
+
+
+
+        public DisputeRepository DisputeRepo
+        {
+            get
+            {
+                if (_disputeRepo == null)
+                    _disputeRepo = new DisputeRepository(_db);
+                return _disputeRepo;
             }
         }
 

@@ -12,8 +12,8 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    [Migration("20251219204254_AddIdentityTables")]
-    partial class AddIdentityTables
+    [Migration("20251220162755_jggg")]
+    partial class jggg
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,14 +202,9 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
 
@@ -514,6 +509,44 @@ namespace PickGo_backend.Migrations
                     b.ToTable("customers");
                 });
 
+            modelBuilder.Entity("PickGo_backend.Models.Dispute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("PackageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasDefaultValue("Pending");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageId");
+
+                    b.ToTable("Disputes");
+                });
+
             modelBuilder.Entity("PickGo_backend.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -629,7 +662,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 12, 19, 20, 42, 49, 37, DateTimeKind.Utc).AddTicks(5108),
+                            CreatedAt = new DateTime(2025, 12, 20, 16, 27, 55, 195, DateTimeKind.Utc).AddTicks(1767),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -640,7 +673,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 12, 19, 20, 42, 49, 37, DateTimeKind.Utc).AddTicks(5115),
+                            CreatedAt = new DateTime(2025, 12, 20, 16, 27, 55, 195, DateTimeKind.Utc).AddTicks(1812),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -651,7 +684,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 12, 19, 20, 42, 49, 37, DateTimeKind.Utc).AddTicks(5121),
+                            CreatedAt = new DateTime(2025, 12, 20, 16, 27, 55, 195, DateTimeKind.Utc).AddTicks(1818),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -662,7 +695,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 12, 19, 20, 42, 49, 37, DateTimeKind.Utc).AddTicks(5123),
+                            CreatedAt = new DateTime(2025, 12, 20, 16, 27, 55, 195, DateTimeKind.Utc).AddTicks(1820),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -673,7 +706,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 12, 19, 20, 42, 49, 37, DateTimeKind.Utc).AddTicks(5126),
+                            CreatedAt = new DateTime(2025, 12, 20, 16, 27, 55, 195, DateTimeKind.Utc).AddTicks(1821),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -684,7 +717,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 12, 19, 20, 42, 49, 37, DateTimeKind.Utc).AddTicks(5128),
+                            CreatedAt = new DateTime(2025, 12, 20, 16, 27, 55, 195, DateTimeKind.Utc).AddTicks(1823),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -838,15 +871,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d79e0025-2e91-412b-bbd2-5198d54521b6",
+                            ConcurrencyStamp = "7dcfc877-b5ed-44d0-a5f4-cf8afd46a6b4",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFLv/mYycB4bM92E09JiwwUij1FEZbTHUTgd65F8lGGdTNt07GQm+vMGoG6qnFeYsA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEB229z5JXltcCx3ePEIJrgk5JlYT2Z9FpCxx1gf7xuNMfDsRZhe2MguAOhV3f3hHug==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "002c45ce-bf5c-4ee3-9a15-b843b267542e",
+                            SecurityStamp = "a8fea01a-944e-4d52-98ae-aa3e71797f76",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -944,10 +977,6 @@ namespace PickGo_backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PickGo_backend.Models.User", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1067,6 +1096,17 @@ namespace PickGo_backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PickGo_backend.Models.Dispute", b =>
+                {
+                    b.HasOne("Package", "Package")
+                        .WithMany("Disputes")
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Package");
+                });
+
             modelBuilder.Entity("PickGo_backend.Models.Invoice", b =>
                 {
                     b.HasOne("Package", "Package")
@@ -1134,6 +1174,8 @@ namespace PickGo_backend.Migrations
                 {
                     b.Navigation("DeliveryProof");
 
+                    b.Navigation("Disputes");
+
                     b.Navigation("Invoice");
 
                     b.Navigation("ShipmentReview");
@@ -1189,8 +1231,6 @@ namespace PickGo_backend.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Supplier");
-
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

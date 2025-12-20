@@ -12,8 +12,8 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    [Migration("20251219141633_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251220144356_jn")]
+    partial class jn
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -202,14 +202,9 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
 
@@ -629,7 +624,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 12, 19, 14, 16, 32, 743, DateTimeKind.Utc).AddTicks(1358),
+                            CreatedAt = new DateTime(2025, 12, 20, 14, 43, 55, 855, DateTimeKind.Utc).AddTicks(5587),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -640,7 +635,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 12, 19, 14, 16, 32, 743, DateTimeKind.Utc).AddTicks(1364),
+                            CreatedAt = new DateTime(2025, 12, 20, 14, 43, 55, 855, DateTimeKind.Utc).AddTicks(5593),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -651,7 +646,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 12, 19, 14, 16, 32, 743, DateTimeKind.Utc).AddTicks(1371),
+                            CreatedAt = new DateTime(2025, 12, 20, 14, 43, 55, 855, DateTimeKind.Utc).AddTicks(5598),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -662,7 +657,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 12, 19, 14, 16, 32, 743, DateTimeKind.Utc).AddTicks(1373),
+                            CreatedAt = new DateTime(2025, 12, 20, 14, 43, 55, 855, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -673,7 +668,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 12, 19, 14, 16, 32, 743, DateTimeKind.Utc).AddTicks(1375),
+                            CreatedAt = new DateTime(2025, 12, 20, 14, 43, 55, 855, DateTimeKind.Utc).AddTicks(5602),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -684,7 +679,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 12, 19, 14, 16, 32, 743, DateTimeKind.Utc).AddTicks(1377),
+                            CreatedAt = new DateTime(2025, 12, 20, 14, 43, 55, 855, DateTimeKind.Utc).AddTicks(5604),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -838,15 +833,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ddf5cd42-3a9e-485b-9767-a40e27f47c62",
+                            ConcurrencyStamp = "131808e1-251c-46e6-9a69-6e13737b7da1",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOnDV9pYb0/AqIpSXVtsg7sMEmHVML5gofS4WT7xUbIp+eETsQsLUmJTOLcuVXGbnA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECosje/DEMAp3LJkRn2MthFUkQ8fOv6WVRV29cL6hmnKMZbdOD3710VspVBm7y+57A==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "674a5aaa-46f1-483b-8db6-2388299e208f",
+                            SecurityStamp = "aba346a1-8b05-4433-8bb9-0c2405a06ade",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -944,10 +939,6 @@ namespace PickGo_backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PickGo_backend.Models.User", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -1189,8 +1180,6 @@ namespace PickGo_backend.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Supplier");
-
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }
