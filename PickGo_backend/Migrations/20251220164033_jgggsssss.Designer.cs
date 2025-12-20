@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PickGo_backend.Context;
 
@@ -11,9 +12,11 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    partial class DelieveryAppContextModelSnapshot : ModelSnapshot
+    [Migration("20251220164033_jgggsssss")]
+    partial class jgggsssss
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

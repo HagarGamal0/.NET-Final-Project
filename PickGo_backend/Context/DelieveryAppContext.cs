@@ -21,6 +21,7 @@ namespace PickGo_backend.Context
         public DbSet<CourierLocation>  CourierLocations { get; set; }
         public DbSet<CourierTransaction>  CourierTransactions { get; set; }
         public DbSet<Customer> customers { get; set; }
+        public DbSet<Dispute> Disputes { get; set; }
 
         public DbSet<DeliveryProof>  deliveryProofs { get; set; }
         public DbSet<Package> Packages { get; set; }
@@ -40,6 +41,7 @@ namespace PickGo_backend.Context
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new PackageConfiguration());
             modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
+            modelBuilder.ApplyConfiguration(new DisputeConfiguration());
 
             modelBuilder.ApplyConfiguration(new SupplierConfiguration());
             modelBuilder.ApplyConfiguration(new CourierConfiguration());

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PickGo_backend.DTOs;
 using PickGo_backend.DTOs.Admin;
+using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
 
 namespace PickGo_backend.Controllers
@@ -164,6 +166,68 @@ namespace PickGo_backend.Controllers
         }
 
 
+
+        [HttpGet("Disputes")]
+        public async Task<IActionResult> GetDisputes()
+        {
+            var disputes = await _unitOfWork.DisputeRepo.GetAllAsync();
+            if (!disputes.Any())
+                return NotFound(new { message = "No disputes found." });
+
+            var result = disputes.Select(d => new
+            {
+                d.Id,
+                d.PackageId,
+                d.Description,
+                d.Status,
+                d.DisputeType,
+                d.CreatedAt
+            });
+
+            return Ok(result);
+        }
+
+        [HttpGet("Dispute/{id}")]
+        public async Task<IActionResult> GetDisputeDetails(int id)
+        {
+            var dispute = await _unitOfWork.DisputeRepo.GetDisputeDetailsAsync(id);
+            if (dispute == null) return NotFound(new { message = "Dispute not found." });
+
+            return Ok(new
+            {
+                dispute.Id,
+                dispute.PackageId,
+                dispute.Description,
+                dispute.Status,
+                dispute.DisputeType,
+                dispute.ResolutionNotes,
+                ProofImages = dispute.ProofImages.Select(p => p.ImageUrl),
+                StatusHistory = dispute.StatusHistory.Select(s => new { s.Status, s.ChangedAt }),
+                dispute.CreatedAt
+            });
+        }
+
+        [HttpPost("ResolveDispute/{disputeId}")]
+        public async Task<IActionResult> ResolveDispute(int disputeId, [FromBody] ResolveDisputeDto dto)
+        {
+            var dispute = await _unitOfWork.DisputeRepo.GetByIdAsync(disputeId);
+            if (dispute == null) return NotFound(new { message = "Dispute not found." });
+
+            dispute.Status = dto.Status;
+            dispute.ResolutionNotes = dto.Notes;
+
+            // Add status history
+            dispute.StatusHistory.Add(new DisputeStatusHistory
+            {
+                Status = dto.Status,
+                ChangedAt = DateTime.UtcNow
+            });
+
+            _unitOfWork.DisputeRepo.Update(dispute);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { message = "Dispute resolved successfully." });
+        }
 
 
     }

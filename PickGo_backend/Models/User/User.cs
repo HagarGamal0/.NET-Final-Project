@@ -8,7 +8,7 @@ namespace PickGo_backend.Models
         public DateTime? BirthDate { get; set; }
         public string? Gender { get; set; }
 
-        public ICollection<IdentityUserRole<string>>? UserRoles { get; set; }
+      //  public ICollection<IdentityUserRole<string>>? UserRoles { get; set; }
 
         public Courier? Courier { get; set; } // optional navigation
         public Supplier? Supplier { get; set; } // optional navigation
