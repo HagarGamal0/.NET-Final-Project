@@ -35,7 +35,7 @@ namespace PickGo_backend.Controllers
                 {
                     c.Id,
                     c.UserId,
-                    c.VehicleType,
+                    VehicleType = c.VehicleType.ToString(),
                     c.Rating,
                     c.MaxWeight
                 })
@@ -95,41 +95,31 @@ namespace PickGo_backend.Controllers
         }
 
         // -------------------- Match Courier --------------------
+        // -------------------- Match Courier --------------------
         [HttpPost("MatchCourier")]
         public async Task<IActionResult> MatchCourier([FromBody] CourierMatchRequest request)
         {
             var couriers = await _unitOfWork.CourierRepo.GetAllWithLocationsAsync();
 
             var nearby = couriers
-       .Where(c => c.IsOnline && c.Status == CourierStatus.Approved && c.Locations.Any())
-       .Select(c =>
-       {
-           var loc = c.Locations.OrderByDescending(l => l.RecordedAt).First();
-           var distance = GeoHelper.DistanceKm(
-               request.PickupLat,
-               request.PickupLng,
-               loc.Lat,
-               loc.Lng
-           );
-
-           return new { Courier = c, Location = loc, Distance = distance };
-       })
-       .Where(x => x.Distance <= 10) // 10 km radius
-       .OrderBy(x => x.Distance)
-       .Take(5)
-       .ToList();
+                .Where(c => c.IsOnline && c.Status == CourierStatus.Approved && c.Locations.Any())
+                .Select(c =>
+                {
+                    var loc = c.Locations.OrderByDescending(l => l.RecordedAt).First();
+                    var distance = GeoHelper.DistanceKm(request.PickupLat, request.PickupLng, loc.Lat, loc.Lng);
+                    return new { Courier = c, Location = loc, Distance = distance };
+                })
+                .Where(x => x.Distance <= 10)
+                .OrderBy(x => x.Distance)
+                .Take(5)
+                .ToList();
 
             var results = new List<object>();
 
             foreach (var c in nearby)
             {
-                var vehicle = c.Courier.VehicleType.ToLower() switch
-                {
-                    "car" => "car",
-                    "bike" => "bike",
-                    "foot" => "foot",
-                    _ => "car"
-                };
+                // convert enum to lowercase string for GraphHopper
+                var vehicle = c.Courier.VehicleType.ToString().ToLower();
 
                 try
                 {
@@ -142,7 +132,7 @@ namespace PickGo_backend.Controllers
                     results.Add(new
                     {
                         c.Courier.Id,
-                        c.Courier.VehicleType,
+                        VehicleType = c.Courier.VehicleType.ToString(),
                         DistanceKm = Math.Round(km, 2),
                         EtaMinutes = Math.Round(eta, 1)
                     });
@@ -158,9 +148,6 @@ namespace PickGo_backend.Controllers
 
             return Ok(results.OrderBy(r => ((dynamic)r).EtaMinutes));
         }
-
-
-
 
 
 
@@ -183,7 +170,7 @@ namespace PickGo_backend.Controllers
                 {
                     p.Id,
                     Status = p.Status.ToString(),
-                    CODAmount = p.ShipmentCost,   // ✅ COD
+                    CODAmount = p.ShipmentCost,  
                     Destination = p.Destination,
                     DropLat = p.Lat,
                     DropLng = p.Lang

@@ -6,7 +6,7 @@ namespace PickGo_backend.Models
     public class Courier : BaseModel
     {
         public string UserId { get; set; } = null!;
-        public string VehicleType { get; set; } = null!;
+        public VehicleType VehicleType { get; set; }
         public string LicenseNumber { get; set; } = null!;
         public bool IsAvailable { get; set; }
         public bool IsOnline { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PickGo_backend.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace PickGo_backend.DTOs.Courier
 
@@ -10,9 +11,9 @@ namespace PickGo_backend.DTOs.Courier
             public string Email { get; set; } = null!;
             public string Password { get; set; } = null!;
 
-            // Courier-specific fields
-            public string VehicleType { get; set; } = null!;
-            public string LicenseNumber { get; set; } = null!;
+        // Courier-specific fields
+        public VehicleType VehicleType { get; set; }   
+        public string LicenseNumber { get; set; } = null!;
             public float MaxWeight { get; set; }
             public string? Address { get; set; }
             public DateTime? BirthDate { get; set; }

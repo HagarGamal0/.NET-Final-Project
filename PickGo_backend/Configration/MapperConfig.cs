@@ -41,6 +41,10 @@ namespace PickGo_backend.Configration
                     opt => opt.MapFrom(_ => DateTime.UtcNow));
 
 
+            CreateMap<CourierRegisterDTO, Courier>();
+            CreateMap<CourierCompleteProfileDTO, Courier>();
+
+
             // =======================
             //        REQUEST
             // =======================
