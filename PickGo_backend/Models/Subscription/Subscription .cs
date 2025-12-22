@@ -8,10 +8,10 @@ namespace PickGo_backend.Models
         public string Description { get; set; } = null!;
         public decimal Price { get; set; }
         public int DurationInDays { get; set; }
-        public string UserType { get; set; } = null!; // "Courier" أو "Supplier"
+        public string UserType { get; set; } = null!; // "Courier" or "Supplier"
         public int MaxOrders { get; set; }
 
-        // علاقات many-to-many
+        // Many-to-many relationships
         public ICollection<CourierSubscription> CourierSubscriptions { get; set; } = new List<CourierSubscription>();
         public ICollection<SupplierSubscription> SupplierSubscriptions { get; set; } = new List<SupplierSubscription>();
     }

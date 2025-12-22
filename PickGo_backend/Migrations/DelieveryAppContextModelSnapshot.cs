@@ -33,6 +33,9 @@ namespace PickGo_backend.Migrations
                     b.Property<int?>("CourierID")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("CustomerID")
                         .HasColumnType("int");
 
@@ -196,14 +199,9 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("AspNetUserRoles", (string)null);
 
@@ -244,6 +242,9 @@ namespace PickGo_backend.Migrations
 
                     b.Property<int?>("CourierID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
@@ -312,6 +313,12 @@ namespace PickGo_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CurrentSubscriptionId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
@@ -337,9 +344,11 @@ namespace PickGo_backend.Migrations
                     b.Property<float>("Rating")
                         .HasColumnType("real");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<string>("RejectionReason")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<int?>("SupplierId")
                         .HasColumnType("int");
@@ -354,11 +363,14 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("VehcelLicensePhotoFront")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VehicleType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("VehicleType")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CurrentSubscriptionId")
+                        .IsUnique()
+                        .HasFilter("[CurrentSubscriptionId] IS NOT NULL");
 
                     b.HasIndex("SupplierId");
 
@@ -378,6 +390,9 @@ namespace PickGo_backend.Migrations
 
                     b.Property<int>("CourierID")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<float>("Lat")
                         .HasColumnType("real");
@@ -405,6 +420,18 @@ namespace PickGo_backend.Migrations
 
                     b.Property<int>("CourierId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SubscriptionId")
                         .HasColumnType("int");
@@ -459,7 +486,10 @@ namespace PickGo_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -475,6 +505,96 @@ namespace PickGo_backend.Migrations
                     b.ToTable("customers");
                 });
 
+            modelBuilder.Entity("PickGo_backend.Models.Dispute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisputeType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PackageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResolutionNotes")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PackageId");
+
+                    b.ToTable("Disputes");
+                });
+
+            modelBuilder.Entity("PickGo_backend.Models.DisputeProof", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisputeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisputeId");
+
+                    b.ToTable("DisputeProof");
+                });
+
+            modelBuilder.Entity("PickGo_backend.Models.DisputeStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DisputeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DisputeId");
+
+                    b.ToTable("DisputeStatusHistory");
+                });
+
             modelBuilder.Entity("PickGo_backend.Models.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -485,6 +605,9 @@ namespace PickGo_backend.Migrations
 
                     b.Property<float>("Cost")
                         .HasColumnType("real");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("InvoiceNumber")
                         .HasColumnType("nvarchar(max)");
@@ -514,11 +637,17 @@ namespace PickGo_backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsUrgent")
+                        .HasColumnType("bit");
+
                     b.Property<double>("PickupLat")
                         .HasColumnType("float");
 
                     b.Property<double>("PickupLng")
                         .HasColumnType("float");
+
+                    b.Property<bool>("ReadyForPickup")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Source")
                         .IsRequired()
@@ -545,9 +674,13 @@ namespace PickGo_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<int>("DurationInDays")
                         .HasColumnType("int");
@@ -557,14 +690,17 @@ namespace PickGo_backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("UserType")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -574,6 +710,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
+                            CreatedAt = new DateTime(2025, 12, 20, 17, 7, 30, 56, DateTimeKind.Utc).AddTicks(5856),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -584,6 +721,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
+                            CreatedAt = new DateTime(2025, 12, 20, 17, 7, 30, 56, DateTimeKind.Utc).AddTicks(5864),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -594,6 +732,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
+                            CreatedAt = new DateTime(2025, 12, 20, 17, 7, 30, 56, DateTimeKind.Utc).AddTicks(5870),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -604,6 +743,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
+                            CreatedAt = new DateTime(2025, 12, 20, 17, 7, 30, 56, DateTimeKind.Utc).AddTicks(5873),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -614,6 +754,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
+                            CreatedAt = new DateTime(2025, 12, 20, 17, 7, 30, 56, DateTimeKind.Utc).AddTicks(5875),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -624,6 +765,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
+                            CreatedAt = new DateTime(2025, 12, 20, 17, 7, 30, 56, DateTimeKind.Utc).AddTicks(5878),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -640,6 +782,9 @@ namespace PickGo_backend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -667,6 +812,9 @@ namespace PickGo_backend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SubscriptionId")
                         .HasColumnType("int");
@@ -771,15 +919,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ba824b45-c2c9-4327-b7bb-ac2d27388fdd",
+                            ConcurrencyStamp = "7caf19a9-8a2a-4610-a1ba-e7cc0827037c",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMOXqsSchOeZc05df96BItZDLthbp20jbjbpG8z8oevhmcpACrCdm+TmdMYajUz+/g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKGLOdtGwEKXyV0AJPFPlJoiHkVJGrcCHo8UJn8327NnWWcd+O80Y2TefimMRklsxw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "71494f6f-8c43-47e0-ad92-7ed09fcf6823",
+                            SecurityStamp = "87886765-8e01-43dd-b11f-dd16d3f9ad7a",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -792,6 +940,9 @@ namespace PickGo_backend.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PackageID")
                         .HasColumnType("int");
@@ -874,10 +1025,6 @@ namespace PickGo_backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("PickGo_backend.Models.User", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -917,6 +1064,11 @@ namespace PickGo_backend.Migrations
 
             modelBuilder.Entity("PickGo_backend.Models.Courier", b =>
                 {
+                    b.HasOne("PickGo_backend.Models.CourierSubscription", "CurrentSubscription")
+                        .WithOne()
+                        .HasForeignKey("PickGo_backend.Models.Courier", "CurrentSubscriptionId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("PickGo_backend.Models.Supplier", null)
                         .WithMany("Couriers")
                         .HasForeignKey("SupplierId");
@@ -926,6 +1078,8 @@ namespace PickGo_backend.Migrations
                         .HasForeignKey("PickGo_backend.Models.Courier", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("CurrentSubscription");
 
                     b.Navigation("User");
                 });
@@ -946,7 +1100,7 @@ namespace PickGo_backend.Migrations
                     b.HasOne("PickGo_backend.Models.Courier", "Courier")
                         .WithMany("CourierSubscriptions")
                         .HasForeignKey("CourierId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("PickGo_backend.Models.Subscription", "Subscription")
@@ -988,6 +1142,39 @@ namespace PickGo_backend.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PickGo_backend.Models.Dispute", b =>
+                {
+                    b.HasOne("Package", "Package")
+                        .WithMany("Disputes")
+                        .HasForeignKey("PackageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("PickGo_backend.Models.DisputeProof", b =>
+                {
+                    b.HasOne("PickGo_backend.Models.Dispute", "Dispute")
+                        .WithMany("ProofImages")
+                        .HasForeignKey("DisputeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dispute");
+                });
+
+            modelBuilder.Entity("PickGo_backend.Models.DisputeStatusHistory", b =>
+                {
+                    b.HasOne("PickGo_backend.Models.Dispute", "Dispute")
+                        .WithMany("StatusHistory")
+                        .HasForeignKey("DisputeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dispute");
                 });
 
             modelBuilder.Entity("PickGo_backend.Models.Invoice", b =>
@@ -1057,6 +1244,8 @@ namespace PickGo_backend.Migrations
                 {
                     b.Navigation("DeliveryProof");
 
+                    b.Navigation("Disputes");
+
                     b.Navigation("Invoice");
 
                     b.Navigation("ShipmentReview");
@@ -1082,6 +1271,13 @@ namespace PickGo_backend.Migrations
                     b.Navigation("DeliveryProofs");
 
                     b.Navigation("Packages");
+                });
+
+            modelBuilder.Entity("PickGo_backend.Models.Dispute", b =>
+                {
+                    b.Navigation("ProofImages");
+
+                    b.Navigation("StatusHistory");
                 });
 
             modelBuilder.Entity("PickGo_backend.Models.Request", b =>
@@ -1112,8 +1308,6 @@ namespace PickGo_backend.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Supplier");
-
-                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

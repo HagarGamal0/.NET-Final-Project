@@ -11,9 +11,23 @@ namespace PickGo_backend.Repositories
             public CourierRepository(DelieveryAppContext context) : base(context) { }
 
 
-       
-
+        public async Task<IEnumerable<Courier>> GetAllWithLocationsAsync()
+        {
+            return await _table
+                .Include(c => c.Locations)   // Include for locations
+                .ToListAsync();
         }
+
+
+        public async Task<Courier?> GetByIdWithIncludesAsync(int id)
+        {
+            return await _context.Couriers
+                .Include(c => c.CourierSubscriptions)
+                .Include(c => c.CurrentSubscription)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+    }
     }
 
 

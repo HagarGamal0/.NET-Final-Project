@@ -18,8 +18,26 @@ namespace PickGo_backend.Repositries
         }
 
         public async Task<IEnumerable<TEntity>> GetAllAsync() => await _table.ToListAsync();
-        public async Task<TEntity> GetByIdAsync(int id) => await _table.FindAsync(id);
-        public async Task AddAsync(TEntity entity) => await _table.AddAsync(entity);
+
+
+        // ------------------ Get by int ID ------------------
+        public async Task<TEntity?> GetByIdAsync(int id)
+        {
+            return await _table.FindAsync(id);
+        }
+
+        // ------------------ Get by string ID ------------------
+        public async Task<TEntity?> GetByIdAsync(string? id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return null; // optional: return null if no ID
+
+            return await _table.FindAsync(id);
+        }
+
+
+
+            public async Task AddAsync(TEntity entity) => await _table.AddAsync(entity);
         public void Update(TEntity entity) => _table.Update(entity);
         public void Delete(TEntity entity) => _table.Remove(entity);
 
@@ -44,6 +62,11 @@ namespace PickGo_backend.Repositries
             var entity = await _table.FindAsync(id);
             if (entity != null)
                 _table.Remove(entity);
+        }
+
+        public Task<IEnumerable<TEntity>> GetAllAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>>? include = null)
+        {
+            throw new NotImplementedException();
         }
     }
 }

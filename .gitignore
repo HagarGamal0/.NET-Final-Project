@@ -1,11 +1,23 @@
-# Ignore Visual Studio temporary files
+# Visual Studio
 .vs/
-bin/
-obj/
-*.user
 *.suo
+*.user
 *.userosscache
 *.sln.docstates
+<<<<<<< HEAD
+
+# Build outputs
+bin/
+obj/
+
+# .NET
+*.dll
+*.pdb
+
+# OS
+.DS_Store
+Thumbs.db
+=======
 /.vs/PickGo_backend/v17/.suo
 /.vs/PickGo_backend/
 /PickGo_backend/obj/Debug/net8.0/PickGo_backend.AssemblyInfo.cs
@@ -22,3 +34,6 @@ obj/
 /PickGo_backend/bin/
 /.vs/PickGo_backend/v17/DocumentLayout.backup.json
 /.vs/PickGo_backend/v17/DocumentLayout.json
+**/obj/
+**/bin/
+>>>>>>> f72ef72 (chore: Ignore `obj` and `bin` build output directories in .gitignore.)

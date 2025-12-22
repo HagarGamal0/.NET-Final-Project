@@ -1,8 +1,10 @@
-﻿namespace PickGo_backend.DTOs.Courier
+﻿using PickGo_backend.Models.Enums;
+
+namespace PickGo_backend.DTOs.Courier
 {
     public class CourierCompleteProfileDTO
     {
-        public string? VehicleType { get; set; }
+        public VehicleType VehicleType { get; set; }
         public string? LicenseNumber { get; set; }
         public float? MaxWeight { get; set; }
 

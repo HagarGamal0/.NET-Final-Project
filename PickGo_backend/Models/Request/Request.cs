@@ -16,6 +16,7 @@ using System.Collections.Generic;
         public double PickupLat { get; set; }
         public double PickupLng { get; set; }
 
+
         public  int  SupplierId { get; set; }
 
         public virtual  Supplier Supplier { get; set; } = null!;
@@ -24,6 +25,8 @@ using System.Collections.Generic;
         public RequestStatus Status { get; set; }
         = RequestStatus.Pending; //passed on courrier accepntence
         public bool IsUrgent { get; set; } = false;
+        public bool ReadyForPickup { get; set; } = false;
+
 
     }
 

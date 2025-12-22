@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PickGo_backend.Configurations;
 using PickGo_backend.Models;
@@ -20,6 +21,7 @@ namespace PickGo_backend.Context
         public DbSet<CourierLocation>  CourierLocations { get; set; }
         public DbSet<CourierTransaction>  CourierTransactions { get; set; }
         public DbSet<Customer> customers { get; set; }
+        public DbSet<Dispute> Disputes { get; set; }
 
         public DbSet<DeliveryProof>  deliveryProofs { get; set; }
         public DbSet<Package> Packages { get; set; }
@@ -31,10 +33,16 @@ namespace PickGo_backend.Context
         {
             base.OnModelCreating(modelBuilder); // important for Identity tables
 
+
+            // Explicitly map Identity relationships
+     
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new ShipmentReviewConfiguration());
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());
             modelBuilder.ApplyConfiguration(new PackageConfiguration());
+            modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
+            modelBuilder.ApplyConfiguration(new DisputeConfiguration());
+
             modelBuilder.ApplyConfiguration(new SupplierConfiguration());
             modelBuilder.ApplyConfiguration(new CourierConfiguration());
             modelBuilder.ApplyConfiguration(new CourierLocationConfiguration());
