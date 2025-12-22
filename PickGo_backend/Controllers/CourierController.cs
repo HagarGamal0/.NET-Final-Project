@@ -18,11 +18,14 @@ namespace PickGo_backend.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IGraphHopperService _graphHopper;
+        private readonly IEmailService _emailService;
 
-        public CourierController(UnitOfWork unitOfWork, IGraphHopperService graphHopper)
+        public CourierController(UnitOfWork unitOfWork, IGraphHopperService graphHopper , IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _graphHopper = graphHopper;
+            _emailService = emailService;
+
         }
 
         // -------------------- Get Online Couriers --------------------
@@ -95,61 +98,7 @@ namespace PickGo_backend.Controllers
         }
 
         // -------------------- Match Courier --------------------
-        // -------------------- Match Courier --------------------
-        [HttpPost("MatchCourier")]
-        public async Task<IActionResult> MatchCourier([FromBody] CourierMatchRequest request)
-        {
-            var couriers = await _unitOfWork.CourierRepo.GetAllWithLocationsAsync();
-
-            var nearby = couriers
-                .Where(c => c.IsOnline && c.Status == CourierStatus.Approved && c.Locations.Any())
-                .Select(c =>
-                {
-                    var loc = c.Locations.OrderByDescending(l => l.RecordedAt).First();
-                    var distance = GeoHelper.DistanceKm(request.PickupLat, request.PickupLng, loc.Lat, loc.Lng);
-                    return new { Courier = c, Location = loc, Distance = distance };
-                })
-                .Where(x => x.Distance <= 10)
-                .OrderBy(x => x.Distance)
-                .Take(5)
-                .ToList();
-
-            var results = new List<object>();
-
-            foreach (var c in nearby)
-            {
-                // convert enum to lowercase string for GraphHopper
-                var vehicle = c.Courier.VehicleType.ToString().ToLower();
-
-                try
-                {
-                    var (km, eta) = await _graphHopper.GetRouteAsync(
-                        c.Location.Lat, c.Location.Lng,
-                        request.PickupLat, request.PickupLng,
-                        vehicle
-                    );
-
-                    results.Add(new
-                    {
-                        c.Courier.Id,
-                        VehicleType = c.Courier.VehicleType.ToString(),
-                        DistanceKm = Math.Round(km, 2),
-                        EtaMinutes = Math.Round(eta, 1)
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"GraphHopper error for courier {c.Courier.Id}: {ex.Message}");
-                }
-            }
-
-            if (!results.Any())
-                return NotFound("No available route found for nearby couriers.");
-
-            return Ok(results.OrderBy(r => ((dynamic)r).EtaMinutes));
-        }
-
-
+     
 
         [HttpGet("MyAssignedPackages")]
         public async Task<IActionResult> MyAssignedPackages()
@@ -256,13 +205,11 @@ namespace PickGo_backend.Controllers
 
 
         [HttpPost("DeliverPackage/{packageId}")]
-        public async Task<IActionResult> DeliverPackage(
-       int packageId,
-       [FromBody] DeliverPackageDto dto)
+        public async Task<IActionResult> DeliverPackage(int packageId, [FromBody] DeliverPackageDto dto)
         {
             var courier = await GetCourierFromToken();
-
             var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
             if (package == null)
                 return NotFound("Package not found");
 
@@ -270,32 +217,28 @@ namespace PickGo_backend.Controllers
                 return Forbid("Not your package");
 
             if (package.Status != PackageStatus.OutForDelivery)
-                return BadRequest("Package not ready");
+                return BadRequest("Package is not out for delivery");
 
-            // MUST provide one
-            if (string.IsNullOrEmpty(dto.CustomerOTP) &&
-                string.IsNullOrEmpty(dto.SignatureUrl))
-                return BadRequest("OTP or Signature is required");
-
+            // تسجيل أي proof متوفر (توقيع، ملاحظات)
             var proof = new DeliveryProof
             {
                 PackageID = package.Id,
                 CourierID = courier.Id,
                 CustomerID = package.CustomerID,
-                CustomerOTP = dto.CustomerOTP,
-                SignatureUrl = dto.SignatureUrl,
                 DeliveredAt = DateTime.UtcNow
             };
 
             await _unitOfWork.DeliveryProofRepo.AddAsync(proof);
 
-            package.Status = PackageStatus.Delivered;
-            package.DeliveredAt = DateTime.UtcNow;
-
+            // لا نغير حالة الطرد بعد، ننتظر VerifyOTP
             _unitOfWork.PackageRepo.Update(package);
             await _unitOfWork.SaveAsync();
 
-            return Ok("Package delivered successfully");
+            return Ok(new
+            {
+                message = "Delivery proof recorded. Waiting for customer OTP verification.",
+                DeliveryOTP = package.DeliveryOTP // Optional: فقط للمراجعة أثناء التطوير
+            });
         }
 
         [HttpPost("FailDelivery/{packageId}")]
@@ -332,6 +275,69 @@ namespace PickGo_backend.Controllers
             await _unitOfWork.SaveAsync();
 
             return Ok(new { message = "Courier deleted safely" });
+        }
+
+
+        private string GenerateOTP()
+        {
+            return Random.Shared.Next(100000, 999999).ToString();
+        }
+
+
+        [HttpPost("StartDelivery/{packageId}")]
+        public async Task<IActionResult> StartDelivery(int packageId)
+        {
+            var courier = await GetCourierFromToken();
+
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            if (package == null)
+                return NotFound("Package not found");
+
+            if (package.CourierID != courier.Id)
+                return Forbid("Not your package");
+
+            if (package.Status != PackageStatus.Assigned)
+                return BadRequest("Package not ready to start delivery");
+
+            package.Status = PackageStatus.OutForDelivery;
+
+            package.DeliveryOTP = GenerateOTP();
+            package.OTPVerified = false;
+
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            //  Send OTP to customer (later)
+            await _emailService.SendEmailAsync(
+     package.Customer.User.Email,
+     "Your OTP for package delivery",
+     $"Hello {package.Customer.User.UserName},<br>Your OTP for package delivery is: <b>{package.DeliveryOTP}</b>"
+ );
+            return Ok(new
+            {
+                message = "Delivery started",
+                note = "OTP sent to customer"
+            });
+        }
+
+
+
+        [HttpPost("VerifyOTP/{packageId}")]
+        public async Task<IActionResult> VerifyOTP(int packageId, [FromBody] string otp)
+        {
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            if (package == null) return NotFound("Package not found");
+
+            if (package.DeliveryOTP != otp) return BadRequest("Invalid OTP");
+
+            package.OTPVerified = true;
+            package.Status = PackageStatus.Delivered;
+            package.DeliveredAt = DateTime.UtcNow;
+
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok("Package delivered successfully");
         }
     }
 }
