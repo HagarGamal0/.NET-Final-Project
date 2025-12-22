@@ -322,22 +322,46 @@ namespace PickGo_backend.Controllers
 
 
 
-        [HttpPost("VerifyOTP/{packageId}")]
-        public async Task<IActionResult> VerifyOTP(int packageId, [FromBody] string otp)
-        {
-            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
-            if (package == null) return NotFound("Package not found");
+[HttpPost("VerifyOTP/{packageId}")]
+public async Task<IActionResult> VerifyOTP(int packageId, [FromBody] string otp)
+{
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+    if (package == null)
+        return NotFound("Package not found");
 
-            if (package.DeliveryOTP != otp) return BadRequest("Invalid OTP");
+    // ❌ Wrong OTP
+    if (package.DeliveryOTP != otp)
+        return BadRequest("Invalid OTP");
 
-            package.OTPVerified = true;
-            package.Status = PackageStatus.Delivered;
-            package.DeliveredAt = DateTime.UtcNow;
+    // ✅ Correct OTP → mark delivered
+    package.OTPVerified = true;
+    package.Status = PackageStatus.Delivered;
+    package.DeliveredAt = DateTime.UtcNow;
 
-            _unitOfWork.PackageRepo.Update(package);
-            await _unitOfWork.SaveAsync();
+    _unitOfWork.PackageRepo.Update(package);
+    await _unitOfWork.SaveAsync();
 
-            return Ok("Package delivered successfully");
-        }
+    return Ok(new
+    {
+        message = "Package delivered successfully"
+    });
+}
+
+
+[HttpGet("otp-status/{packageId}")]
+public async Task<IActionResult> GetOTPStatus(int packageId)
+{
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+    if (package == null)
+        return NotFound("Package not found");
+
+    return Ok(new
+    {
+        otpVerified = package.OTPVerified,
+        status = package.Status
+    });
+}
+
+
     }
 }

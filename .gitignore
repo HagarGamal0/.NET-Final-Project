@@ -4,6 +4,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+<<<<<<< HEAD
 
 # Build outputs
 bin/
@@ -16,3 +17,23 @@ obj/
 # OS
 .DS_Store
 Thumbs.db
+=======
+/.vs/PickGo_backend/v17/.suo
+/.vs/PickGo_backend/
+/PickGo_backend/obj/Debug/net8.0/PickGo_backend.AssemblyInfo.cs
+/PickGo_backend/obj/Debug/net8.0/PickGo_backend.AssemblyInfoInputs.cache
+/PickGo_backend/obj/Debug/net8.0/PickGo_backend.csproj.AssemblyReference.cache
+/PickGo_backend/obj/Debug/net8.0/PickGo_backend.assets.cache
+/PickGo_backend/obj/Debug/net8.0/rpswa.dswa.cache.json
+/PickGo_backend/obj/PickGo_backend.csproj.nuget.dgspec.json
+/PickGo_backend/obj/Debug/net8.0/PickGo_backend.GeneratedMSBuildEditorConfig.editorconfig
+/PickGo_backend/obj/PickGo_backend.csproj.nuget.g.props
+/PickGo_backend/obj/project.assets.json
+/PickGo_backend/obj/project.nuget.cache
+/PickGo_backend/obj/
+/PickGo_backend/bin/
+/.vs/PickGo_backend/v17/DocumentLayout.backup.json
+/.vs/PickGo_backend/v17/DocumentLayout.json
+**/obj/
+**/bin/
+>>>>>>> f72ef72 (chore: Ignore `obj` and `bin` build output directories in .gitignore.)
