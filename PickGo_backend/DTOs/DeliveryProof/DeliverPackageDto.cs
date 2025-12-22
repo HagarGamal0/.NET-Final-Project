@@ -4,6 +4,6 @@
     {
 
         public string? CustomerOTP { get; set; }
-        public string? SignatureUrl { get; set; }
+        public string? Notes { get; set; }          // Optional, any shipment notes
     }
 }
