@@ -99,11 +99,14 @@ builder.Services.AddScoped<OrderNotificationService>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularApp",
-        policy => policy
-            .WithOrigins("http://localhost:4200")
-            .AllowAnyHeader()
-            .AllowAnyMethod());
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -138,7 +141,7 @@ var app = builder.Build();
 
 
 
-app.UseCors("AllowAngularApp");
+app.UseCors("AllowAll");
 // Middleware pipeline
 // (app.Environment.IsDevelopment())
 //{
