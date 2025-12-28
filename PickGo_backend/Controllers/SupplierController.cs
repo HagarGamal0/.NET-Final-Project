@@ -34,8 +34,8 @@ namespace PickGo_backend.Controllers
         [HttpPost("CreateRequest")]
         public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDTO dto)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.Id == supplierId);
+            var supplierId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.UserId == supplierId);
             if (supplier == null) return NotFound("Supplier not found.");
 
             var request = new Request
