@@ -2,7 +2,7 @@
 {
     public class CourierLocationDto
     {
-        public float Lat { get; set; }
-        public float Lng { get; set; }
+        public double Lat { get; set; }
+        public double Lng { get; set; }
     }
 }

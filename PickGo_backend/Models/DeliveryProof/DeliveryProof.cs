@@ -14,4 +14,5 @@ public class DeliveryProof : BaseModel
     public Courier? Courier { get; set; }
 
     public Package Package { get; set; } // required one-to-one
+    public string? Notes { get; set; }
 }
