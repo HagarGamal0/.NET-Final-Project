@@ -35,5 +35,8 @@ public class Package:BaseModel
     public int ShipmentReviewID { get; set; }
     public virtual ShipmentReview? ShipmentReview { get; set; }
 
-   
+    public string? DeliveryOTP { get; set; }
+    public bool OTPVerified { get; set; } = false; 
+
+
 }

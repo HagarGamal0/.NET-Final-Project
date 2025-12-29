@@ -55,10 +55,10 @@ namespace PickGo_backend.Controllers
                 // Create a new User
                 var user = new User
                 {
-                    UserName = dto.UserName ?? dto.PhoneNumber, // use provided username or phone number
+                    UserName =$"Customer_{dto.PhoneNumber}", // use provided username or phone number
                     PhoneNumber = dto.PhoneNumber,
-                    Email = dto.Email + "@example.com",  // required by Identity
-                    Address = dto.Address
+                    Email = dto.PhoneNumber + "@example.com",  // required by Identity
+                    Address = dto.Address??"Aswan"
                 };
 
                 await _unitOfWork.UserRepo.AddAsync(user);

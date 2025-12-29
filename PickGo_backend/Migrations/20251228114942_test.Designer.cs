@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PickGo_backend.Context;
 
@@ -11,9 +12,11 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    partial class DelieveryAppContextModelSnapshot : ModelSnapshot
+    [Migration("20251228114942_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +48,6 @@ namespace PickGo_backend.Migrations
 
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("PackageID")
                         .HasColumnType("int");
@@ -322,18 +322,11 @@ namespace PickGo_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CompletedDeliveries")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("CurrentSubscriptionId")
                         .HasColumnType("int");
-
-                    b.Property<string>("IdPhotoUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
@@ -342,6 +335,7 @@ namespace PickGo_backend.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LicenseNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LicensePhotoBack")
@@ -350,7 +344,7 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("LicensePhotoFront")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("MaxWeight")
+                    b.Property<float>("MaxWeight")
                         .HasColumnType("real");
 
                     b.Property<string>("PhotoUrl")
@@ -380,9 +374,6 @@ namespace PickGo_backend.Migrations
 
                     b.Property<int>("VehicleType")
                         .HasColumnType("int");
-
-                    b.Property<string>("address")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -728,7 +719,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2564),
+                            CreatedAt = new DateTime(2025, 12, 28, 11, 49, 40, 638, DateTimeKind.Utc).AddTicks(8937),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -739,7 +730,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2569),
+                            CreatedAt = new DateTime(2025, 12, 28, 11, 49, 40, 638, DateTimeKind.Utc).AddTicks(8943),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -750,7 +741,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2574),
+                            CreatedAt = new DateTime(2025, 12, 28, 11, 49, 40, 638, DateTimeKind.Utc).AddTicks(8950),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -761,7 +752,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2576),
+                            CreatedAt = new DateTime(2025, 12, 28, 11, 49, 40, 638, DateTimeKind.Utc).AddTicks(8953),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -772,7 +763,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2579),
+                            CreatedAt = new DateTime(2025, 12, 28, 11, 49, 40, 638, DateTimeKind.Utc).AddTicks(8956),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -783,7 +774,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2581),
+                            CreatedAt = new DateTime(2025, 12, 28, 11, 49, 40, 638, DateTimeKind.Utc).AddTicks(8959),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -937,15 +928,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "86cea5b0-ba58-40f1-a33b-ec4e4af34fa3",
+                            ConcurrencyStamp = "725ab3b6-948b-4fca-adf5-68264087ca18",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMczLQZDUpdxmD5ej3YuTmh3v7exYOBmEhDvxX4KrxZbxYA12d0TDUTp7MH1NQaZhg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEBs2PTDjy+H5rg98ZG5V31eSiMmL29FHYG4RFKIE3awAFoAs3sAatkXdAfjkooQ7HQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2bb10fff-f6d6-4516-bdaf-05ffa3fa37ac",
+                            SecurityStamp = "6bcf6b99-6bcd-4b2b-bfb0-38ee5d556efb",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

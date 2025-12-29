@@ -13,6 +13,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+
+
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddScoped<UnitOfWork>();
@@ -79,6 +82,45 @@ builder.Services.AddHttpClient<IGraphHopperService, GraphHopperService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<OrderNotificationService>();
 
+
+
+
+
+
+//builder.Services.AddHangfire(configuration => configuration
+//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+//    .UseSimpleAssemblyNameTypeSerializer()
+//    .UseRecommendedSerializerSettings()
+//    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+//    {
+//        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+//        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+//        QueuePollInterval = TimeSpan.FromSeconds(15),
+//        UseRecommendedIsolationLevel = true,
+//        DisableGlobalLocks = true
+//    })
+//);
+//builder.Services.AddHangfireServer();
+
+
+
+
+
+
+
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -110,10 +152,13 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+
+
+app.UseCors("AllowAll");
 // Middleware pipeline
- // (app.Environment.IsDevelopment())
+// (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
+app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "PickGo API V1");

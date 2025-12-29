@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PickGo_backend.Context;
 
@@ -11,9 +12,11 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    partial class DelieveryAppContextModelSnapshot : ModelSnapshot
+    [Migration("20251229020216_addnotes")]
+    partial class addnotes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -322,9 +325,6 @@ namespace PickGo_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CompletedDeliveries")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -342,6 +342,7 @@ namespace PickGo_backend.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LicenseNumber")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LicensePhotoBack")
@@ -350,7 +351,7 @@ namespace PickGo_backend.Migrations
                     b.Property<string>("LicensePhotoFront")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("MaxWeight")
+                    b.Property<float>("MaxWeight")
                         .HasColumnType("real");
 
                     b.Property<string>("PhotoUrl")
@@ -380,9 +381,6 @@ namespace PickGo_backend.Migrations
 
                     b.Property<int>("VehicleType")
                         .HasColumnType("int");
-
-                    b.Property<string>("address")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -728,7 +726,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2564),
+                            CreatedAt = new DateTime(2025, 12, 29, 2, 2, 14, 425, DateTimeKind.Utc).AddTicks(5382),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -739,7 +737,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2569),
+                            CreatedAt = new DateTime(2025, 12, 29, 2, 2, 14, 425, DateTimeKind.Utc).AddTicks(5388),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -750,7 +748,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2574),
+                            CreatedAt = new DateTime(2025, 12, 29, 2, 2, 14, 425, DateTimeKind.Utc).AddTicks(5392),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -761,7 +759,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2576),
+                            CreatedAt = new DateTime(2025, 12, 29, 2, 2, 14, 425, DateTimeKind.Utc).AddTicks(5394),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -772,7 +770,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2579),
+                            CreatedAt = new DateTime(2025, 12, 29, 2, 2, 14, 425, DateTimeKind.Utc).AddTicks(5397),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -783,7 +781,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2025, 12, 29, 4, 36, 56, 12, DateTimeKind.Utc).AddTicks(2581),
+                            CreatedAt = new DateTime(2025, 12, 29, 2, 2, 14, 425, DateTimeKind.Utc).AddTicks(5399),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -937,15 +935,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "86cea5b0-ba58-40f1-a33b-ec4e4af34fa3",
+                            ConcurrencyStamp = "6ee60593-e322-4df7-bc89-8540b43a4aae",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMczLQZDUpdxmD5ej3YuTmh3v7exYOBmEhDvxX4KrxZbxYA12d0TDUTp7MH1NQaZhg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGJ1Jpg410OTq5RBHQmm4Cp1QHRdtVOz1WbD8Q1Oc3ua+N9qCWmFfQexhchJlZZauw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "2bb10fff-f6d6-4516-bdaf-05ffa3fa37ac",
+                            SecurityStamp = "5d797186-c651-4865-ac38-b785d0fc2b75",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
