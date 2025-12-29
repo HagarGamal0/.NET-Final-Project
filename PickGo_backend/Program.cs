@@ -35,6 +35,19 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 .AddEntityFrameworkStores<DelieveryAppContext>()
 .AddDefaultTokenProviders();
 
+// configure cors policy
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
+
 // AutoMapper
 builder.Services.AddAutoMapper(op => op.AddProfile<MapperConfig>());
 
@@ -109,7 +122,7 @@ var app = builder.Build();
 //}
 
 app.UseHttpsRedirection();
-
+app.UseCors();
 // ✅ Authentication must come before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
