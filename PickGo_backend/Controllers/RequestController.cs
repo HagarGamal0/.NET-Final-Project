@@ -68,22 +68,38 @@ namespace PickGo_backend.Controllers
 
             return Ok(_mapper.Map<RequestReadDTO>(request));
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll(string? search, string sortBy = "date", string sortDir = "desc")
         {
-            var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplierId);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+
+            var supplier = await _unitOfWork.SupplierRepo
+                .GetByExpressionAsync(s => s.UserId == userId);
+
+            if (supplier == null)
+                return Unauthorized("Supplier not found");
+
+            var requests = await _unitOfWork.RequestRepo
+                .GetBySupplierAsync(supplier.Id);
 
             if (!string.IsNullOrEmpty(search))
+            {
                 requests = requests.Where(r =>
                     r.Source.Contains(search) ||
                     r.Packages.Any(p => p.Description.Contains(search))
                 ).ToList();
+            }
 
             requests = sortBy switch
             {
-                "status" => sortDir == "asc" ? requests.OrderBy(r => r.Status).ToList() : requests.OrderByDescending(r => r.Status).ToList(),
-                _ => sortDir == "asc" ? requests.OrderBy(r => r.CreatedAt).ToList() : requests.OrderByDescending(r => r.CreatedAt).ToList()
+                "status" => sortDir == "asc"
+                    ? requests.OrderBy(r => r.Status).ToList()
+                    : requests.OrderByDescending(r => r.Status).ToList(),
+
+                _ => sortDir == "asc"
+                    ? requests.OrderBy(r => r.CreatedAt).ToList()
+                    : requests.OrderByDescending(r => r.CreatedAt).ToList()
             };
 
             return Ok(_mapper.Map<List<RequestReadDTO>>(requests));
