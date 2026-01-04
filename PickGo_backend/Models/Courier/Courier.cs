@@ -37,7 +37,7 @@ namespace PickGo_backend.Models
         // public Package? CurrentPackage { get; set; } // optional
 
         public int? CurrentSubscriptionId { get; set; }
-        public CourierSubscription? CurrentSubscription { get; set; }
+        public virtual CourierSubscription? CurrentSubscription { get; set; }
         public virtual ICollection<Package>? Packages { get; set; }
         public virtual ICollection<DeliveryProof>? DeliveryProofs { get; set; }
         public virtual ICollection<CourierTransaction>? Transactions { get; set; }

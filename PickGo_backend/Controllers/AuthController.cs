@@ -212,31 +212,31 @@ namespace PickGo_backend.Controllers
 
 
 
-        [Authorize(Roles = "Courier")]
-        [HttpPut("Courier/CompleteProfile")]
-        public async Task<IActionResult> CompleteCourierProfile([FromBody] CourierCompleteProfileDTO dto)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            Console.WriteLine($"UserIddddddddddddddddddddddddddd: {userId}");
+        //[Authorize(Roles = "Courier")]
+        //[HttpPut("Courier/CompleteProfile")]
+        //public async Task<IActionResult> CompleteCourierProfile([FromBody] CourierCompleteProfileDTO dto)
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    Console.WriteLine($"UserIddddddddddddddddddddddddddd: {userId}");
 
 
-            var courier = (await _unitOfWork.CourierRepo.GetAllAsync())
-                            .FirstOrDefault(c => c.UserId == userId);
+        //    var courier = (await _unitOfWork.CourierRepo.GetAllAsync())
+        //                    .FirstOrDefault(c => c.UserId == userId);
 
-            if (courier == null)
-                return NotFound("Courier not found.");
+        //    if (courier == null)
+        //        return NotFound("Courier not found.");
 
-            _mapper.Map(dto, courier);
+        //    _mapper.Map(dto, courier);
 
-            _unitOfWork.CourierRepo.Update(courier);
-            await _unitOfWork.SaveAsync();
+        //    _unitOfWork.CourierRepo.Update(courier);
+        //    await _unitOfWork.SaveAsync();
 
-            return Ok(new
-            {
-                message = "Courier profile updated successfully",
-                courierId = courier.Id
-            });
-        }
+        //    return Ok(new
+        //    {
+        //        message = "Courier profile updated successfully",
+        //        courierId = courier.Id
+        //    });
+        //}
 
 
 
@@ -285,24 +285,24 @@ namespace PickGo_backend.Controllers
         }
 
 
-        [Authorize]
-        [HttpPut("EditProfile")]
-        public async Task<IActionResult> EditProfile([FromBody] EditProfileDTO dto)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
+        //[Authorize]
+        //[HttpPut("EditProfile")]
+        //public async Task<IActionResult> EditProfile([FromBody] EditProfileDTO dto)
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var user = await _userManager.FindByIdAsync(userId);
 
-            if (user == null)
-                return NotFound("User not found.");
+        //    if (user == null)
+        //        return NotFound("User not found.");
 
-            _mapper.Map(dto, user);
-            var result = await _userManager.UpdateAsync(user);
+        //    _mapper.Map(dto, user);
+        //    var result = await _userManager.UpdateAsync(user);
 
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
+        //    if (!result.Succeeded)
+        //        return BadRequest(result.Errors);
 
-            return Ok(new { message = "Profile updated successfully." });
-        }
+        //    return Ok(new { message = "Profile updated successfully." });
+        //}
 
 
 

@@ -4,11 +4,11 @@
     {
         // Foreign key to Courier
         public int CourierId { get; set; }
-        public Courier Courier { get; set; } = null!;
+        public virtual Courier Courier { get; set; } = null!;
 
         // Foreign key to Subscription
         public int SubscriptionId { get; set; }
-        public Subscription Subscription { get; set; } = null!;
+        public virtual Subscription Subscription { get; set; } = null!;
 
         // Subscription start and end
         public DateTime StartDate { get; set; } = DateTime.UtcNow;

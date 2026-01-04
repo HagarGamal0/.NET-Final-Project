@@ -16,5 +16,6 @@ namespace PickGo_backend.DTOs.Package
         public PackageStatus Status { get; set; }
         public int RequestID { get; set; }
         public int CustomerID { get; set; }
+        public string CustomerName { get; set; }
     }
 }

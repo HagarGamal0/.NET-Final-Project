@@ -1,6 +1,10 @@
-﻿using AutoMapper;
+﻿
+
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using PickGo_backend.Context;
 using PickGo_backend.DTOs.Courier;
 using PickGo_backend.DTOs.DeliveryProof;
 using PickGo_backend.Helpers;
@@ -21,14 +25,120 @@ namespace PickGo_backend.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly IGraphHopperService _graphHopper;
         private readonly IEmailService _emailService;
+        
 
-        public CourierController(UnitOfWork unitOfWork, IGraphHopperService graphHopper , IEmailService emailService)
+        public CourierController(
+            UnitOfWork unitOfWork,
+            IGraphHopperService graphHopper,
+            IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _graphHopper = graphHopper;
             _emailService = emailService;
-
         }
+
+        //====================== dashboard ==============
+
+        [HttpGet("DashboardSummary")]
+        public async Task<IActionResult> DashboardSummary()
+        {
+            var courier = await GetCurrentCourier();
+            if (courier == null) return NotFound("Courier not found");
+
+            // --- الأرباح ---
+            var deliveredPackages = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p => p.CourierID == courier.Id && p.Status == PackageStatus.Delivered);
+            var totalEarnings = deliveredPackages.Sum(p => p.ShipmentCost);
+
+            // --- الطلبات الحالية ---
+            var currentOrders = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p => p.CourierID == courier.Id &&
+                           (p.Status == PackageStatus.Assigned || p.Status == PackageStatus.OutForDelivery))
+                .Select(p => new
+                {
+                    p.Id,
+                    Status = p.Status.ToString(),
+                    CODAmount = p.ShipmentCost,
+                    DestinationLat = p.Lat,
+                    DestinationLng = p.Lang
+                }).ToList();
+
+            // --- الطلبات المتاحة ---
+            var availableJobs = (await _unitOfWork.PackageRepo.GetAllWithIncludesAsync())
+                .Where(p => p.Status == PackageStatus.Pending)
+                .Select(p => new
+                {
+                    p.Id,
+                    pickupLat = p.Request.PickupLat,
+                    pickupLng = p.Request.PickupLng,
+                    p.ShipmentCost,
+                    CustomerName = p.Customer.User.UserName,
+                    CustomerEmail = p.Customer.User.Email,
+                    DestinationLat = p.Lat,
+                    DestinationLng = p.Lang,
+                    p.Status
+                }).ToList();
+
+            // --- الحالة الحالية ---
+            var availability = new { isAvailable = courier.IsAvailable, isOnline = courier.IsOnline };
+
+            // --- آخر موقع ---
+            var lastLocation = courier.Locations?.OrderBy(l => l.RecordedAt).LastOrDefault();
+            var locationDto = lastLocation != null
+                ? new { lastLocation.Lat, lastLocation.Lng }
+                : null;
+
+            // --- مخلص اليوم (End Shift) ---
+            var today = DateTime.UtcNow.Date;
+            var ordersToday = deliveredPackages
+                .Where(p => p.DeliveredAt.HasValue && p.DeliveredAt.Value.Date == today)
+                .Select(p => new
+                {
+                    p.Id,
+                    time = p.DeliveredAt,
+                    amount = p.ShipmentCost,
+                    status = p.Status.ToString()
+                }).ToList();
+
+            var previousDays = deliveredPackages
+                .Where(p => p.DeliveredAt.HasValue)
+                .GroupBy(p => p.DeliveredAt!.Value.Date)
+                .Select(g => new
+                {
+                    date = g.Key,
+                    ordersCount = g.Count(),
+                    totalAmount = g.Sum(x => x.ShipmentCost)
+                })
+                .OrderByDescending(x => x.date)
+                .Take(7)
+                .ToList();
+
+            return Ok(new
+            {
+                totalEarnings,
+                currentOrders,
+                availableJobs,
+                availability,
+                lastLocation = locationDto,
+                ordersToday,
+                previousDays
+            });
+        }
+
+
+
+        // =====================================================
+        // Helper: Current Courier
+        // =====================================================
+        private async Task<Courier?> GetCurrentCourier()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return null;
+
+            return await _unitOfWork.CourierRepo
+                .GetByExpressionAsync(c => c.UserId == userId);
+        }
+
 
         // -------------------- Get Online Couriers --------------------
         [HttpGet("Online")]
@@ -382,6 +492,7 @@ namespace PickGo_backend.Controllers
         }
 
         //--------------------------- CourierProfile -------------------
+        [Authorize]
         [HttpGet("Profile")]
         public async Task<IActionResult> GetCourierProfile()
         {
@@ -389,15 +500,13 @@ namespace PickGo_backend.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            var courier = await _unitOfWork.CourierRepo
-                .GetByExpressionAsync(c => c.UserId == userId);
+            // جلب الكورير مع البيانات
+            var courier = await _unitOfWork.CourierRepo.GetCourierWithProfileAsync(userId);
 
             if (courier == null)
                 return NotFound("Courier not found");
 
-            // جلب آخر موقع إذا موجود
-            var lastLocation = courier.Locations?.OrderBy(l => l.RecordedAt).LastOrDefault();
-
+            // عمل DTO للبروفايل
             var dto = new CourierCompleteProfileDTO
             {
                 Id = courier.Id.ToString(),
@@ -410,13 +519,20 @@ namespace PickGo_backend.Controllers
                 CompletedDeliveries = courier.CompletedDeliveries,
                 IsAvailable = courier.IsAvailable,
                 IsOnline = courier.IsOnline,
-                Locations = lastLocation != null
-                    ? new CourierLocationDto
+                PhotoUrl = courier.PhotoUrl,
+                Address = courier.address,
+                LicensePhotoFront = courier.LicensePhotoFront,
+                LicensePhotoBack = courier.LicensePhotoBack,
+                VehicleLicensePhotoFront = courier.VehcelLicensePhotoFront,
+                VehicleLicensePhotoBack = courier.VehcelLicensePhotoBack,
+                IdPhotoUrl = courier.IdPhotoUrl,
+                Locations = courier.Locations?
+                    .OrderByDescending(l => l.RecordedAt)
+                    .Select(l => new CourierLocationDto
                     {
-                        Lat = lastLocation.Lat,
-                        Lng = lastLocation.Lng
-                    }
-                    : null
+                        Lat = l.Lat,
+                        Lng = l.Lng
+                    }).ToList()
             };
 
             return Ok(dto);
@@ -424,10 +540,198 @@ namespace PickGo_backend.Controllers
 
 
 
-        //------------------------------------------
+        //------------------------------------------update
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            var uploads = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
 
-        [HttpPut("Profile")]
-        public async Task<IActionResult> UpdateCourierProfile([FromBody] CourierCompleteProfileDTO dto)
+            if (!Directory.Exists(uploads))
+                Directory.CreateDirectory(uploads);
+
+            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+            var path = Path.Combine(uploads, fileName);
+
+            using var stream = new FileStream(path, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return $"/uploads/{fileName}";
+        }
+
+
+        [Authorize]
+        [HttpPut("updateProfile")]
+        public async Task<IActionResult> UpdateCourierProfile(
+    [FromForm] UpdateCourierProfileDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var courier = await _unitOfWork.CourierRepo.GetCourierWithProfileAsync(userId);
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            courier.User.PhoneNumber = dto.Phone ?? courier.User.PhoneNumber;
+            courier.LicenseNumber = dto.LicenseNumber ?? courier.LicenseNumber;
+            courier.address = dto.Address ?? courier.address;
+
+            if (!string.IsNullOrEmpty(dto.VehicleType) &&
+                Enum.TryParse(dto.VehicleType, out VehicleType vt))
+                courier.VehicleType = vt;
+
+            courier.IsAvailable = dto.IsAvailable;
+            courier.IsOnline = dto.IsOnline;
+
+            if (dto.Photo != null)
+                courier.PhotoUrl = await SaveFile(dto.Photo);
+
+            if (dto.LicensePhotoFront != null)
+                courier.LicensePhotoFront = await SaveFile(dto.LicensePhotoFront);
+
+            if (dto.LicensePhotoBack != null)
+                courier.LicensePhotoBack = await SaveFile(dto.LicensePhotoBack);
+
+            if (dto.VehicleLicensePhotoFront != null)
+                courier.VehcelLicensePhotoFront = await SaveFile(dto.VehicleLicensePhotoFront);
+
+            if (dto.VehicleLicensePhotoBack != null)
+                courier.VehcelLicensePhotoBack = await SaveFile(dto.VehicleLicensePhotoBack);
+
+            if (dto.IdPhoto != null)
+                courier.IdPhotoUrl = await SaveFile(dto.IdPhoto);
+
+            _unitOfWork.CourierRepo.Update(courier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { message = "Profile updated successfully" });
+        }
+
+
+        // =====================================================
+        // Toggle Availability (زر واحد)
+        // =====================================================
+        [HttpPost("availability/toggle")]
+        public async Task<IActionResult> ToggleAvailability()
+        {
+            var courier = await GetCurrentCourier();
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            courier.IsAvailable = !courier.IsAvailable;
+            courier.IsOnline = courier.IsAvailable;
+
+            _unitOfWork.CourierRepo.Update(courier);
+            await _unitOfWork.SaveAsync();
+
+            // لو بقى غير متاح → End Shift
+            if (!courier.IsAvailable)
+            {
+                return await EndShiftInternal();
+            }
+
+            return Ok(new
+            {
+                isAvailable = courier.IsAvailable,
+                message = "Courier is now AVAILABLE"
+            });
+        }
+
+        // =====================================================
+        // Get Availability
+        // =====================================================
+        [HttpGet("availability")]
+        public async Task<IActionResult> GetAvailability()
+        {
+            var courier = await GetCurrentCourier();
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            return Ok(new { isAvailable = courier.IsAvailable });
+        }
+
+        // =====================================================
+        // End Shift (API)
+        // =====================================================
+        [HttpPost("endshift")]
+        public async Task<IActionResult> EndShift()
+        {
+            return await EndShiftInternal();
+        }
+
+        // =====================================================
+        // End Shift Logic (مش API)
+        // =====================================================
+        private async Task<IActionResult> EndShiftInternal()
+        {
+            var courier = await GetCurrentCourier();
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            var today = DateTime.UtcNow.Date;
+
+            var orders = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p =>
+                    p.CourierID == courier.Id &&
+                    p.Status == PackageStatus.Delivered &&
+                    p.DeliveredAt.HasValue &&
+                    p.DeliveredAt.Value.Date == today)
+                .Select(p => new
+                {
+                    p.Id,
+                    time = p.DeliveredAt,
+                    amount = p.ShipmentCost,
+                    status = p.Status.ToString()
+                })
+                .ToList();
+
+            var previousDays = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p =>
+                    p.CourierID == courier.Id &&
+                    p.Status == PackageStatus.Delivered &&
+                    p.DeliveredAt.HasValue)
+                .GroupBy(p => p.DeliveredAt!.Value.Date)
+                .Select(g => new
+                {
+                    date = g.Key,
+                    ordersCount = g.Count(),
+                    totalAmount = g.Sum(x => x.ShipmentCost)
+                })
+                .OrderByDescending(x => x.date)
+                .Take(7)
+                .ToList();
+
+            return Ok(new
+            {
+                isAvailable = false,
+                orders,
+                previousDays
+            });
+        }
+
+
+
+
+        //========================== otp-status ===========================
+
+        [HttpGet("otp-status/{packageId}")]
+        public async Task<IActionResult> GetOTPStatus(int packageId)
+        {
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            if (package == null)
+                return NotFound("Package not found");
+
+            return Ok(new
+            {
+                otpVerified = package.OTPVerified,
+                status = package.Status
+            });
+        }
+
+
+
+        // ===================== Active Jobs =====================
+        [HttpGet("ActiveJobs")]
+        public async Task<IActionResult> GetActiveJobs()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
@@ -439,50 +743,25 @@ namespace PickGo_backend.Controllers
             if (courier == null)
                 return NotFound("Courier not found");
 
-            // تحديث الحقول المتاحة في DTO
-            if (!string.IsNullOrEmpty(dto.Phone))
-                courier.User.PhoneNumber = dto.Phone;
+            // جلب الطلبات الحالية (اللي أخدها الكورير)
+            var activeJobs = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p => p.CourierID == courier.Id &&
+                           (p.Status == PackageStatus.Assigned ||
+                            p.Status == PackageStatus.OutForDelivery))
+                .Select(p => new
+                {
+                    p.Id,
+                    Status = p.Status.ToString(),
+                    CODAmount = p.ShipmentCost,
+                    DestinationLat = p.Lat,
+                    DestinationLng = p.Lang,
+                    CustomerName = p.Customer.User.UserName,
+                    CustomerEmail = p.Customer.User.Email
+                })
+                .ToList();
 
-            if (!string.IsNullOrEmpty(dto.LicenseNumber))
-                courier.LicenseNumber = dto.LicenseNumber;
-
-            if (!string.IsNullOrEmpty(dto.VehicleType))
-            {
-                // تحويل الـ string لـ enum إذا لزم الأمر
-                if (Enum.TryParse<VehicleType>(dto.VehicleType, out var vehicleType))
-                    courier.VehicleType = vehicleType;
-            }
-
-            // يمكن تحديث الحالة المتاحة أو أونلاين إذا أحببت
-            courier.IsAvailable = dto.IsAvailable;
-            courier.IsOnline = dto.IsOnline;
-
-            _unitOfWork.CourierRepo.Update(courier);
-            await _unitOfWork.SaveAsync();
-
-            return Ok(new { message = "Profile updated successfully" });
+            return Ok(activeJobs);
         }
-
-
-
-
-
-        //========================== otp-status ===========================
-
-        [HttpGet("otp-status/{packageId}")]
-public async Task<IActionResult> GetOTPStatus(int packageId)
-{
-    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
-    if (package == null)
-        return NotFound("Package not found");
-
-    return Ok(new
-    {
-        otpVerified = package.OTPVerified,
-        status = package.Status
-    });
-}
-
 
     }
 }

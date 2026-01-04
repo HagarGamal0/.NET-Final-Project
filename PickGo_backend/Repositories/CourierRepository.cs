@@ -27,7 +27,15 @@ namespace PickGo_backend.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<Courier?> GetCourierWithProfileAsync(string userId)
+        {
+            return await _context.Couriers
+                .Include(c => c.User)
+                .Include(c => c.Locations)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
     }
-    }
+}
 
 

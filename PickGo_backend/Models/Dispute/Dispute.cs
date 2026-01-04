@@ -9,10 +9,10 @@
         public string DisputeType { get; set; } // Customer / Supplier / Carrier
 
         // Proof images stored as URLs
-        public List<DisputeProof> ProofImages { get; set; } = new();
+        public virtual List<DisputeProof> ProofImages { get; set; } = new();
 
         // Status history
-        public List<DisputeStatusHistory> StatusHistory { get; set; } = new();
+        public virtual List<DisputeStatusHistory> StatusHistory { get; set; } = new();
 
         // Navigation
         public virtual Package Package { get; set; }
