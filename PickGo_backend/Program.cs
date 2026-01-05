@@ -81,6 +81,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddHttpClient<IGraphHopperService, GraphHopperService>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<OrderNotificationService>();
+builder.Services.AddScoped<CourierMatchingService>();
+builder.Services.AddHttpClient<LynxTalismanService>(c => c.Timeout = TimeSpan.FromSeconds(3));
 
 
 
@@ -174,5 +176,44 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<CourierLocationHub>("/hubs/courier");
+
+
+    // LYNX TALISMAN: Ensure DB Schema for AssignmentObservations exists (Manual Migration for Phase 2)
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DelieveryAppContext>();
+        try
+        {
+            var checkTable = "SELECT TOP 1 * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'AssignmentObservations'";
+            using (var command = db.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = checkTable;
+                db.Database.OpenConnection();
+                var result = command.ExecuteScalar();
+                if (result == null)
+                {
+                    var createTable = @"
+                    CREATE TABLE AssignmentObservations (
+                        Id INT IDENTITY(1,1) PRIMARY KEY,
+                        RequestId INT NOT NULL,
+                        CourierId INT NULL,
+                        Explanation NVARCHAR(MAX) NULL,
+                        DecisionSource NVARCHAR(MAX) NOT NULL,
+                        Timestamp DATETIME2 NOT NULL,
+                        CONSTRAINT FK_AssignmentObservations_Requests_RequestId FOREIGN KEY (RequestId) REFERENCES Requests (Id) ON DELETE CASCADE
+                    );
+                    CREATE INDEX IX_AssignmentObservations_RequestId ON AssignmentObservations (RequestId);
+                    ";
+                    command.CommandText = createTable;
+                    command.ExecuteNonQuery();
+                    Console.WriteLine("LYNX TALISMAN: Table AssignmentObservations created manually.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"LYNX TALISMAN: Error checking/creating table: {ex.Message}");
+        }
+    }
 
     app.Run();

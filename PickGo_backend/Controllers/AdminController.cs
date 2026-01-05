@@ -239,6 +239,16 @@ namespace PickGo_backend.Controllers
         }
 
 
+
+        [HttpGet("AssignmentAudits")]
+        public async Task<IActionResult> GetAssignmentAudits()
+        {
+            var audits = await _unitOfWork.AssignmentObservationRepo.GetAllAsync();
+            if (!audits.Any()) return NotFound(new { message = "No assignment audits found." });
+            
+            return Ok(audits.OrderByDescending(a => a.Timestamp));
+        }
+
     }
 }
 
