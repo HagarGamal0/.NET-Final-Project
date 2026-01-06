@@ -10,9 +10,9 @@
 
 
         public int CourierID { get; set; }
-        public Courier Courier { get; set; }
+        public virtual Courier Courier { get; set; }
 
         public int PackageID { get; set; }
-        public Package Package { get; set; }
+        public virtual Package Package { get; set; }
     }
 }

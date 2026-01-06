@@ -22,7 +22,7 @@ public class Package:BaseModel
 
     public int RequestID { get; set; }
     public int? CourierID { get; set; }
-    public ICollection<Dispute> Disputes { get; set; } = new List<Dispute>();
+    public virtual ICollection<Dispute> Disputes { get; set; } = new List<Dispute>();
 
     public virtual Request Request { get; set; } = null!;
     public int CustomerID { get; set; }  // match Customer.Id
@@ -30,7 +30,7 @@ public class Package:BaseModel
     public virtual Courier? Courier { get; set; }
     public virtual Invoice? Invoice { get; set; }
     public virtual DeliveryProof? DeliveryProof { get; set; }
-    public ICollection<CourierTransaction>? Transactions { get; set; }
+    public virtual ICollection<CourierTransaction>? Transactions { get; set; }
 
     public int ShipmentReviewID { get; set; }
     public virtual ShipmentReview? ShipmentReview { get; set; }

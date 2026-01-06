@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PickGo_backend.DTOs;
 using PickGo_backend.DTOs.Admin;
+using PickGo_backend.DTOs.Package;
+using PickGo_backend.DTOs.Request;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
 
@@ -26,7 +28,7 @@ namespace PickGo_backend.Controllers
         public async Task<IActionResult> GetPendingCouriers()
         {
             var pendingCouriers = (await _unitOfWork.CourierRepo.GetAllAsync())
-                                  .Where(c => c.Status == CourierStatus.Pending)
+                                  .Where(c => c.Status == CourierStatus.Pending && c.User != null)
                                   .Select(c => new
                                   {
                                       id = c.Id,
@@ -216,27 +218,101 @@ namespace PickGo_backend.Controllers
             });
         }
 
-        [HttpPost("ResolveDispute/{disputeId}")]
-        public async Task<IActionResult> ResolveDispute(int disputeId, [FromBody] ResolveDisputeDto dto)
+        //[HttpPost("ResolveDispute/{disputeId}")]
+        //public async Task<IActionResult> ResolveDispute(int disputeId, [FromBody] ResolveDisputeDto dto)
+        //{
+        //    var dispute = await _unitOfWork.DisputeRepo.GetByIdAsync(disputeId);
+        //    if (dispute == null) return NotFound(new { message = "Dispute not found." });
+
+        //    dispute.Status = dto.Status;
+        //    dispute.ResolutionNotes = dto.Notes;
+
+        //    // Add status history
+        //    dispute.StatusHistory.Add(new DisputeStatusHistory
+        //    {
+        //        Status = dto.Status,
+        //        ChangedAt = DateTime.UtcNow
+        //    });
+
+        //    _unitOfWork.DisputeRepo.Update(dispute);
+        //    await _unitOfWork.SaveAsync();
+
+        //    return Ok(new { message = "Dispute resolved successfully." });
+        //}
+
+
+        // GET all orders for Admin
+        [HttpGet("orders")]
+        public async Task<IActionResult> GetAllOrdersForAdmin()
         {
-            var dispute = await _unitOfWork.DisputeRepo.GetByIdAsync(disputeId);
-            if (dispute == null) return NotFound(new { message = "Dispute not found." });
+            var orders = await _unitOfWork.RequestRepo.GetAllAsync();
 
-            dispute.Status = dto.Status;
-            dispute.ResolutionNotes = dto.Notes;
+            
+            if (!orders.Any())
+                return NotFound(new { message = "No orders found." });
 
-            // Add status history
-            dispute.StatusHistory.Add(new DisputeStatusHistory
+            var result = new List<RequestReadDTO>();
+
+            foreach (Request o in orders)
             {
-                Status = dto.Status,
-                ChangedAt = DateTime.UtcNow
-            });
+                var dto = new RequestReadDTO
+                {
+                    Id = o.Id,
+                    Source = o.Source,
+                    PickupLat = o.PickupLat,
+                    PickupLng = o.PickupLng,
+                    Status = o.Status, // Pending, Approved, Rejected
+                    CreatedAt = o.CreatedAt,
+                    SupplierId = o.SupplierId,
+                    SupplierName = o.Supplier.User.UserName,
+                    Packages = o.Packages.Any() ? o.Packages.Select(p => new PackageReadDTO
+                    {
+                        Description = p.Description,
+                        Weight = p.Weight,
+                        Fragile = p.Fragile,
+                        ShipmentCost = p.ShipmentCost,
+                        Destination = p.Destination,
+                        Lat = p.Lat,
+                        Lang = p.Lang,
+                        CustomerID = p.CustomerID,
+                        CustomerName = p.Customer.User.UserName,
+                        Id = p.Id,
+                        Status = p.Status
+                    }).ToList() : new()
+                };
 
-            _unitOfWork.DisputeRepo.Update(dispute);
+                result.Add(dto);
+
+            }
+            return Ok(result);
+        }
+
+        // Approve a request
+        [HttpPost("approve/{id}")]
+        public async Task<IActionResult> ApproveRequest(int id)
+        {
+            var request = await _unitOfWork.RequestRepo.GetByIdAsync(id);
+            if (request == null) return NotFound();
+
+            request.Status = RequestStatus.Approved;
             await _unitOfWork.SaveAsync();
 
-            return Ok(new { message = "Dispute resolved successfully." });
+            return Ok();
         }
+
+        [HttpPost("reject/{id}")]
+        public async Task<IActionResult> RejectRequest(int id)
+        {
+            var request = await _unitOfWork.RequestRepo.GetByIdAsync(id);
+            if (request == null) return NotFound();
+
+            request.Status = RequestStatus.Rejected;
+            await _unitOfWork.SaveAsync();
+
+            return Ok();
+        }
+
+
 
 
     }

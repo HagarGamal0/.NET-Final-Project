@@ -12,7 +12,7 @@ namespace PickGo_backend.Models
         public int MaxOrders { get; set; }
 
         // Many-to-many relationships
-        public ICollection<CourierSubscription> CourierSubscriptions { get; set; } = new List<CourierSubscription>();
-        public ICollection<SupplierSubscription> SupplierSubscriptions { get; set; } = new List<SupplierSubscription>();
+        public virtual ICollection<CourierSubscription> CourierSubscriptions { get; set; } = new List<CourierSubscription>();
+        public virtual ICollection<SupplierSubscription> SupplierSubscriptions { get; set; } = new List<SupplierSubscription>();
     }
 }

@@ -22,7 +22,7 @@ builder.Services.AddScoped<UnitOfWork>();
 
 // Database
 builder.Services.AddDbContext<DelieveryAppContext>(options =>
-    options.UseSqlServer(
+    options.UseLazyLoadingProxies().UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
     )
 );

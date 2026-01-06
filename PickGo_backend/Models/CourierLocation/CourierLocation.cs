@@ -6,6 +6,6 @@
         public float Lat { get; set; }
         public float Lng { get; set; }
         public DateTime RecordedAt { get; set; }
-        public Courier Courier { get; set; } = null!;
+        public virtual Courier Courier { get; set; } = null!;
     }
 }

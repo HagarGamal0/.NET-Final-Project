@@ -12,7 +12,7 @@ namespace PickGo_backend.Models
         public string? InvoiceNumber { get; set; } 
         public int PackageID { get; set; }
 
-        public Package? Package { get; set; }
+        public virtual Package? Package { get; set; }
 
     }
 }

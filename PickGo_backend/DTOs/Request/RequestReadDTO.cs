@@ -11,6 +11,7 @@ namespace PickGo_backend.DTOs.Request
         public double PickupLat { get; set; }
         public double PickupLng { get; set; }
         public int SupplierId { get; set; }
+        public string SupplierName { get; set; }
         public RequestStatus Status { get; set; }
 
         public List<PackageReadDTO>? Packages { get; set; }
