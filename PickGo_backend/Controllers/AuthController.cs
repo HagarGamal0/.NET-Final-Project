@@ -8,6 +8,7 @@ using PickGo_backend.DTOs;
 using PickGo_backend.DTOs.Courier;
 using PickGo_backend.DTOs.Supplier;
 using PickGo_backend.DTOs.User;
+using PickGo_backend.DTOs.Customer;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
 using System.IdentityModel.Tokens.Jwt;
@@ -157,6 +158,62 @@ namespace PickGo_backend.Controllers
         {
             return await LoginUser(dto, "Admin");
         }
+
+       [HttpPost("Login/Customer")]
+public async Task<IActionResult> LoginCustomerWithOtp(
+    [FromBody] CustomerOtpVerifyDTO dto)
+{
+    // 1️⃣ Find customer by phone number
+    var customer = await _unitOfWork.CustomerRepo
+        .GetByExpressionAsync(c => c.PhoneNumber == dto.PhoneNumber);
+
+    if (customer == null)
+        return Unauthorized("Customer not found");
+
+    // 2️⃣ TEMP OTP CHECK (replace later with real OTP logic)
+    if (dto.Otp != "1234")
+        return Unauthorized("Invalid OTP");
+
+    // 3️⃣ Load related Identity user
+    var user = await _userManager.FindByIdAsync(customer.UserId);
+    if (user == null)
+        return Unauthorized("User not found");
+
+    // 4️⃣ Ensure role exists
+    if (!await _userManager.IsInRoleAsync(user, "Customer"))
+        await _userManager.AddToRoleAsync(user, "Customer");
+
+    // 5️⃣ Create JWT (SAME STYLE AS OTHERS)
+    var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id),
+        new Claim(ClaimTypes.Name, user.UserName ?? dto.PhoneNumber),
+        new Claim(ClaimTypes.Email, user.Email ?? ""),
+        new Claim(ClaimTypes.Role, "Customer"),
+        new Claim("customerId", customer.Id.ToString())
+    };
+
+    var key = new SymmetricSecurityKey(
+        Encoding.ASCII.GetBytes(_configuration["Jwt:Key"])
+    );
+
+    var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+    var token = new JwtSecurityToken(
+        claims: claims,
+        expires: DateTime.UtcNow.AddMinutes(
+            int.Parse(_configuration["Jwt:ExpiresInMinutes"])
+        ),
+        signingCredentials: creds
+    );
+
+    return Ok(new
+    {
+        token = new JwtSecurityTokenHandler().WriteToken(token),
+        customerId = customer.Id,
+        role = "Customer"
+    });
+}
 
         private async Task<IActionResult> LoginUser(UserLoginDTO dto, string role)
         {

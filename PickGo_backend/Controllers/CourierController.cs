@@ -128,20 +128,32 @@ namespace PickGo_backend.Controllers
 
         //====================================== AcceptPackage ===========================
         [HttpPost("AcceptPackage/{packageId}")]
-        public async Task<IActionResult> AcceptPackage(int packageId)
-        {
-            var courier = await GetCourierFromToken();
-            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+public async Task<IActionResult> AcceptPackage(int packageId)
+{
+    var courier = await GetCourierFromToken();
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
 
-            if (package == null || package.CourierID != courier.Id)
-                return NotFound();
+    if (package == null)
+        return NotFound("Package not found");
 
-            package.Status = PackageStatus.Assigned;
-            _unitOfWork.PackageRepo.Update(package);
-            await _unitOfWork.SaveAsync();
+    if (package.Status != PackageStatus.Pending)
+        return BadRequest("Package is no longer available");
 
-            return Ok("Package accepted");
-        }
+    // 🔥 ASSIGN HERE
+    package.CourierID = courier.Id;
+    package.Status = PackageStatus.Assigned;
+
+    _unitOfWork.PackageRepo.Update(package);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(new
+    {
+        message = "Package accepted",
+        packageId = package.Id,
+        courierId = courier.Id
+    });
+}
+
 
         //=========================================================================
 
@@ -201,29 +213,52 @@ namespace PickGo_backend.Controllers
         //===================================================================
 
         [HttpPost("DeliverPackage/{packageId}")]
-        public async Task<IActionResult> DeliverPackage(int packageId, [FromBody] DeliverPackageDto dto)
+public async Task<IActionResult> DeliverPackage(int packageId, [FromBody] DeliverPackageDto dto)
+{
+    var courier = await GetCourierFromToken();
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
+    if (package == null)
+        return NotFound("Package not found");
+
+    if (package.CourierID != courier.Id)
+        return Forbid();
+
+    if (package.Status != PackageStatus.OutForDelivery)
+        return BadRequest("Package not out for delivery");
+
+    // ✅ CHECK IF PROOF ALREADY EXISTS
+    var existingProof = (await _unitOfWork.DeliveryProofRepo.GetAllAsync())
+        .FirstOrDefault(p => p.PackageID == package.Id);
+
+    if (existingProof == null)
+    {
+        var proof = new DeliveryProof
         {
-            var courier = await GetCourierFromToken();
-            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
-            if (package == null) return NotFound("Package not found");
-            if (package.CourierID != courier.Id) return Forbid();
-            if (package.Status != PackageStatus.OutForDelivery) return BadRequest("Package not out for delivery");
+            PackageID = package.Id,
+            CourierID = courier.Id,
+            CustomerID = package.CustomerID,
+            DeliveredAt = DateTime.UtcNow,
+            Notes = dto.Notes
+        };
 
-            var proof = new DeliveryProof
-            {
-                PackageID = package.Id,
-                CourierID = courier.Id,
-                CustomerID = package.CustomerID,
-                DeliveredAt = DateTime.UtcNow,
-                Notes = dto.Notes
-            };
+        await _unitOfWork.DeliveryProofRepo.AddAsync(proof);
+    }
+    else
+    {
+        // Optional safe update (no duplicate insert)
+        existingProof.DeliveredAt = DateTime.UtcNow;
+        existingProof.Notes = dto.Notes;
 
-            await _unitOfWork.DeliveryProofRepo.AddAsync(proof);
-            _unitOfWork.PackageRepo.Update(package);
-            await _unitOfWork.SaveAsync();
+        _unitOfWork.DeliveryProofRepo.Update(existingProof);
+    }
 
-            return Ok(new { message = "Delivery proof recorded, waiting OTP" });
-        }
+    _unitOfWork.PackageRepo.Update(package);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(new { message = "Delivery proof recorded, waiting OTP" });
+}
+
 
 
         //=========================================================================
@@ -422,6 +457,150 @@ namespace PickGo_backend.Controllers
             return Ok(dto);
         }
 
+
+        // ================= Dashboard Summary =================
+[HttpGet("DashboardSummary")]
+public async Task<IActionResult> GetDashboardSummary()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    var packages = await _unitOfWork.PackageRepo.GetAllAsync();
+
+    var myPackages = packages.Where(p => p.CourierID == courier.Id);
+
+    return Ok(new
+    {
+        activeJobs = myPackages.Count(p =>
+            p.Status == PackageStatus.Assigned ||
+            p.Status == PackageStatus.OutForDelivery),
+
+        completedJobs = myPackages.Count(p =>
+            p.Status == PackageStatus.Delivered),
+
+        totalEarnings = myPackages
+            .Where(p => p.Status == PackageStatus.Delivered)
+            .Sum(p => p.ShipmentCost)
+    });
+}
+
+    // ================= Availability =================
+[HttpGet("availability")]
+public async Task<IActionResult> GetAvailability()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    return Ok(new
+    {
+        isAvailable = courier.IsAvailable
+    });
+}
+
+
+// ================= End Shift =================
+[HttpPost("endshift")]
+public async Task<IActionResult> EndShift()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    // End shift logic
+    courier.IsAvailable = false;
+    courier.IsOnline = false;
+
+    _unitOfWork.CourierRepo.Update(courier);
+    await _unitOfWork.SaveAsync();
+
+    // Optional: return shift summary (frontend already expects arrays safely)
+    var packages = await _unitOfWork.PackageRepo.GetAllAsync();
+
+    var todayOrders = packages
+        .Where(p => p.CourierID == courier.Id &&
+                    p.DeliveredAt != null &&
+                    p.DeliveredAt.Value.Date == DateTime.UtcNow.Date)
+        .ToList();
+
+    return Ok(new
+    {
+        orders = todayOrders.Select(p => new
+        {
+            p.Id,
+            p.ShipmentCost,
+            p.DeliveredAt
+        }),
+        previousDays = Array.Empty<object>()
+    });
+}
+
+// ================= Availability =================
+[HttpPost("availability/toggle")]
+public async Task<IActionResult> ToggleAvailability()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    courier.IsAvailable = !courier.IsAvailable;
+
+    _unitOfWork.CourierRepo.Update(courier);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(new
+    {
+        isAvailable = courier.IsAvailable
+    });
+}
+
+    // ================= Active Jobs =================
+[HttpGet("activeJobs")]
+public async Task<IActionResult> GetActiveJobs()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+        .Where(p =>
+            p.CourierID == courier.Id &&
+            (p.Status == PackageStatus.Assigned ||
+             p.Status == PackageStatus.OutForDelivery))
+        .Select(p => new
+        {
+            p.Id,
+            p.Status,
+            p.ShipmentCost,
+            DestinationLat = p.Lat,
+            DestinationLng = p.Lang
+        })
+        .ToList();
+
+    return Ok(packages);
+}
 
 
         //------------------------------------------

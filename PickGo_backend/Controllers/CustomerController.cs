@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PickGo_backend.DTOs.Customer;
 using PickGo_backend.Models;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PickGo_backend.Controllers
 {
@@ -153,42 +155,82 @@ namespace PickGo_backend.Controllers
 
         }
 
-        [HttpGet("{customerId}/packages")]
-        public async Task<IActionResult> GetCustomerPackages(int customerId)
+        // [HttpGet("{customerId}/packages")]
+        // public async Task<IActionResult> GetCustomerPackages(int customerId)
+        // {
+        //     var customer = await _unitOfWork.CustomerRepo.GetByIdAsync(customerId);
+        //     if (customer == null) return NotFound("Customer not found.");
+
+        //     var packages = await _unitOfWork.PackageRepo.GetAllAsync(include: p => p.Include(p => p.Request).Include(p => p.Courier));
+
+        //     var result = packages
+        //         .Where(p => p.CustomerID == customerId &&
+        //                (p.Status == PackageStatus.Pending ||
+        //                 p.Status == PackageStatus.Assigned ||
+        //                 p.Status == PackageStatus.OutForDelivery))
+        //         .Select(p => new
+        //         {
+        //             p.Id,
+        //             p.Status,
+        //             PickupLat = p.Request.PickupLat,
+        //             PickupLng = p.Request.PickupLng,
+        //             DropLat = p.Lat,
+        //             DropLng = p.Lang,
+        //             p.Destination,
+        //             p.Description,
+        //             p.Weight,
+        //             p.Fragile,
+        //             Courier = p.Courier != null ? new
+        //             {
+        //                 p.Courier.Id,
+        //                 p.Courier.VehicleType,
+        //                 p.Courier.Rating
+        //             } : null
+        //         })
+        //         .ToList();
+
+        //     return Ok(result);
+        // }
+
+        [Authorize]
+[HttpGet("packages")]
+public async Task<IActionResult> GetMyPackages()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var customer = await _unitOfWork.CustomerRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (customer == null)
+        return NotFound("Customer not found");
+
+    var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+        .Where(p => p.CustomerID == customer.Id)
+        .Select(p => new
         {
-            var customer = await _unitOfWork.CustomerRepo.GetByIdAsync(customerId);
-            if (customer == null) return NotFound("Customer not found.");
+            p.Id,
+            p.Status,
+            p.Description,
+            p.Weight,
+            PickupLat = p.Request.PickupLat,
+            PickupLng = p.Request.PickupLng,
+            DropLat = p.Lat,
+            DropLng = p.Lang,
+            Courier = p.Courier != null ? new
+            {
+                p.Courier.Id,
+                p.Courier.VehicleType,
+                p.Courier.Rating
+            } : null
+        })
+        .ToList();
 
-            var packages = await _unitOfWork.PackageRepo.GetAllAsync(include: p => p.Include(p => p.Request).Include(p => p.Courier));
+    return Ok(packages);
+}
 
-            var result = packages
-                .Where(p => p.CustomerID == customerId &&
-                       (p.Status == PackageStatus.Pending ||
-                        p.Status == PackageStatus.Assigned ||
-                        p.Status == PackageStatus.OutForDelivery))
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Status,
-                    PickupLat = p.Request.PickupLat,
-                    PickupLng = p.Request.PickupLng,
-                    DropLat = p.Lat,
-                    DropLng = p.Lang,
-                    p.Destination,
-                    p.Description,
-                    p.Weight,
-                    p.Fragile,
-                    Courier = p.Courier != null ? new
-                    {
-                        p.Courier.Id,
-                        p.Courier.VehicleType,
-                        p.Courier.Rating
-                    } : null
-                })
-                .ToList();
 
-            return Ok(result);
-        }
         [HttpGet("{customerId}/packages/track")]
 
         // -------------------- UC-CUS-03: Track Package (Real-time) --------------------
@@ -222,7 +264,9 @@ namespace PickGo_backend.Controllers
                     package.Courier.Id,
                     package.Courier.VehicleType,
                     package.Courier.Rating,
-                    package.Courier.IsOnline
+                    package.Courier.IsOnline,
+                    package.OTPVerified,
+                    package.DeliveryOTP
                 } : null
             });
         }
@@ -275,5 +319,7 @@ namespace PickGo_backend.Controllers
             return Ok(new { message = "Rating submitted successfully." });
 
         }
+
+        
     }
 }
