@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PickGo_backend.Configurations;
 using PickGo_backend.Models;
+using PickGo_backend.Models.Lynx;
 using System.Net;
 
 
@@ -22,6 +23,7 @@ namespace PickGo_backend.Context
         public DbSet<CourierTransaction>  CourierTransactions { get; set; }
         public DbSet<Customer> customers { get; set; }
         public DbSet<Dispute> Disputes { get; set; }
+        public DbSet<AssignmentObservation> AssignmentObservations { get; set; }
 
         public DbSet<DeliveryProof>  deliveryProofs { get; set; }
         public DbSet<Package> Packages { get; set; }

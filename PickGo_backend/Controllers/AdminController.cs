@@ -25,16 +25,25 @@ namespace PickGo_backend.Controllers
         [HttpGet("PendingCouriers")]
         public async Task<IActionResult> GetPendingCouriers()
         {
-            // Fetch all couriers with Pending status
             var pendingCouriers = (await _unitOfWork.CourierRepo.GetAllAsync())
                                   .Where(c => c.Status == CourierStatus.Pending)
                                   .Select(c => new
                                   {
-                                      c.Id,
-                                      c.UserId,
-                                      c.VehicleType,
-                                      c.LicenseNumber,
-                                      c.Status
+                                      id = c.Id,
+                                      name = c.User.UserName, 
+                                      email = c.User.Email, 
+                                      phone = c.User.PhoneNumber,
+                                      passWord =c.User.PasswordHash,
+                                      vehicleType = c.VehicleType.ToString(), 
+                                      licenseNumber = c.LicenseNumber,
+                                      maxWeight = c.MaxWeight,
+                                      photoUrl = c.PhotoUrl,
+                                      licensePhotoFront = c.LicensePhotoFront,
+                                      licensePhotoBack = c.LicensePhotoBack,
+                                      appliedAt = c.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss"), 
+                                      address = c.User.Address,
+                                      birthDate = c.User.BirthDate,
+                                      gender = c.User.Gender.ToString() 
                                   })
                                   .ToList();
 
@@ -229,6 +238,16 @@ namespace PickGo_backend.Controllers
             return Ok(new { message = "Dispute resolved successfully." });
         }
 
+
+
+        [HttpGet("AssignmentAudits")]
+        public async Task<IActionResult> GetAssignmentAudits()
+        {
+            var audits = await _unitOfWork.AssignmentObservationRepo.GetAllAsync();
+            if (!audits.Any()) return NotFound(new { message = "No assignment audits found." });
+            
+            return Ok(audits.OrderByDescending(a => a.Timestamp));
+        }
 
     }
 }

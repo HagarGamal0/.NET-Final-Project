@@ -6,8 +6,7 @@
         public string UserId { get; set; } = null!;
         public string PhoneNumber { get; set; } = null!;  // explicitly show phone number
         public string? Address { get; set; }
-        public string? UserName { get; set; }  // optional user-defined name
-
+        public string? UserName { get; set; }  // optional user-defined name        
         public int PackagesCount { get; set; }
     }
 

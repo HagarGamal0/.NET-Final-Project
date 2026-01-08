@@ -22,6 +22,7 @@ namespace PickGo_backend
         private CustomerRepository _customerRepo;
         private RoleRepository _roleRepo;
         private DisputeRepository _disputeRepo;
+        private AssignmentObservationRepository _assignmentObservationRepo;
 
         public UnitOfWork(DelieveryAppContext db)
         {
@@ -147,6 +148,16 @@ namespace PickGo_backend
                 if (_customerRepo == null)
                     _customerRepo = new CustomerRepository(_db);
                 return _customerRepo;
+            }
+        }
+
+        public AssignmentObservationRepository AssignmentObservationRepo
+        {
+            get
+            {
+                if (_assignmentObservationRepo == null)
+                    _assignmentObservationRepo = new AssignmentObservationRepository(_db);
+                return _assignmentObservationRepo;
             }
         }
 

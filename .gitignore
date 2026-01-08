@@ -37,3 +37,4 @@ Thumbs.db
 **/obj/
 **/bin/
 >>>>>>> f72ef72 (chore: Ignore `obj` and `bin` build output directories in .gitignore.)
+obj/

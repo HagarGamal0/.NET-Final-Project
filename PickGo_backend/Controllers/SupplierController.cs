@@ -20,22 +20,24 @@ namespace PickGo_backend.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly OrderNotificationService _notificationService;
-        private readonly IGraphHopperService _graphHopper;
+        private readonly CourierMatchingService _matchingService;
+        private readonly LynxTalismanService _lynxService;
 
-
-        public SupplierController(UnitOfWork unitOfWork, IMapper mapper, OrderNotificationService notificationService)
+        public SupplierController(UnitOfWork unitOfWork, IMapper mapper, OrderNotificationService notificationService, CourierMatchingService matchingService, LynxTalismanService lynxService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _notificationService = notificationService;
+            _matchingService = matchingService;
+            _lynxService = lynxService;
         }
 
         // -------------------- UC-SUP-02: Create New Parcel Request --------------------
         [HttpPost("CreateRequest")]
         public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDTO dto)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.Id == supplierId);
+            var supplierId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.UserId == supplierId);
             if (supplier == null) return NotFound("Supplier not found.");
 
             var request = new Request
@@ -114,6 +116,9 @@ namespace PickGo_backend.Controllers
 
             await _notificationService.NotifyCourierNearby(request.Id);
 
+            // Lynx Talisman Observation
+            await _lynxService.ExplainAssignmentAsync(request.Id, courier.Id, "SUPPLIER");
+
             return Ok(new { message = $"Courier {courier.Id} assigned successfully" });
         }
 
@@ -173,56 +178,41 @@ namespace PickGo_backend.Controllers
         [HttpPost("MatchCourier")]
         public async Task<IActionResult> MatchCourier([FromBody] CourierMatchRequest request)
         {
-            var couriers = await _unitOfWork.CourierRepo.GetAllWithLocationsAsync();
-
-            var nearby = couriers
-                .Where(c => c.IsOnline && c.Status == CourierStatus.Approved && c.Locations.Any())
-                .Select(c =>
-                {
-                    var loc = c.Locations.OrderByDescending(l => l.RecordedAt).First();
-                    var distance = GeoHelper.DistanceKm(request.PickupLat, request.PickupLng, loc.Lat, loc.Lng);
-                    return new { Courier = c, Location = loc, Distance = distance };
-                })
-                .Where(x => x.Distance <= 10)
-                .OrderBy(x => x.Distance)
-                .Take(5)
-                .ToList();
-
-            var results = new List<object>();
-
-            foreach (var c in nearby)
-            {
-                // convert enum to lowercase string for GraphHopper
-                var vehicle = c.Courier.VehicleType.ToString().ToLower();
-
-                try
-                {
-                    var (km, eta) = await _graphHopper.GetRouteAsync(
-                        c.Location.Lat, c.Location.Lng,
-                        request.PickupLat, request.PickupLng,
-                        vehicle
-                    );
-
-                    results.Add(new
-                    {
-                        c.Courier.Id,
-                        VehicleType = c.Courier.VehicleType.ToString(),
-                        DistanceKm = Math.Round(km, 2),
-                        EtaMinutes = Math.Round(eta, 1)
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"GraphHopper error for courier {c.Courier.Id}: {ex.Message}");
-                }
-            }
+            var results = await _matchingService.GetRankedCouriersAsync(request.PickupLat, request.PickupLng);
 
             if (!results.Any())
                 return NotFound("No available route found for nearby couriers.");
 
-            return Ok(results.OrderBy(r => ((dynamic)r).EtaMinutes));
+            return Ok(results.Select(r => new
+            {
+                r.Courier.Id,
+                VehicleType = r.Courier.VehicleType.ToString(),
+                DistanceKm = r.DistanceKm,
+                EtaMinutes = r.EtaMinutes
+            }));
         }
 
 
+
+        [HttpGet("Explanation/{requestId}")]
+        public async Task<IActionResult> GetExplanation(int requestId)
+        {
+            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
+
+            if (request == null) return NotFound("Request not found");
+            if (request.SupplierId != supplierId) return Unauthorized();
+
+            var obs = await _unitOfWork.AssignmentObservationRepo.GetLatestForRequest(requestId);
+            if (obs == null) return NotFound("No explanation found for this request.");
+
+            return Ok(new
+            {
+                obs.RequestId,
+                obs.Explanation,
+                obs.Timestamp,
+                obs.DecisionSource
+            });
+        }
     }
 }

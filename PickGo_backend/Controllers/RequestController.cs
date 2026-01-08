@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PickGo_backend.DTOs.Request;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
+using PickGo_backend.Services; // Added for LynxTalismanService
 using System.Security.Claims;
 
 namespace PickGo_backend.Controllers
@@ -15,11 +16,13 @@ namespace PickGo_backend.Controllers
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly LynxTalismanService _lynxService;
 
-        public RequestController(UnitOfWork unitOfWork, IMapper mapper)
+        public RequestController(UnitOfWork unitOfWork, IMapper mapper, LynxTalismanService lynxService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _lynxService = lynxService;
         }
 
         [HttpPost]
@@ -63,6 +66,9 @@ namespace PickGo_backend.Controllers
                     courier.IsAvailable = false;
                     request.Status = RequestStatus.Accepted;
                     await _unitOfWork.SaveAsync();
+
+                    // Lynx Talisman Observation (SYSTEM)
+                    await _lynxService.ExplainAssignmentAsync(request.Id, courier.Id, "SYSTEM");
                 }
             }
 
@@ -137,6 +143,9 @@ namespace PickGo_backend.Controllers
 
             request.Status = RequestStatus.Assigned;
             await _unitOfWork.SaveAsync();
+
+            // Lynx Talisman Observation (SUPPLIER)
+            await _lynxService.ExplainAssignmentAsync(request.Id, courierId, "SUPPLIER");
 
             return Ok(new { message = "Rider assigned successfully" });
         }

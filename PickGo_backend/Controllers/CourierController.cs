@@ -7,7 +7,9 @@ using PickGo_backend.Helpers;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
 using PickGo_backend.Services;
+using System.Linq;
 using System.Security.Claims;
+
 
 namespace PickGo_backend.Controllers
 {
@@ -98,54 +100,62 @@ namespace PickGo_backend.Controllers
         }
 
         // -------------------- Match Courier --------------------
-     
+
 
         [HttpGet("MyAssignedPackages")]
         public async Task<IActionResult> MyAssignedPackages()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var courier = await _unitOfWork.CourierRepo
-                .GetByExpressionAsync(c => c.UserId == userId);
-
-            if (courier == null)
-                return NotFound("Courier not found");
+            var courier = await _unitOfWork.CourierRepo.GetByExpressionAsync(c => c.UserId == userId);
+            if (courier == null) return NotFound("Courier not found");
 
             var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
                 .Where(p => p.CourierID == courier.Id &&
-                       (p.Status == PackageStatus.Assigned ||
-                        p.Status == PackageStatus.PickupInProgress ||
-                        p.Status == PackageStatus.OutForDelivery))
+                           (p.Status == PackageStatus.Assigned ||
+                            p.Status == PackageStatus.OutForDelivery))
                 .Select(p => new
                 {
                     p.Id,
                     Status = p.Status.ToString(),
-                    CODAmount = p.ShipmentCost,  
-                    Destination = p.Destination,
-                    DropLat = p.Lat,
-                    DropLng = p.Lang
+                    CODAmount = p.ShipmentCost,
+                    DestinationLat = p.Lat,
+                    DestinationLng = p.Lang
                 })
                 .ToList();
 
             return Ok(packages);
         }
 
-
+        //====================================== AcceptPackage ===========================
         [HttpPost("AcceptPackage/{packageId}")]
-        public async Task<IActionResult> AcceptPackage(int packageId)
-        {
-            var courier = await GetCourierFromToken();
-            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+public async Task<IActionResult> AcceptPackage(int packageId)
+{
+    var courier = await GetCourierFromToken();
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
 
-            if (package == null || package.CourierID != courier.Id)
-                return NotFound();
+    if (package == null)
+        return NotFound("Package not found");
 
-            package.Status = PackageStatus.Assigned;
-            _unitOfWork.PackageRepo.Update(package);
-            await _unitOfWork.SaveAsync();
+    if (package.Status != PackageStatus.Pending)
+        return BadRequest("Package is no longer available");
 
-            return Ok("Package accepted");
-        }
+    // 🔥 ASSIGN HERE
+    package.CourierID = courier.Id;
+    package.Status = PackageStatus.Assigned;
 
+    _unitOfWork.PackageRepo.Update(package);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(new
+    {
+        message = "Package accepted",
+        packageId = package.Id,
+        courierId = courier.Id
+    });
+}
+
+
+        //=========================================================================
 
         [HttpPost("RejectPackage/{packageId}")]
         public async Task<IActionResult> RejectPackage(int packageId, [FromBody] string? reason)
@@ -166,10 +176,6 @@ namespace PickGo_backend.Controllers
         }
 
 
-
-
-
-
         private async Task<Courier> GetCourierFromToken()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -186,6 +192,7 @@ namespace PickGo_backend.Controllers
             return courier;
         }
 
+        //==========================================================================
 
         [HttpPost("UpdateStatus/{packageId}")]
         public async Task<IActionResult> UpdateStatus(int packageId, PackageStatus status)
@@ -203,43 +210,58 @@ namespace PickGo_backend.Controllers
             return Ok("Status updated");
         }
 
+        //===================================================================
 
         [HttpPost("DeliverPackage/{packageId}")]
-        public async Task<IActionResult> DeliverPackage(int packageId, [FromBody] DeliverPackageDto dto)
+public async Task<IActionResult> DeliverPackage(int packageId, [FromBody] DeliverPackageDto dto)
+{
+    var courier = await GetCourierFromToken();
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+
+    if (package == null)
+        return NotFound("Package not found");
+
+    if (package.CourierID != courier.Id)
+        return Forbid();
+
+    if (package.Status != PackageStatus.OutForDelivery)
+        return BadRequest("Package not out for delivery");
+
+    // ✅ CHECK IF PROOF ALREADY EXISTS
+    var existingProof = (await _unitOfWork.DeliveryProofRepo.GetAllAsync())
+        .FirstOrDefault(p => p.PackageID == package.Id);
+
+    if (existingProof == null)
+    {
+        var proof = new DeliveryProof
         {
-            var courier = await GetCourierFromToken();
-            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            PackageID = package.Id,
+            CourierID = courier.Id,
+            CustomerID = package.CustomerID,
+            DeliveredAt = DateTime.UtcNow,
+            Notes = dto.Notes
+        };
 
-            if (package == null)
-                return NotFound("Package not found");
+        await _unitOfWork.DeliveryProofRepo.AddAsync(proof);
+    }
+    else
+    {
+        // Optional safe update (no duplicate insert)
+        existingProof.DeliveredAt = DateTime.UtcNow;
+        existingProof.Notes = dto.Notes;
 
-            if (package.CourierID != courier.Id)
-                return Forbid("Not your package");
+        _unitOfWork.DeliveryProofRepo.Update(existingProof);
+    }
 
-            if (package.Status != PackageStatus.OutForDelivery)
-                return BadRequest("Package is not out for delivery");
+    _unitOfWork.PackageRepo.Update(package);
+    await _unitOfWork.SaveAsync();
 
-            // تسجيل أي proof متوفر (توقيع، ملاحظات)
-            var proof = new DeliveryProof
-            {
-                PackageID = package.Id,
-                CourierID = courier.Id,
-                CustomerID = package.CustomerID,
-                DeliveredAt = DateTime.UtcNow
-            };
+    return Ok(new { message = "Delivery proof recorded, waiting OTP" });
+}
 
-            await _unitOfWork.DeliveryProofRepo.AddAsync(proof);
 
-            // لا نغير حالة الطرد بعد، ننتظر VerifyOTP
-            _unitOfWork.PackageRepo.Update(package);
-            await _unitOfWork.SaveAsync();
 
-            return Ok(new
-            {
-                message = "Delivery proof recorded. Waiting for customer OTP verification.",
-                DeliveryOTP = package.DeliveryOTP // Optional: فقط للمراجعة أثناء التطوير
-            });
-        }
+        //=========================================================================
 
         [HttpPost("FailDelivery/{packageId}")]
         public async Task<IActionResult> FailDelivery(int packageId, [FromBody] string reason)
@@ -257,7 +279,7 @@ namespace PickGo_backend.Controllers
             return Ok("Delivery failed");
         }
 
-
+        //==================================================================
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCourier(int id)
         {
@@ -283,72 +305,350 @@ namespace PickGo_backend.Controllers
             return Random.Shared.Next(100000, 999999).ToString();
         }
 
-
+        //=======================================================================
         [HttpPost("StartDelivery/{packageId}")]
         public async Task<IActionResult> StartDelivery(int packageId)
         {
             var courier = await GetCourierFromToken();
-
             var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
-            if (package == null)
-                return NotFound("Package not found");
-
-            if (package.CourierID != courier.Id)
-                return Forbid("Not your package");
-
-            if (package.Status != PackageStatus.Assigned)
-                return BadRequest("Package not ready to start delivery");
+            if (package == null) return NotFound("Package not found");
+            if (package.CourierID != courier.Id) return Forbid();
+            if (package.Status != PackageStatus.Assigned) return BadRequest("Package not ready");
 
             package.Status = PackageStatus.OutForDelivery;
-
-            package.DeliveryOTP = GenerateOTP();
+            package.DeliveryOTP = Random.Shared.Next(100000, 999999).ToString();
             package.OTPVerified = false;
 
             _unitOfWork.PackageRepo.Update(package);
             await _unitOfWork.SaveAsync();
 
-            //  Send OTP to customer (later)
             await _emailService.SendEmailAsync(
-     package.Customer.User.Email,
-     "Your OTP for package delivery",
-     $"Hello {package.Customer.User.UserName},<br>Your OTP for package delivery is: <b>{package.DeliveryOTP}</b>"
- );
-            return Ok(new
-            {
-                message = "Delivery started",
-                note = "OTP sent to customer"
-            });
+                package.Customer.User.Email,
+                "Your OTP for package delivery",
+                $"Your OTP: {package.DeliveryOTP}"
+            );
+
+            return Ok(new { message = "Delivery started", note = "OTP sent to customer" });
+        }
+
+
+        //=====================================================================
+
+        [HttpPost("VerifyOTP/{packageId}")]
+        public async Task<IActionResult> VerifyOTP(int packageId, [FromBody] string otp)
+        {
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            if (package == null) return NotFound("Package not found");
+
+            if (package.DeliveryOTP != otp) return BadRequest("Invalid OTP");
+
+            package.OTPVerified = true;
+            package.Status = PackageStatus.Delivered;
+            package.DeliveredAt = DateTime.UtcNow;
+
+            _unitOfWork.PackageRepo.Update(package);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { message = "Package delivered successfully" });
         }
 
 
 
-[HttpPost("VerifyOTP/{packageId}")]
-public async Task<IActionResult> VerifyOTP(int packageId, [FromBody] string otp)
+        [HttpGet("AvailableJobs")]
+        public async Task<IActionResult> GetAvailableJobs()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // جلب بيانات الكورير
+            var courier = await _unitOfWork.CourierRepo
+                .GetByExpressionAsync(c => c.UserId == userId);
+
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            var packages = (await _unitOfWork.PackageRepo
+       .GetAllWithIncludesAsync()) // جلب كل الباكجات مع الـ includes
+       .Where(p => p.Status == PackageStatus.Pending)
+       .Select(p => new
+       {
+           p.Id,
+           pickupLat = p.Request.PickupLat,
+           pickupLng = p.Request.PickupLng,
+           p.ShipmentCost,
+           CustomerName = p.Customer.User.UserName,
+           CustomerEmail = p.Customer.User.Email,
+           DestinationLat = p.Lat,
+           DestinationLng = p.Lang,
+           p.Status
+       })
+       .ToList();
+
+
+
+            return Ok(packages);
+        }
+
+
+        //=============================== Earnings =============================
+
+        [HttpGet("Earnings")]
+        public async Task<IActionResult> GetCourierEarnings()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var courier = await _unitOfWork.CourierRepo.GetByExpressionAsync(c => c.UserId == userId);
+
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            // مثال لحساب الأرباح
+            var deliveredPackages = (await _unitOfWork.PackageRepo.GetAllAsync())
+                .Where(p => p.CourierID == courier.Id && p.Status == PackageStatus.Delivered);
+
+            var totalEarnings = deliveredPackages.Sum(p => p.ShipmentCost);
+
+            var earningsDto = new
+            {
+                totalEarnings,
+                deliveredCount = deliveredPackages.Count(),
+                lastDeliveryDate = deliveredPackages.OrderByDescending(p => p.DeliveredAt).FirstOrDefault()?.DeliveredAt
+            };
+
+            return Ok(earningsDto);
+        }
+
+        //--------------------------- CourierProfile -------------------
+        [HttpGet("Profile")]
+        public async Task<IActionResult> GetCourierProfile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var courier = await _unitOfWork.CourierRepo
+                .GetByExpressionAsync(c => c.UserId == userId);
+
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            // جلب آخر موقع إذا موجود
+            var lastLocation = courier.Locations?.OrderBy(l => l.RecordedAt).LastOrDefault();
+
+            var dto = new CourierCompleteProfileDTO
+            {
+                Id = courier.Id.ToString(),
+                Name = courier.User.UserName,
+                Email = courier.User.Email,
+                Phone = courier.User.PhoneNumber,
+                VehicleType = courier.VehicleType.ToString(),
+                LicenseNumber = courier.LicenseNumber,
+                Rating = courier.Rating,
+                CompletedDeliveries = courier.CompletedDeliveries,
+                IsAvailable = courier.IsAvailable,
+                IsOnline = courier.IsOnline,
+                Locations = lastLocation != null
+                    ? new CourierLocationDto
+                    {
+                        Lat = lastLocation.Lat,
+                        Lng = lastLocation.Lng
+                    }
+                    : null
+            };
+
+            return Ok(dto);
+        }
+
+
+        // ================= Dashboard Summary =================
+[HttpGet("DashboardSummary")]
+public async Task<IActionResult> GetDashboardSummary()
 {
-    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
-    if (package == null)
-        return NotFound("Package not found");
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
 
-    // ❌ Wrong OTP
-    if (package.DeliveryOTP != otp)
-        return BadRequest("Invalid OTP");
+    if (courier == null)
+        return NotFound("Courier not found");
 
-    // ✅ Correct OTP → mark delivered
-    package.OTPVerified = true;
-    package.Status = PackageStatus.Delivered;
-    package.DeliveredAt = DateTime.UtcNow;
+    var packages = await _unitOfWork.PackageRepo.GetAllAsync();
 
-    _unitOfWork.PackageRepo.Update(package);
-    await _unitOfWork.SaveAsync();
+    var myPackages = packages.Where(p => p.CourierID == courier.Id);
 
     return Ok(new
     {
-        message = "Package delivered successfully"
+        activeJobs = myPackages.Count(p =>
+            p.Status == PackageStatus.Assigned ||
+            p.Status == PackageStatus.OutForDelivery),
+
+        completedJobs = myPackages.Count(p =>
+            p.Status == PackageStatus.Delivered),
+
+        totalEarnings = myPackages
+            .Where(p => p.Status == PackageStatus.Delivered)
+            .Sum(p => p.ShipmentCost)
+    });
+}
+
+    // ================= Availability =================
+[HttpGet("availability")]
+public async Task<IActionResult> GetAvailability()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    return Ok(new
+    {
+        isAvailable = courier.IsAvailable
     });
 }
 
 
-[HttpGet("otp-status/{packageId}")]
+// ================= End Shift =================
+[HttpPost("endshift")]
+public async Task<IActionResult> EndShift()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    // End shift logic
+    courier.IsAvailable = false;
+    courier.IsOnline = false;
+
+    _unitOfWork.CourierRepo.Update(courier);
+    await _unitOfWork.SaveAsync();
+
+    // Optional: return shift summary (frontend already expects arrays safely)
+    var packages = await _unitOfWork.PackageRepo.GetAllAsync();
+
+    var todayOrders = packages
+        .Where(p => p.CourierID == courier.Id &&
+                    p.DeliveredAt != null &&
+                    p.DeliveredAt.Value.Date == DateTime.UtcNow.Date)
+        .ToList();
+
+    return Ok(new
+    {
+        orders = todayOrders.Select(p => new
+        {
+            p.Id,
+            p.ShipmentCost,
+            p.DeliveredAt
+        }),
+        previousDays = Array.Empty<object>()
+    });
+}
+
+// ================= Availability =================
+[HttpPost("availability/toggle")]
+public async Task<IActionResult> ToggleAvailability()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    courier.IsAvailable = !courier.IsAvailable;
+
+    _unitOfWork.CourierRepo.Update(courier);
+    await _unitOfWork.SaveAsync();
+
+    return Ok(new
+    {
+        isAvailable = courier.IsAvailable
+    });
+}
+
+    // ================= Active Jobs =================
+[HttpGet("activeJobs")]
+public async Task<IActionResult> GetActiveJobs()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+        .Where(p =>
+            p.CourierID == courier.Id &&
+            (p.Status == PackageStatus.Assigned ||
+             p.Status == PackageStatus.OutForDelivery))
+        .Select(p => new
+        {
+            p.Id,
+            p.Status,
+            p.ShipmentCost,
+            DestinationLat = p.Lat,
+            DestinationLng = p.Lang
+        })
+        .ToList();
+
+    return Ok(packages);
+}
+
+
+        //------------------------------------------
+
+        [HttpPut("Profile")]
+        public async Task<IActionResult> UpdateCourierProfile([FromBody] CourierCompleteProfileDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var courier = await _unitOfWork.CourierRepo
+                .GetByExpressionAsync(c => c.UserId == userId);
+
+            if (courier == null)
+                return NotFound("Courier not found");
+
+            // تحديث الحقول المتاحة في DTO
+            if (!string.IsNullOrEmpty(dto.Phone))
+                courier.User.PhoneNumber = dto.Phone;
+
+            if (!string.IsNullOrEmpty(dto.LicenseNumber))
+                courier.LicenseNumber = dto.LicenseNumber;
+
+            if (!string.IsNullOrEmpty(dto.VehicleType))
+            {
+                // تحويل الـ string لـ enum إذا لزم الأمر
+                if (Enum.TryParse<VehicleType>(dto.VehicleType, out var vehicleType))
+                    courier.VehicleType = vehicleType;
+            }
+
+            // يمكن تحديث الحالة المتاحة أو أونلاين إذا أحببت
+            courier.IsAvailable = dto.IsAvailable;
+            courier.IsOnline = dto.IsOnline;
+
+            _unitOfWork.CourierRepo.Update(courier);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { message = "Profile updated successfully" });
+        }
+
+
+
+
+
+        //========================== otp-status ===========================
+
+        [HttpGet("otp-status/{packageId}")]
 public async Task<IActionResult> GetOTPStatus(int packageId)
 {
     var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
