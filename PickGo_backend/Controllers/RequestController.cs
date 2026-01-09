@@ -75,25 +75,60 @@ namespace PickGo_backend.Controllers
             return Ok(_mapper.Map<RequestReadDTO>(request));
         }
         [HttpGet]
-        public async Task<IActionResult> GetAll(string? search, string sortBy = "date", string sortDir = "desc")
-        {
-            var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplierId);
+public async Task<IActionResult> GetAll(
+    string? search,
+    string? status,
+    string sortBy = "date",
+    string sortDir = "desc"
+)
+{
+    // ✅ FIX 1: Correctly resolve Supplier from UserId (GUID-safe)
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var supplier = await _unitOfWork.SupplierRepo
+        .GetByExpressionAsync(s => s.UserId == userId);
 
-            if (!string.IsNullOrEmpty(search))
-                requests = requests.Where(r =>
-                    r.Source.Contains(search) ||
-                    r.Packages.Any(p => p.Description.Contains(search))
-                ).ToList();
+    if (supplier == null)
+        return Unauthorized("Supplier not found");
 
-            requests = sortBy switch
-            {
-                "status" => sortDir == "asc" ? requests.OrderBy(r => r.Status).ToList() : requests.OrderByDescending(r => r.Status).ToList(),
-                _ => sortDir == "asc" ? requests.OrderBy(r => r.CreatedAt).ToList() : requests.OrderByDescending(r => r.CreatedAt).ToList()
-            };
+    var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplier.Id);
 
-            return Ok(_mapper.Map<List<RequestReadDTO>>(requests));
-        }
+    // ✅ FIX 2: Multi-status filtering (?status=pending,assigned)
+    if (!string.IsNullOrEmpty(status))
+    {
+        var statuses = status
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(s => Enum.Parse<RequestStatus>(s, true))
+            .ToList();
+
+        requests = requests
+            .Where(r => statuses.Contains(r.Status))
+            .ToList();
+    }
+
+    // Existing search logic
+    if (!string.IsNullOrEmpty(search))
+    {
+        requests = requests.Where(r =>
+            r.Source.Contains(search) ||
+            r.Packages.Any(p => p.Description.Contains(search))
+        ).ToList();
+    }
+
+    // Existing sorting logic
+    requests = sortBy switch
+    {
+        "status" => sortDir == "asc"
+            ? requests.OrderBy(r => r.Status).ToList()
+            : requests.OrderByDescending(r => r.Status).ToList(),
+
+        _ => sortDir == "asc"
+            ? requests.OrderBy(r => r.CreatedAt).ToList()
+            : requests.OrderByDescending(r => r.CreatedAt).ToList()
+    };
+
+    return Ok(_mapper.Map<List<RequestReadDTO>>(requests));
+}
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOne(int id)

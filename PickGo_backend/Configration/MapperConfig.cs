@@ -27,6 +27,12 @@ namespace PickGo_backend.Configration
                 .ForAllMembers(opts =>
                     opts.Condition((src, dest, srcVal) => srcVal != null));
 
+            CreateMap<Supplier, SupplierProfileDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.User.PhoneNumber))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.User.Address));
+
             // =======================
             //        COURIER
             // =======================

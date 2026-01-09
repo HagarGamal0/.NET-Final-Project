@@ -192,6 +192,42 @@ namespace PickGo_backend.Controllers
             }));
         }
 
+        [HttpGet("Dashboard")]
+public async Task<IActionResult> Dashboard()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var supplier = await _unitOfWork.SupplierRepo
+        .GetByExpressionAsync(s => s.UserId == userId);
+
+    if (supplier == null)
+        return Unauthorized("Supplier not found");
+
+    var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplier.Id);
+
+    return Ok(new
+    {
+        pendingCount = requests.Count(r => r.Status == RequestStatus.Pending),
+        readyForPickupCount = requests.Count(r => r.Status == RequestStatus.Assigned),
+        inTransitCount = requests.Count(r => r.Status == RequestStatus.PickupInProgress),
+        deliveredTodayCount = requests.Count(r =>
+            r.Status == RequestStatus.Delivered &&
+            r.CreatedAt.Date == DateTime.UtcNow.Date
+        )
+    });
+}
+
+[HttpGet("Profile")]
+public async Task<IActionResult> Profile()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var supplier = await _unitOfWork.SupplierRepo
+        .GetByExpressionAsync(s => s.UserId == userId);
+
+    if (supplier == null)
+        return NotFound("Supplier not found");
+
+    return Ok(_mapper.Map<SupplierProfileDTO>(supplier));
+}
 
 
         [HttpGet("Explanation/{requestId}")]
