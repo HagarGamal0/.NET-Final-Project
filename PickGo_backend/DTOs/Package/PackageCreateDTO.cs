@@ -11,5 +11,7 @@ namespace PickGo_backend.DTOs.Package
         public double? Lat { get; set; }
         public double? Lang { get; set; }
         public int CustomerID { get; set; }
+        public string ReceiverPhone { get; set; } = null!;
+
     }
 }

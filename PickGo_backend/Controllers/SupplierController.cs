@@ -8,6 +8,7 @@ using PickGo_backend.Helpers;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
 using PickGo_backend.Services;
+using PickGo_backend.DTOs.Request;
 using System.Security.Claims;
 
 namespace PickGo_backend.Controllers
@@ -59,7 +60,8 @@ namespace PickGo_backend.Controllers
                 ExpireDate = p.ExpireDate,
                 ShipmentCost = p.ShipmentCost,
                 ShipmentNotes = p.Notes,
-                CustomerID = p.CustomerID,
+                CustomerID = p.CustomerID > 0 ? p.CustomerID : null,
+                ReceiverPhone = p.ReceiverPhone ?? "",
                 Status = PackageStatus.Pending,
                 Destination = p.Destination,
                 Lat = p.Lat,
@@ -69,7 +71,11 @@ namespace PickGo_backend.Controllers
             await _unitOfWork.RequestRepo.AddAsync(request);
             await _unitOfWork.SaveAsync();
 
-            return Ok(new { message = "Request created successfully", requestId = request.Id });
+            // After saving packages
+
+
+return Ok(_mapper.Map<RequestReadDTO>(request));
+
         }
 
         // -------------------- UC-SUP-06: Confirm Pickup Ready --------------------
@@ -89,7 +95,38 @@ namespace PickGo_backend.Controllers
         }
 
         // -------------------- UC-SUP-03: Assign Courier Manually --------------------
-        [HttpPost("AssignCourier/{requestId}")]
+        
+        // -------------------- UC-SUP-07: Cancel Parcel --------------------
+        [HttpPost("CancelParcel/{requestId}")]
+        public async Task<IActionResult> CancelParcel(int requestId)
+        {
+            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+            var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
+            
+            if (request == null || request.SupplierId != supplierId)
+                return NotFound("Request not found or unauthorized");
+
+            if (request.Status == RequestStatus.PickupInProgress || request.Status == RequestStatus.Delivered)
+            {
+                return BadRequest("Cannot cancel a request that is already in progress or delivered.");
+            }
+
+            request.Status = RequestStatus.Cancelled;
+            if (request.Packages != null)
+            {
+                foreach (var pkg in request.Packages)
+                {
+                    pkg.Status = PackageStatus.Cancelled;
+                }
+            }
+
+            _unitOfWork.RequestRepo.Update(request);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(new { message = "Request and packages cancelled successfully" });
+        }
+
+[HttpPost("AssignCourier/{requestId}")]
         public async Task<IActionResult> AssignCourier(int requestId, [FromBody] AssignCourierDTO dto)
         {
             var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
@@ -192,29 +229,71 @@ namespace PickGo_backend.Controllers
             }));
         }
 
+        
         [HttpGet("Dashboard")]
-public async Task<IActionResult> Dashboard()
-{
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var supplier = await _unitOfWork.SupplierRepo
-        .GetByExpressionAsync(s => s.UserId == userId);
+        public async Task<IActionResult> Dashboard()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var supplier = await _unitOfWork.SupplierRepo
+                .GetByExpressionAsync(s => s.UserId == userId);
 
-    if (supplier == null)
-        return Unauthorized("Supplier not found");
+            if (supplier == null)
+                return Unauthorized("Supplier not found");
 
-    var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplier.Id);
+            // Use GetAllWithPackagesAsync to ensure we have package details for sums and names
+            var allRequests = (await _unitOfWork.RequestRepo.GetAllWithPackagesAsync())
+                .Where(r => r.SupplierId == supplier.Id)
+                .ToList();
 
-    return Ok(new
-    {
-        pendingCount = requests.Count(r => r.Status == RequestStatus.Pending),
-        readyForPickupCount = requests.Count(r => r.Status == RequestStatus.Assigned),
-        inTransitCount = requests.Count(r => r.Status == RequestStatus.PickupInProgress),
-        deliveredTodayCount = requests.Count(r =>
-            r.Status == RequestStatus.Delivered &&
-            r.CreatedAt.Date == DateTime.UtcNow.Date
-        )
-    });
-}
+            var pendingCount = allRequests.Count(r => r.Status == RequestStatus.Pending);
+            var readyForPickupCount = allRequests.Count(r => r.Status == RequestStatus.Assigned);
+            var inTransitCount = allRequests.Count(r => r.Status == RequestStatus.PickupInProgress);
+            var deliveredTodayCount = allRequests.Count(r =>
+                r.Status == RequestStatus.Delivered &&
+                r.CreatedAt.Date == DateTime.UtcNow.Date
+            );
+
+            var totalCodToday = allRequests
+                .Where(r => r.Status == RequestStatus.Delivered && r.CreatedAt.Date == DateTime.UtcNow.Date)
+                .Sum(r => r.Packages?.Sum(p => p.ShipmentCost) ?? 0);
+
+            // Recent Parcels - Map to Anonymous Object matching FE Parcel interface roughly
+            var recentParcels = allRequests
+                .OrderByDescending(r => r.CreatedAt)
+                .Take(5)
+                .Select(r => new {
+                    requestId = r.Id,
+                    trackingNumber = r.Id.ToString(),
+                    status = r.Status,
+                    createdAt = r.CreatedAt,
+                    deliveryAddress = r.Packages?.FirstOrDefault()?.Destination ?? "N/A",
+                    receiverName = r.Packages?.FirstOrDefault()?.ReceiverName ?? "Unknown",
+                    codAmount = r.Packages?.Sum(p => p.ShipmentCost) ?? 0,
+                    isReadyForPickup = r.ReadyForPickup,
+                    description = r.Packages?.FirstOrDefault()?.Description ?? ""
+                });
+
+            // Stats for the Dashboard Cards
+            var stats = new List<object>
+            {
+                new { label = "إجمالي الطلبات", value = allRequests.Count.ToString(), icon = "bi-box", trend = "+0%" },
+                new { label = "تم التسليم", value = allRequests.Count(r => r.Status == RequestStatus.Delivered).ToString(), icon = "bi-check-circle", trend = "" },
+                new { label = "قيد الانتظار", value = pendingCount.ToString(), icon = "bi-hourglass", trend = "" },
+                new { label = "الأرباح اليوم", value = totalCodToday.ToString("N0") + " ج.م", icon = "bi-cash", trend = "" }
+            };
+
+            return Ok(new
+            {
+                stats,
+                recentParcels,
+                pendingCount,
+                readyForPickupCount,
+                inTransitCount,
+                deliveredTodayCount,
+                totalCodToday
+            });
+        }
+
 
 [HttpGet("Profile")]
 public async Task<IActionResult> Profile()

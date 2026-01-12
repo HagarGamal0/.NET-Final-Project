@@ -25,55 +25,43 @@ namespace PickGo_backend.Controllers
             _lynxService = lynxService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.UserId == userId);
-            if (supplier == null) return BadRequest("Supplier not found.");
+[HttpPost]
+public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var supplier = await _unitOfWork.SupplierRepo
+        .GetByExpressionAsync(s => s.UserId == userId);
 
-            var request = _mapper.Map<Request>(dto);
-            request.SupplierId = supplier.Id;
-            request.CreatedAt = DateTime.UtcNow;
-            request.Status = RequestStatus.Pending;
+    if (supplier == null)
+        return BadRequest("Supplier not found");
 
-            // Save request first to get Id
-            await _unitOfWork.RequestRepo.AddAsync(request);
-            await _unitOfWork.SaveAsync();
+    var request = _mapper.Map<Request>(dto);
+    request.SupplierId = supplier.Id;
+    request.CreatedAt = DateTime.UtcNow;
+    request.Status = RequestStatus.Pending;
 
-            // Map and save packages using foreach
-            var packages = dto.Packages.Select(p =>
-            {
-                var package = _mapper.Map<Package>(p);
-                package.RequestID = request.Id;
-                package.Status = PackageStatus.Pending;
-                return package;
-            }).ToList();
+    await _unitOfWork.RequestRepo.AddAsync(request);
+    await _unitOfWork.SaveAsync();
 
-            foreach (var package in packages)
-            {
-                await _unitOfWork.PackageRepo.AddAsync(package);
-            }
-            await _unitOfWork.SaveAsync();
+    foreach (var p in dto.Packages)
+    {
+        var package = _mapper.Map<Package>(p);
+        package.RequestID = request.Id;
+        package.Status = PackageStatus.Pending;
+        package.ReceiverPhone = p.ReceiverPhone;
 
-            // Auto-assign courier if non-urgent
-            if (!dto.IsUrgent)
-            {
-                var courier = await FindNearestAvailableCourier(request);
-                if (courier != null)
-                {
-                    foreach (var pkg in packages) pkg.CourierID = courier.Id;
-                    courier.IsAvailable = false;
-                    request.Status = RequestStatus.Accepted;
-                    await _unitOfWork.SaveAsync();
+        await _unitOfWork.PackageRepo.AddAsync(package);
+    }
 
-                    // Lynx Talisman Observation (SYSTEM)
-                    await _lynxService.ExplainAssignmentAsync(request.Id, courier.Id, "SYSTEM");
-                }
-            }
+    await _unitOfWork.SaveAsync();
 
-            return Ok(_mapper.Map<RequestReadDTO>(request));
-        }
+    var fullRequest = await _unitOfWork.RequestRepo.GetFullRequestAsync(request.Id);
+    return Ok(_mapper.Map<RequestReadDTO>(fullRequest));
+}
+
+
+
+
         [HttpGet]
 public async Task<IActionResult> GetAll(
     string? search,
@@ -96,9 +84,18 @@ public async Task<IActionResult> GetAll(
     if (!string.IsNullOrEmpty(status))
     {
         var statuses = status
-            .Split(',', StringSplitOptions.RemoveEmptyEntries)
-            .Select(s => Enum.Parse<RequestStatus>(s, true))
-            .ToList();
+    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+    .Select(s =>
+    {
+        if (Enum.TryParse<RequestStatus>(s, true, out var parsed))
+            return (RequestStatus?)parsed;
+
+        return null;
+    })
+    .Where(s => s.HasValue)
+    .Select(s => s!.Value)
+    .ToList();
+
 
         requests = requests
             .Where(r => statuses.Contains(r.Status))

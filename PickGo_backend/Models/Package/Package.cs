@@ -1,13 +1,17 @@
-﻿using PickGo_backend.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using PickGo_backend.Models;
 
 public class Package:BaseModel
 {
+    [Required]
     public string Description { get; set; } = null!;
+    [Required]
     public float Weight { get; set; }
     public bool Fragile { get; set; }
     public DateTime ExpireDate { get; set; }
     public float ShipmentCost { get; set; }
     public DateTime? DeliveredAt { get; set; }
+    [Required]
     public string? Destination { get; set; }
     public double? Lat { get; set; }
 
@@ -25,8 +29,9 @@ public class Package:BaseModel
     public ICollection<Dispute> Disputes { get; set; } = new List<Dispute>();
 
     public virtual Request Request { get; set; } = null!;
-    public int CustomerID { get; set; }  // match Customer.Id
-    public virtual Customer Customer { get; set; } = null!;
+    public int? CustomerID { get; set; }
+    public string ReceiverPhone { get; set; } = null!;
+    public virtual Customer? Customer { get; set; }
     public virtual Courier? Courier { get; set; }
     public virtual Invoice? Invoice { get; set; }
     public virtual DeliveryProof? DeliveryProof { get; set; }

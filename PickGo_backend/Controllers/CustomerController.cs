@@ -149,7 +149,7 @@ namespace PickGo_backend.Controllers
                     } : null
                 })
                 .ToList();
-
+Console.WriteLine(packages);
             return Ok(packages);
 
 
@@ -192,43 +192,54 @@ namespace PickGo_backend.Controllers
         //     return Ok(result);
         // }
 
-        [Authorize]
+[Authorize(Roles = "Customer")]
 [HttpGet("packages")]
 public async Task<IActionResult> GetMyPackages()
 {
+    // ✅ FIX 1: Get UserId safely from token
     var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     if (string.IsNullOrEmpty(userId))
-        return Unauthorized();
+        return Unauthorized("Invalid token");
 
+    // ✅ FIX 2: Resolve Customer by UserId (this is CORRECT)
     var customer = await _unitOfWork.CustomerRepo
         .GetByExpressionAsync(c => c.UserId == userId);
 
     if (customer == null)
         return NotFound("Customer not found");
 
-    var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
-        .Where(p => p.CustomerID == customer.Id)
-        .Select(p => new
-        {
-            p.Id,
-            p.Status,
-            p.Description,
-            p.Weight,
-            PickupLat = p.Request.PickupLat,
-            PickupLng = p.Request.PickupLng,
-            DropLat = p.Lat,
-            DropLng = p.Lang,
-            Courier = p.Courier != null ? new
-            {
-                p.Courier.Id,
-                p.Courier.VehicleType,
-                p.Courier.Rating
-            } : null
-        })
-        .ToList();
+    // ✅ FIX 3: Fetch ONLY packages belonging to this customer
+    // ❌ Do NOT use GetAllAsync() then filter in memory
+    var packages = await _unitOfWork.PackageRepo
+        .FindAsync(p => p.CustomerID == customer.Id || p.ReceiverPhone == customer.PhoneNumber);
 
-    return Ok(packages);
+    // ✅ FIX 4: Shape response (safe null handling)
+    var result = packages.Select(p => new
+    {
+        p.Id,
+        p.Status,
+        p.Description,
+        p.Weight,
+        p.ShipmentCost,
+        p.Fragile,
+
+        PickupLat = p.Request?.PickupLat,
+        PickupLng = p.Request?.PickupLng,
+
+        DropLat = p.Lat,
+        DropLng = p.Lang,
+
+        Courier = p.Courier == null ? null : new
+        {
+            p.Courier.Id,
+            p.Courier.VehicleType,
+            p.Courier.Rating
+        }
+    }).ToList();
+
+    return Ok(result);
 }
+
 
 
         [HttpGet("{customerId}/packages/track")]
@@ -320,6 +331,87 @@ public async Task<IActionResult> GetMyPackages()
 
         }
 
-        
+        [Authorize]
+[HttpGet("packages/{packageId}/delivery-otp")]
+public async Task<IActionResult> GetDeliveryOtp(int packageId)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userId))
+        return Unauthorized();
+
+    var customer = await _unitOfWork.CustomerRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (customer == null)
+        return NotFound("Customer not found");
+
+    var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+    if (package == null || package.CustomerID != customer.Id)
+        return NotFound("Package not found");
+
+    if (package.Status != PackageStatus.OutForDelivery || package.OTPVerified)
+        return Ok(new { showOtp = false });
+
+    return Ok(new
+    {
+        showOtp = true,
+        otp = package.DeliveryOTP
+    });
+}
+
+
+
+        [HttpGet("orders/{id}/carrier-location")]
+        public async Task<IActionResult> GetCarrierLocation(int id)
+        {
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(id);
+            if (package == null) return NotFound("Package not found");
+
+            if (package.CourierID == null)
+                return NotFound("No courier assigned");
+
+            // Efficient fetch using FindAsync
+            var locations = await _unitOfWork.CourierLocationRepo.FindAsync(l => l.CourierID == package.CourierID.Value);
+            
+            var location = locations
+                .OrderByDescending(l => l.RecordedAt)
+                .FirstOrDefault();
+
+            if (location == null)
+                return NotFound("Location not available");
+
+            return Ok(new
+            {
+                lat = location.Lat,
+                lng = location.Lng,
+                courierId = package.CourierID.Value,
+                timestamp = location.RecordedAt
+            });
+        }
+
+
+        // TEMP: Test helper to seed location
+        [HttpGet("test/seed-location/{packageId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SeedTestLocation(int packageId)
+        {
+            var package = await _unitOfWork.PackageRepo.GetByIdAsync(packageId);
+            if (package == null) return NotFound("Package not found");
+            
+            if (package.CourierID == null) return BadRequest("No courier assigned to package " + packageId);
+            
+            var loc = new CourierLocation
+            {
+                CourierID = package.CourierID.Value,
+                Lat = 30.0444f, // Cairo example
+                Lng = 31.2357f,
+                RecordedAt = DateTime.UtcNow
+            };
+            
+            await _unitOfWork.CourierLocationRepo.AddAsync(loc);
+            await _unitOfWork.SaveAsync();
+            
+            return Ok("Location seeded for courier " + package.CourierID.Value);
+        }
     }
 }

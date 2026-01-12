@@ -11,6 +11,7 @@ namespace PickGo_backend.Repository {
         void Delete(TEntity entity);
 
         Task<TEntity> GetByExpressionAsync(Expression<Func<TEntity, bool>> predicate);
+        Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
 
     }
 }

@@ -49,6 +49,11 @@ namespace PickGo_backend.Repositries
             return await _table.FirstOrDefaultAsync(predicate);
         }
 
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _table.Where(predicate).ToListAsync();
+        }
+
         // ------------------------------
         // Added for controller compatibility
         // ------------------------------
