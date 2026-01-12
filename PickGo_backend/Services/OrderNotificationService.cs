@@ -45,6 +45,16 @@ public class OrderNotificationService
         await client.DisconnectAsync(true);
     }
 
+public async Task NotifyNewRequest(int requestId)
+{
+    await _hubContext.Clients
+        .Group("Couriers")
+        .SendAsync("NewRequestCreated", new
+        {
+            requestNumber = requestId,
+            message = $"New delivery request #{requestId} available"
+        });
+}
 
 
 }

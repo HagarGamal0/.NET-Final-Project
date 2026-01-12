@@ -16,6 +16,6 @@
         public string? Notes { get; set; }
 
         public string ReceiverPhone { get; set; }
-        public int CustomerID { get; set; } // Link to the customer
+        public int? CustomerID { get; set; } // Link to the customer
     }
 }

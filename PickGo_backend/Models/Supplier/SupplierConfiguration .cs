@@ -7,6 +7,7 @@ namespace PickGo_backend.Models
     {
         public void Configure(EntityTypeBuilder<Supplier> builder)
         {
+            builder.ToTable("Supplier");
             builder.HasKey(s => s.Id);
 
             // Supplier → User (One-to-One)

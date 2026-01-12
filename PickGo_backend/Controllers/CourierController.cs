@@ -390,39 +390,38 @@ public async Task<IActionResult> VerifyOTP(int packageId, [FromBody] string otp)
 
 
 
-        [HttpGet("AvailableJobs")]
-        public async Task<IActionResult> GetAvailableJobs()
+       [HttpGet("AvailableJobs")]
+public async Task<IActionResult> GetAvailableJobs()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    var courier = await _unitOfWork.CourierRepo
+        .GetByExpressionAsync(c => c.UserId == userId);
+
+    if (courier == null)
+        return NotFound("Courier not found");
+
+    var packages = await _unitOfWork.PackageRepo.GetAllWithIncludesAsync();
+
+    var result = packages
+        .Where(p => p.Status == PackageStatus.Pending)
+        .Select(p => new
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            p.Id,
+            pickupLat = p.Request?.PickupLat ?? 0,
+            pickupLng = p.Request?.PickupLng ?? 0,
+            p.ShipmentCost,
+            CustomerName = p.Customer?.User?.UserName ?? "Guest",
+            CustomerEmail = p.Customer?.User?.Email ?? "N/A",
+            DestinationLat = p.Lat ?? 0,
+            DestinationLng = p.Lang ?? 0,
+            Status = p.Status.ToString()
+        })
+        .ToList();
 
-            // جلب بيانات الكورير
-            var courier = await _unitOfWork.CourierRepo
-                .GetByExpressionAsync(c => c.UserId == userId);
+    return Ok(result);
+}
 
-            if (courier == null)
-                return NotFound("Courier not found");
-
-            var packages = (await _unitOfWork.PackageRepo
-       .GetAllWithIncludesAsync()) // جلب كل الباكجات مع الـ includes
-       .Where(p => p.Status == PackageStatus.Pending)
-       .Select(p => new
-       {
-           p.Id,
-           pickupLat = p.Request.PickupLat,
-           pickupLng = p.Request.PickupLng,
-           p.ShipmentCost,
-           CustomerName = p.Customer.User.UserName,
-           CustomerEmail = p.Customer.User.Email,
-           DestinationLat = p.Lat,
-           DestinationLng = p.Lang,
-           p.Status
-       })
-       .ToList();
-
-
-
-            return Ok(packages);
-        }
 
 
         //=============================== Earnings =============================

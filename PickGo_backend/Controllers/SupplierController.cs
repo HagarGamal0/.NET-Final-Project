@@ -1,10 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PickGo_backend.DTOs.Courier;
 using PickGo_backend.DTOs.Supplier;
-using PickGo_backend.Helpers;
 using PickGo_backend.Models;
 using PickGo_backend.Models.Enums;
 using PickGo_backend.Services;
@@ -24,7 +22,12 @@ namespace PickGo_backend.Controllers
         private readonly CourierMatchingService _matchingService;
         private readonly LynxTalismanService _lynxService;
 
-        public SupplierController(UnitOfWork unitOfWork, IMapper mapper, OrderNotificationService notificationService, CourierMatchingService matchingService, LynxTalismanService lynxService)
+        public SupplierController(
+            UnitOfWork unitOfWork,
+            IMapper mapper,
+            OrderNotificationService notificationService,
+            CourierMatchingService matchingService,
+            LynxTalismanService lynxService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
@@ -34,300 +37,363 @@ namespace PickGo_backend.Controllers
         }
 
         // -------------------- UC-SUP-02: Create New Parcel Request --------------------
-        [HttpPost("CreateRequest")]
-        public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDTO dto)
+ [HttpPost("CreateRequest")]
+public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDTO dto)
+{
+    try
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var supplier = await _unitOfWork.SupplierRepo
+            .GetSupplierWithIncludesAsync(userId!);
+
+        if (supplier == null)
+            return Unauthorized("Supplier not found");
+
+        if (dto.Packages == null || !dto.Packages.Any())
+            return BadRequest("At least one package is required");
+
+        var request = new Request
         {
-            var supplierId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.UserId == supplierId);
-            if (supplier == null) return NotFound("Supplier not found.");
+            SupplierId = supplier.Id,
+            Source = dto.Source,
+            PickupLat = dto.PickupLat,
+            PickupLng = dto.PickupLng,
+            Status = RequestStatus.Pending,
+            IsUrgent = dto.Priority?.ToLower() == "urgent",
+            CreatedAt = DateTime.UtcNow,
 
-            var request = new Request
+            Packages = dto.Packages.Select(p =>
             {
-                SupplierId = supplier.Id,
-                Source = dto.Source,
-                PickupLat = dto.PickupLat,
-                PickupLng = dto.PickupLng,
-                Status = RequestStatus.Pending,
-                IsUrgent = dto.Priority.ToLower() == "urgent",
-                CreatedAt = DateTime.UtcNow
-            };
+                // ✅ REQUIRED: Guest customer must have phone number
+                if (string.IsNullOrWhiteSpace(p.ReceiverPhone))
+                    throw new Exception("Receiver phone number is required for guest delivery");
 
-            request.Packages = dto.Packages.Select(p => new Package
-            {
-                Description = p.Description,
-                Weight = p.Weight,
-                Fragile = p.Fragile,
-                ExpireDate = p.ExpireDate,
-                ShipmentCost = p.ShipmentCost,
-                ShipmentNotes = p.Notes,
-                CustomerID = p.CustomerID > 0 ? p.CustomerID : null,
-                ReceiverPhone = p.ReceiverPhone ?? "",
-                Status = PackageStatus.Pending,
-                Destination = p.Destination,
-                Lat = p.Lat,
-                Lang = p.Lng
-            }).ToList();
+                return new Package
+                {
+                    Description = p.Description,
+                    Weight = p.Weight,
+                    Fragile = p.Fragile,
+                    ExpireDate = p.ExpireDate,
+                    ShipmentCost = p.ShipmentCost,
+                    ShipmentNotes = p.Notes,
 
-            await _unitOfWork.RequestRepo.AddAsync(request);
-            await _unitOfWork.SaveAsync();
+                    // ✅ Guest-only customer (no account, no ID)
+                    CustomerID = null,
 
-            // After saving packages
+                    // ✅ SINGLE SOURCE OF TRUTH FOR CUSTOMER
+                    ReceiverPhone = p.ReceiverPhone,
 
+                    Status = PackageStatus.Pending,
+                    Destination = p.Destination,
+                    Lat = p.Lat,
+                    Lang = p.Lng
+                };
+            }).ToList()
+        };
 
-return Ok(_mapper.Map<RequestReadDTO>(request));
+        await _unitOfWork.RequestRepo.AddAsync(request);
+        await _unitOfWork.SaveAsync();
+        var requestNumber = request.Id;
 
-        }
+        await _notificationService.NotifyNewRequest(requestNumber);
+
+        return Ok(new
+        {
+            message = "Request created successfully",
+            requestNumber = request.Id
+        });
+    }
+    catch (Exception ex)
+    {
+        // ✅ Demo-safe, readable backend error
+        return StatusCode(500, ex.Message);
+    }
+}
+
 
         // -------------------- UC-SUP-06: Confirm Pickup Ready --------------------
         [HttpPost("ConfirmReady/{requestId}")]
         public async Task<IActionResult> ConfirmReady(int requestId)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
-            if (request == null || request.SupplierId != supplierId)
-                return NotFound("Request not found or unauthorized");
+            try
+            {
+                var supplier = await GetSupplier();
 
-            request.ReadyForPickup = true;
-            _unitOfWork.RequestRepo.Update(request);
-            await _unitOfWork.SaveAsync();
+                var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
+                if (request == null || request.SupplierId != supplier.Id)
+                    return NotFound("Request not found or unauthorized");
 
-            return Ok(new { message = "Request marked as Ready for Pickup" });
+                request.ReadyForPickup = true;
+                _unitOfWork.RequestRepo.Update(request);
+                await _unitOfWork.SaveAsync();
+
+                return Ok(new { message = "Request marked as Ready for Pickup" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        // -------------------- UC-SUP-03: Assign Courier Manually --------------------
-        
         // -------------------- UC-SUP-07: Cancel Parcel --------------------
         [HttpPost("CancelParcel/{requestId}")]
         public async Task<IActionResult> CancelParcel(int requestId)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
-            
-            if (request == null || request.SupplierId != supplierId)
-                return NotFound("Request not found or unauthorized");
-
-            if (request.Status == RequestStatus.PickupInProgress || request.Status == RequestStatus.Delivered)
+            try
             {
-                return BadRequest("Cannot cancel a request that is already in progress or delivered.");
-            }
+                var supplier = await GetSupplier();
 
-            request.Status = RequestStatus.Cancelled;
-            if (request.Packages != null)
-            {
-                foreach (var pkg in request.Packages)
-                {
+                var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
+                if (request == null || request.SupplierId != supplier.Id)
+                    return NotFound("Request not found or unauthorized");
+
+                if (request.Status == RequestStatus.PickupInProgress ||
+                    request.Status == RequestStatus.Delivered)
+                    return BadRequest("Cannot cancel a request that is already in progress or delivered.");
+
+                request.Status = RequestStatus.Cancelled;
+
+                foreach (var pkg in request.Packages ?? new List<Package>())
                     pkg.Status = PackageStatus.Cancelled;
-                }
+
+                _unitOfWork.RequestRepo.Update(request);
+                await _unitOfWork.SaveAsync();
+
+                return Ok(new { message = "Request and packages cancelled successfully" });
             }
-
-            _unitOfWork.RequestRepo.Update(request);
-            await _unitOfWork.SaveAsync();
-
-            return Ok(new { message = "Request and packages cancelled successfully" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-[HttpPost("AssignCourier/{requestId}")]
+        // -------------------- UC-SUP-03: Assign Courier --------------------
+        [HttpPost("AssignCourier/{requestId}")]
         public async Task<IActionResult> AssignCourier(int requestId, [FromBody] AssignCourierDTO dto)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
-            if (request == null || request.SupplierId != supplierId)
-                return NotFound("Request not found or unauthorized");
-
-            if (!request.ReadyForPickup)
-                return BadRequest("Request is not ready for pickup");
-
-            var courier = await _unitOfWork.CourierRepo.GetByExpressionAsync(c => c.Id == dto.CourierId);
-            if (courier == null || !courier.IsOnline || courier.Status != CourierStatus.Approved)
-                return BadRequest("Courier is not available");
-
-            foreach (var package in request.Packages)
+            try
             {
-                package.CourierID = courier.Id;
-                package.Status = PackageStatus.Assigned;
+                var supplier = await GetSupplier();
+
+                var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
+                if (request == null || request.SupplierId != supplier.Id)
+                    return NotFound("Request not found or unauthorized");
+
+                if (!request.ReadyForPickup)
+                    return BadRequest("Request is not ready for pickup");
+
+                var courier = await _unitOfWork.CourierRepo
+                    .GetByExpressionAsync(c => c.Id == dto.CourierId);
+
+                if (courier == null || !courier.IsOnline || courier.Status != CourierStatus.Approved)
+                    return BadRequest("Courier is not available");
+
+                foreach (var pkg in request.Packages)
+                {
+                    pkg.CourierID = courier.Id;
+                    pkg.Status = PackageStatus.Assigned;
+                }
+
+                request.Status = RequestStatus.Assigned;
+                _unitOfWork.RequestRepo.Update(request);
+                await _unitOfWork.SaveAsync();
+
+                await _notificationService.NotifyCourierNearby(request.Id);
+                await _lynxService.ExplainAssignmentAsync(request.Id, courier.Id, "SUPPLIER");
+
+                return Ok(new { message = $"Courier {courier.Id} assigned successfully" });
             }
-
-            request.Status = RequestStatus.Assigned;
-            _unitOfWork.RequestRepo.Update(request);
-            await _unitOfWork.SaveAsync();
-
-            await _notificationService.NotifyCourierNearby(request.Id);
-
-            // Lynx Talisman Observation
-            await _lynxService.ExplainAssignmentAsync(request.Id, courier.Id, "SUPPLIER");
-
-            return Ok(new { message = $"Courier {courier.Id} assigned successfully" });
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
         // -------------------- UC-SUP-04: Track Order --------------------
         [HttpGet("TrackOrder/{requestId}")]
         public async Task<IActionResult> TrackOrder(int requestId)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
-            if (request == null || request.SupplierId != supplierId)
-                return NotFound("Request not found or unauthorized");
-
-            var result = request.Packages.Select(p =>
+            try
             {
-                var loc = p.Courier?.Locations?.OrderByDescending(l => l.RecordedAt).FirstOrDefault();
-                return new
-                {
-                    packageId = p.Id,
-                    status = p.Status.ToString(),
-                    courierId = p.Courier?.Id,
-                    courierName = p.Courier?.User?.UserName,
-                    courierLocation = loc == null ? null : new { loc.Lat, loc.Lng, loc.RecordedAt }
-                };
-            });
+                var supplier = await GetSupplier();
 
-            return Ok(new { requestId = request.Id, status = request.Status.ToString(), packages = result });
+                var request = await _unitOfWork.RequestRepo.GetByIdWithPackagesAsync(requestId);
+                if (request == null || request.SupplierId != supplier.Id)
+                    return NotFound("Request not found or unauthorized");
+
+                var result = (request.Packages ?? new List<Package>()).Select(p =>
+                {
+                    var loc = p.Courier?.Locations?
+                        .OrderByDescending(l => l.RecordedAt)
+                        .FirstOrDefault();
+
+                    return new
+                    {
+                        packageId = p.Id,
+                        status = p.Status.ToString(),
+                        courierId = p.Courier?.Id,
+                        courierName = p.Courier?.User?.UserName,
+                        courierLocation = loc == null ? null : new
+                        {
+                            loc.Lat,
+                            loc.Lng,
+                            loc.RecordedAt
+                        }
+                    };
+                });
+
+                return Ok(new
+                {
+                    requestId = request.Id,
+                    status = request.Status.ToString(),
+                    packages = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-        // -------------------- UC-SUP-05: View Delivered Orders & Reports --------------------
+        // -------------------- UC-SUP-05: Delivered Orders --------------------
         [HttpGet("DeliveredOrders")]
         public async Task<IActionResult> DeliveredOrders(DateTime? fromDate, DateTime? toDate)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var orders = (await _unitOfWork.RequestRepo.GetAllWithPackagesAsync())
-                .Where(r => r.SupplierId == supplierId &&
-                            r.Status == RequestStatus.Delivered &&
-                            (!fromDate.HasValue || r.CreatedAt >= fromDate) &&
-                            (!toDate.HasValue || r.CreatedAt <= toDate))
-                .ToList();
-
-            var totalCOD = orders.Sum(r => r.Packages.Sum(p => p.ShipmentCost));
-
-            return Ok(new
+            try
             {
-                totalCOD,
-                totalOrders = orders.Count,
-                orders = orders.Select(r => new
+                var supplier = await GetSupplier();
+
+                var orders = (await _unitOfWork.RequestRepo.GetAllWithPackagesAsync())
+                    .Where(r =>
+                        r.SupplierId == supplier.Id &&
+                        r.Status == RequestStatus.Delivered &&
+                        (!fromDate.HasValue || r.CreatedAt >= fromDate) &&
+                        (!toDate.HasValue || r.CreatedAt <= toDate))
+                    .ToList();
+
+                var totalCOD = orders.Sum(r => r.Packages?.Sum(p => p.ShipmentCost) ?? 0);
+
+                return Ok(new
                 {
-                    r.Id,
-                    packages = r.Packages.Select(p => new { p.Id, CODAmount = p.ShipmentCost, p.Status })
-                })
-            });
+                    totalCOD,
+                    totalOrders = orders.Count,
+                    orders = orders.Select(r => new
+                    {
+                        r.Id,
+                        packages = r.Packages?.Select(p => new
+                        {
+                            p.Id,
+                            CODAmount = p.ShipmentCost,
+                            p.Status
+                        }) ?? Enumerable.Empty<object>()
+                    })
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
-
-
+        // -------------------- Match Courier --------------------
         [HttpPost("MatchCourier")]
         public async Task<IActionResult> MatchCourier([FromBody] CourierMatchRequest request)
         {
             var results = await _matchingService.GetRankedCouriersAsync(request.PickupLat, request.PickupLng);
-
             if (!results.Any())
-                return NotFound("No available route found for nearby couriers.");
+                return NotFound("No available route found");
 
             return Ok(results.Select(r => new
             {
                 r.Courier.Id,
                 VehicleType = r.Courier.VehicleType.ToString(),
-                DistanceKm = r.DistanceKm,
-                EtaMinutes = r.EtaMinutes
+                r.DistanceKm,
+                r.EtaMinutes
             }));
         }
 
-        
+        // -------------------- Dashboard --------------------
         [HttpGet("Dashboard")]
         public async Task<IActionResult> Dashboard()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var supplier = await _unitOfWork.SupplierRepo
-                .GetByExpressionAsync(s => s.UserId == userId);
+            try
+            {
+                var supplier = await GetSupplier();
+                var requests = supplier.Requests ?? new List<Request>();
 
-            if (supplier == null)
-                return Unauthorized("Supplier not found");
+                var today = DateTime.UtcNow.Date;
 
-            // Use GetAllWithPackagesAsync to ensure we have package details for sums and names
-            var allRequests = (await _unitOfWork.RequestRepo.GetAllWithPackagesAsync())
-                .Where(r => r.SupplierId == supplier.Id)
-                .ToList();
-
-            var pendingCount = allRequests.Count(r => r.Status == RequestStatus.Pending);
-            var readyForPickupCount = allRequests.Count(r => r.Status == RequestStatus.Assigned);
-            var inTransitCount = allRequests.Count(r => r.Status == RequestStatus.PickupInProgress);
-            var deliveredTodayCount = allRequests.Count(r =>
-                r.Status == RequestStatus.Delivered &&
-                r.CreatedAt.Date == DateTime.UtcNow.Date
-            );
-
-            var totalCodToday = allRequests
-                .Where(r => r.Status == RequestStatus.Delivered && r.CreatedAt.Date == DateTime.UtcNow.Date)
-                .Sum(r => r.Packages?.Sum(p => p.ShipmentCost) ?? 0);
-
-            // Recent Parcels - Map to Anonymous Object matching FE Parcel interface roughly
-            var recentParcels = allRequests
-                .OrderByDescending(r => r.CreatedAt)
-                .Take(5)
-                .Select(r => new {
-                    requestId = r.Id,
-                    trackingNumber = r.Id.ToString(),
-                    status = r.Status,
-                    createdAt = r.CreatedAt,
-                    deliveryAddress = r.Packages?.FirstOrDefault()?.Destination ?? "N/A",
-                    receiverName = r.Packages?.FirstOrDefault()?.ReceiverName ?? "Unknown",
-                    codAmount = r.Packages?.Sum(p => p.ShipmentCost) ?? 0,
-                    isReadyForPickup = r.ReadyForPickup,
-                    description = r.Packages?.FirstOrDefault()?.Description ?? ""
+                return Ok(new
+                {
+                    pendingCount = requests.Count(r => r.Status == RequestStatus.Pending),
+                    readyForPickupCount = requests.Count(r => r.Status == RequestStatus.Assigned),
+                    inTransitCount = requests.Count(r => r.Status == RequestStatus.PickupInProgress),
+                    deliveredTodayCount = requests.Count(r =>
+                        r.Status == RequestStatus.Delivered && r.CreatedAt.Date == today),
+                    totalCodToday = requests
+                        .Where(r => r.Status == RequestStatus.Delivered && r.CreatedAt.Date == today)
+                        .Sum(r => r.Packages?.Sum(p => p.ShipmentCost) ?? 0)
                 });
-
-            // Stats for the Dashboard Cards
-            var stats = new List<object>
+            }
+            catch (Exception ex)
             {
-                new { label = "إجمالي الطلبات", value = allRequests.Count.ToString(), icon = "bi-box", trend = "+0%" },
-                new { label = "تم التسليم", value = allRequests.Count(r => r.Status == RequestStatus.Delivered).ToString(), icon = "bi-check-circle", trend = "" },
-                new { label = "قيد الانتظار", value = pendingCount.ToString(), icon = "bi-hourglass", trend = "" },
-                new { label = "الأرباح اليوم", value = totalCodToday.ToString("N0") + " ج.م", icon = "bi-cash", trend = "" }
-            };
+                return StatusCode(500, ex.Message);
+            }
+        }
 
-            return Ok(new
+        // -------------------- Profile (INLINE DTO) --------------------
+        [HttpGet("Profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var supplier = await GetSupplier();
+
+            return Ok(new SupplierProfileDTO
             {
-                stats,
-                recentParcels,
-                pendingCount,
-                readyForPickupCount,
-                inTransitCount,
-                deliveredTodayCount,
-                totalCodToday
+                Id = supplier.Id,
+                Name = supplier.User?.UserName ?? "Unknown",
+                Email = supplier.User?.Email ?? "N/A",
+                Phone = supplier.User?.PhoneNumber ?? "N/A",
+                TotalRequests = supplier.Requests?.Count ?? 0
             });
         }
 
-
-[HttpGet("Profile")]
-public async Task<IActionResult> Profile()
-{
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var supplier = await _unitOfWork.SupplierRepo
-        .GetByExpressionAsync(s => s.UserId == userId);
-
-    if (supplier == null)
-        return NotFound("Supplier not found");
-
-    return Ok(_mapper.Map<SupplierProfileDTO>(supplier));
-}
-
-
+        // -------------------- Explanation --------------------
         [HttpGet("Explanation/{requestId}")]
         public async Task<IActionResult> GetExplanation(int requestId)
         {
-            var supplierId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
-
-            if (request == null) return NotFound("Request not found");
-            if (request.SupplierId != supplierId) return Unauthorized();
-
-            var obs = await _unitOfWork.AssignmentObservationRepo.GetLatestForRequest(requestId);
-            if (obs == null) return NotFound("No explanation found for this request.");
-
-            return Ok(new
+            try
             {
-                obs.RequestId,
-                obs.Explanation,
-                obs.Timestamp,
-                obs.DecisionSource
-            });
+                var supplier = await GetSupplier();
+
+                var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
+                if (request == null || request.SupplierId != supplier.Id)
+                    return Unauthorized();
+
+                var obs = await _unitOfWork.AssignmentObservationRepo
+                    .GetLatestForRequest(requestId);
+
+                if (obs == null)
+                    return NotFound("No explanation found");
+
+                return Ok(obs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // -------------------- HELPER --------------------
+        private async Task<Supplier> GetSupplier()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var supplier = await _unitOfWork.SupplierRepo
+                .GetSupplierWithIncludesAsync(userId!);
+
+            if (supplier == null)
+                throw new Exception("Supplier not found");
+
+            return supplier;
         }
     }
 }

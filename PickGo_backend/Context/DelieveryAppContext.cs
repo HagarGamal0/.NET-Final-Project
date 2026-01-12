@@ -28,7 +28,7 @@ namespace PickGo_backend.Context
         public DbSet<DeliveryProof>  deliveryProofs { get; set; }
         public DbSet<Package> Packages { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<Courier> Suppliers { get; set; }
+        public DbSet<Supplier> Suppliers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,6 +47,8 @@ namespace PickGo_backend.Context
 
             modelBuilder.ApplyConfiguration(new SupplierConfiguration());
             modelBuilder.ApplyConfiguration(new CourierConfiguration());
+            modelBuilder.Entity<Supplier>().ToTable("Supplier");
+            modelBuilder.Entity<Courier>().ToTable("Courier");
             modelBuilder.ApplyConfiguration(new CourierLocationConfiguration());
             modelBuilder.ApplyConfiguration(new CourierTransactionConfiguration());
             modelBuilder.ApplyConfiguration(new CustomerConfiguration());

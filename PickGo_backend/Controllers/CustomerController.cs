@@ -118,42 +118,42 @@ namespace PickGo_backend.Controllers
             return NoContent();
         }
 
-        [HttpGet("MyOrders")]
-        public async Task<IActionResult> MyOrders([FromQuery] string phoneNumber)
+[HttpGet("MyOrders")]
+public async Task<IActionResult> MyOrders([FromQuery] string phoneNumber)
+{
+    if (string.IsNullOrWhiteSpace(phoneNumber))
+        return BadRequest("Phone number is required");
+
+    var packages = (await _unitOfWork.PackageRepo
+        .GetAllAsync(include: p =>
+            p.Include(p => p.Request)
+             .Include(p => p.Courier)))
+        .Where(p =>
+            p.ReceiverPhone == phoneNumber &&
+            (p.Status == PackageStatus.Pending ||
+             p.Status == PackageStatus.Assigned ||
+             p.Status == PackageStatus.OutForDelivery))
+        .Select(p => new
         {
-            // Find customer by phone
-            var customer = await _unitOfWork.CustomerRepo
-                .GetByExpressionAsync(c => c.PhoneNumber == phoneNumber);
-            if (customer == null) return NotFound("Customer not found");
+            p.Id,
+            p.Status,
+            CODAmount = p.ShipmentCost,
+            PickupLat = p.Request.PickupLat,
+            PickupLng = p.Request.PickupLng,
+            DropLat = p.Lat,
+            DropLng = p.Lang,
+            Courier = p.Courier == null ? null : new
+            {
+                p.Courier.Id,
+                p.Courier.VehicleType,
+                p.Courier.Rating
+            }
+        })
+        .ToList();
 
-            // Get all packages for this customer with related Request and Courier
-            var packages = (await _unitOfWork.PackageRepo.GetAllAsync(include: p => p.Include(p => p.Request).Include(p => p.Courier)))
-                .Where(p => p.CustomerID == customer.Id &&
-                            (p.Status == PackageStatus.Pending ||
-                             p.Status == PackageStatus.Assigned ||
-                             p.Status == PackageStatus.OutForDelivery))
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Status,
-                    CODAmount = p.ShipmentCost, // or your COD field if exists
-                    PickupLat = p.Request.PickupLat,
-                    PickupLng = p.Request.PickupLng,
-                    DropLat = p.Lat,
-                    DropLng = p.Lang,
-                    Courier = p.Courier != null ? new
-                    {
-                        p.Courier.Id,
-                        p.Courier.VehicleType,
-                        p.Courier.Rating
-                    } : null
-                })
-                .ToList();
-Console.WriteLine(packages);
-            return Ok(packages);
+    return Ok(packages);
+}
 
-
-        }
 
         // [HttpGet("{customerId}/packages")]
         // public async Task<IActionResult> GetCustomerPackages(int customerId)

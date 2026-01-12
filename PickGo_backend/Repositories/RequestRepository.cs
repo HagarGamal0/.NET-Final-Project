@@ -56,6 +56,9 @@ namespace PickGo_backend.Repositories
                 .Include(r => r.Packages)
                 .ThenInclude(p => p.Courier)
                 .ThenInclude(c => c.User)
+                .Include(r => r.Packages)
+                .ThenInclude(p => p.Courier)
+                .ThenInclude(c => c.Locations)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
 
@@ -65,6 +68,9 @@ namespace PickGo_backend.Repositories
                 .Include(r => r.Packages)
                 .ThenInclude(p => p.Courier)
                 .ThenInclude(c => c.User)
+                .Include(r => r.Packages)
+                .ThenInclude(p => p.Courier)
+                .ThenInclude(c => c.Locations)
                 .ToListAsync();
         }
 

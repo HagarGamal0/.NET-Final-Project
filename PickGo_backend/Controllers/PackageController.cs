@@ -21,7 +21,7 @@ namespace PickGo_backend.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(PackageCreateDTO dto)
         {
-            var request = await _unitOfWork.RequestRepo.GetActiveRequestForCustomerAsync(dto.CustomerID);
+            var request = await _unitOfWork.RequestRepo.GetActiveRequestForCustomerAsync(dto.CustomerID ?? 0);
             if (request == null) return BadRequest("No active request found for this customer.");
 
             var package = _mapper.Map<Package>(dto);
