@@ -112,28 +112,83 @@ public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDTO dto)
 
 
         // -------------------- UC-SUP-06: Confirm Pickup Ready --------------------
-        [HttpPost("ConfirmReady/{requestId}")]
-        public async Task<IActionResult> ConfirmReady(int requestId)
+[HttpPost("ConfirmReady/{requestId}")]
+public async Task<IActionResult> ConfirmReady(int requestId)
+{
+    try
+    {
+        var supplier = await GetSupplier();
+
+        var request = await _unitOfWork.RequestRepo
+            .GetByIdWithPackagesAsync(requestId); // ⬅️ ensure packages loaded
+
+        if (request == null || request.SupplierId != supplier.Id)
+            return NotFound("Request not found or unauthorized");
+
+        // ✅ ORIGINAL LOGIC (UNCHANGED)
+        request.ReadyForPickup = true;
+        _unitOfWork.RequestRepo.Update(request);
+        await _unitOfWork.SaveAsync();
+
+        // 🐆 ADDITION: URGENT AUTO-ASSIGN (NON-BLOCKING)
+        if (request.IsUrgent)
         {
             try
             {
-                var supplier = await GetSupplier();
+                // 🔴 DEMO: single courier
+                var demoCourierUserId = "1926645b-dc54-45c7-b576-175bfc9058f2";
 
-                var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
-                if (request == null || request.SupplierId != supplier.Id)
-                    return NotFound("Request not found or unauthorized");
+                var courier = (await _unitOfWork.CourierRepo.GetAllWithUserAsync())
+                    .FirstOrDefault(c =>
+                        c.User != null &&
+                        c.UserId == demoCourierUserId
+                    );
 
-                request.ReadyForPickup = true;
-                _unitOfWork.RequestRepo.Update(request);
-                await _unitOfWork.SaveAsync();
+                if (courier != null && request.Packages != null)
+                {
+                    foreach (var package in request.Packages)
+                    {
+                        package.CourierID = courier.Id;
+                        package.Status = PackageStatus.Assigned;
+                    }
 
-                return Ok(new { message = "Request marked as Ready for Pickup" });
+                    request.Status = RequestStatus.Assigned;
+
+                    _unitOfWork.RequestRepo.Update(request);
+                    await _unitOfWork.SaveAsync();
+
+                    // 🔔 Notify courier (SignalR)
+                    await _notificationService.NotifyCourierNearby(request.Id);
+
+                    // 🐆 Lynx explanation
+                    await _lynxService.ExplainAssignmentAsync(
+                        request.Id,
+                        courier.Id,
+                        "LYNX_AUTO_URGENT"
+                    );
+                }
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, ex.Message);
+                // ❗ Swallow errors to NEVER break original ConfirmReady flow
+                // Auto-assign failure must NOT block supplier workflow
             }
         }
+
+        // ✅ ORIGINAL RESPONSE (UNCHANGED)
+        return Ok(new
+        {
+            message = request.IsUrgent
+                ? "🚨 Urgent request marked ready (auto-assign attempted 🐆)"
+                : "Request marked as Ready for Pickup"
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
+
 
         // -------------------- UC-SUP-07: Cancel Parcel --------------------
         [HttpPost("CancelParcel/{requestId}")]
@@ -395,5 +450,85 @@ public async Task<IActionResult> CreateRequest([FromBody] CreateRequestDTO dto)
 
             return supplier;
         }
+
+[HttpGet("AvailableCarriers/{requestId}")]
+public async Task<IActionResult> GetAvailableCarriers(int requestId)
+{
+    try
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var supplier = await _unitOfWork.SupplierRepo
+            .GetSupplierWithIncludesAsync(userId!);
+        var demoCourierUserId = "1926645b-dc54-45c7-b576-175bfc9058f2";
+        if (supplier == null)
+            return Unauthorized("Supplier not found");
+
+        var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
+        if (request == null || request.SupplierId != supplier.Id)
+            return NotFound("Request not found");
+
+        var couriers = (await _unitOfWork.CourierRepo.GetAllWithUserAsync())
+    .Where(c =>
+        c.User != null &&                       // ✅ CRITICAL FIX
+        c.UserId == demoCourierUserId
+    )
+    .Select(c => new
+    {
+        c.Id,
+        Name = c.User!.UserName,
+        c.VehicleType,
+        c.Rating,
+        c.IsOnline,
+        c.IsAvailable
+    })
+    .ToList();
+
+        return Ok(couriers);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, "AvailableCarriers Error: " + ex.Message);
+    }
+}
+
+private async Task<bool> AutoAssignUrgentRequestAsync(Request request)
+{
+    // 🔴 DEMO: restrict to one courier
+    var demoCourierUserId = "1926645b-dc54-45c7-b576-175bfc9058f2";
+
+    var courier = (await _unitOfWork.CourierRepo.GetAllWithUserAsync())
+        .FirstOrDefault(c =>
+            c.User != null &&
+            c.UserId == demoCourierUserId
+        );
+
+    if (courier == null)
+        return false;
+
+    foreach (var package in request.Packages!)
+    {
+        package.CourierID = courier.Id;
+        package.Status = PackageStatus.Assigned;
+    }
+
+    request.Status = RequestStatus.Assigned;
+
+    _unitOfWork.RequestRepo.Update(request);
+    await _unitOfWork.SaveAsync();
+
+    // 🔔 Notify courier (SignalR)
+    await _notificationService.NotifyCourierNearby(request.Id);
+
+    // 🐆 Lynx explanation
+    await _lynxService.ExplainAssignmentAsync(
+        request.Id,
+        courier.Id,
+        "LYNX_AUTO_URGENT"
+    );
+
+    return true;
+}
+
+
     }
 }
