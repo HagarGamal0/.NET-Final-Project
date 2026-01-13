@@ -3,10 +3,12 @@
 public class OrderNotificationService
 {
     private readonly IHubContext<CourierLocationHub> _hubContext;
+    private readonly IHubContext<NotificationHub> _notificationHub;
 
-    public OrderNotificationService(IHubContext<CourierLocationHub> hubContext)
+    public OrderNotificationService(IHubContext<CourierLocationHub> hubContext, IHubContext<NotificationHub> notificationHub)
     {
         _hubContext = hubContext;
+        _notificationHub = notificationHub;
     }
 
     public async Task NotifyCourierNearby(int orderId)
@@ -47,7 +49,7 @@ public class OrderNotificationService
 
 public async Task NotifyNewRequest(int requestId)
 {
-    await _hubContext.Clients
+    await _notificationHub.Clients
         .Group("Couriers")
         .SendAsync("NewRequestCreated", new
         {

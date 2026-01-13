@@ -20,7 +20,7 @@ using System.Collections.Generic;
         public  int  SupplierId { get; set; }
 
         public virtual  Supplier Supplier { get; set; } = null!;
-        public virtual ICollection<Package>? Packages { get; set; }
+        public virtual ICollection<Package> Packages { get; set; } = new List<Package>();
 
         public RequestStatus Status { get; set; }
         = RequestStatus.Pending; //passed on courrier accepntence

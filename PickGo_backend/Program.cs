@@ -177,6 +177,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<CourierLocationHub>("/hubs/courier");
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 
     // LYNX TALISMAN: Ensure DB Schema for AssignmentObservations exists (Manual Migration for Phase 2)

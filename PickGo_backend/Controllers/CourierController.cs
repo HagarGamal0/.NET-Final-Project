@@ -116,6 +116,7 @@ namespace PickGo_backend.Controllers
                 .Select(p => new
                 {
                     p.Id,
+                    RequestId = p.RequestID,
                     Status = p.Status.ToString(),
                     CODAmount = p.ShipmentCost,
                     DestinationLat = p.Lat,
@@ -408,14 +409,13 @@ public async Task<IActionResult> GetAvailableJobs()
         .Select(p => new
         {
             p.Id,
-            pickupLat = p.Request?.PickupLat ?? 0,
-            pickupLng = p.Request?.PickupLng ?? 0,
-            p.ShipmentCost,
-            CustomerName = p.Customer?.User?.UserName ?? "Guest",
-            CustomerEmail = p.Customer?.User?.Email ?? "N/A",
-            DestinationLat = p.Lat ?? 0,
-            DestinationLng = p.Lang ?? 0,
-            Status = p.Status.ToString()
+    RequestId = p.Request != null ? p.Request.Id : 0,
+    p.ShipmentCost,
+    pickupLat = p.Request?.PickupLat ?? 0,
+    pickupLng = p.Request?.PickupLng ?? 0,
+    DestinationLat = p.Lat ?? 0,
+    DestinationLng = p.Lang ?? 0,
+    Status = p.Status.ToString()
         })
         .ToList();
 
@@ -460,7 +460,7 @@ public async Task<IActionResult> GetAvailableJobs()
                 return Unauthorized();
 
             var courier = await _unitOfWork.CourierRepo
-                .GetByExpressionAsync(c => c.UserId == userId);
+                .GetByUserIdAsync(userId);
 
             if (courier == null)
                 return NotFound("Courier not found");
@@ -471,11 +471,11 @@ public async Task<IActionResult> GetAvailableJobs()
             var dto = new CourierCompleteProfileDTO
             {
                 Id = courier.Id.ToString(),
-                Name = courier.User.UserName,
-                Email = courier.User.Email,
-                Phone = courier.User.PhoneNumber,
+                Name = courier.User?.UserName ?? "Unknown",
+                Email = courier.User?.Email ?? "No Email",
+                Phone = courier.User?.PhoneNumber ?? "No Phone",
                 VehicleType = courier.VehicleType.ToString(),
-                LicenseNumber = courier.LicenseNumber,
+                LicenseNumber = courier.LicenseNumber ?? "",
                 Rating = courier.Rating,
                 CompletedDeliveries = courier.CompletedDeliveries,
                 IsAvailable = courier.IsAvailable,
@@ -697,6 +697,51 @@ public async Task<IActionResult> GetOTPStatus(int packageId)
     });
 }
 
+
+// ===================== MyAssignedRequests (SAFE ADD) =====================
+[HttpGet("MyAssignedRequests")]
+[Authorize(Roles = "Courier")]
+public async Task<IActionResult> MyAssignedRequests()
+{
+    try
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var courier = await _unitOfWork.CourierRepo
+            .GetByExpressionAsync(c => c.UserId == userId);
+
+        if (courier == null)
+            return NotFound("Courier not found");
+
+        // Fetch requests via packages
+        var requests = (await _unitOfWork.RequestRepo.GetAllWithPackagesAsync())
+            .Where(r =>
+                (r.Packages?.Any(p =>
+                    p.CourierID == courier.Id &&
+                    (p.Status == PackageStatus.Assigned ||
+                     p.Status == PackageStatus.OutForDelivery)
+                ) ?? false)
+            )
+            .Select(r => new
+            {
+                requestId = r.Id,                // 🔒 CANONICAL ID
+                createdAt = r.CreatedAt,
+                isUrgent = r.IsUrgent,
+                pickupLat = r.PickupLat,
+                pickupLng = r.PickupLng,
+                packagesCount = r.Packages?.Count ?? 0,
+                codAmount = r.Packages?.Sum(p => p.ShipmentCost) ?? 0,
+                status = r.Status.ToString()
+            })
+            .OrderByDescending(r => r.createdAt)
+            .ToList();
+
+        return Ok(requests);
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, "MyAssignedRequests Error: " + ex.Message);
+    }
+}
 
     }
 }

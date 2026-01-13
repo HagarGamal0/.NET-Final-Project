@@ -128,13 +128,45 @@ public async Task<IActionResult> GetAll(
 
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(int id)
-        {
-            var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(id);
-            if (request == null) return NotFound();
+public async Task<IActionResult> GetOne(int id)
+{
+    var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(id);
+    if (request == null) return NotFound();
 
-            return Ok(_mapper.Map<RequestReadDTO>(request));
-        }
+    return Ok(new
+    {
+        request.Id,
+        request.Source,
+        request.CreatedAt,
+        request.Status,
+        request.IsUrgent,
+        request.ReadyForPickup,
+
+        Supplier = new
+        {
+            request.SupplierId
+        },
+
+        Packages = request.Packages.Select(p => new
+        {
+            p.Id,
+            p.Description,
+            p.Weight,
+            p.Status,
+            p.ShipmentCost,
+            p.Destination,
+            p.ReceiverPhone,
+
+            Courier = p.Courier == null ? null : new
+            {
+                p.Courier.Id,
+                p.Courier.VehicleType,
+                p.Courier.Rating
+            }
+        })
+    });
+}
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, RequestUpdateDTO dto)
@@ -161,7 +193,7 @@ public async Task<IActionResult> GetAll(
         [HttpPut("{requestId}/assign/{courierId}")]
         public async Task<IActionResult> AssignRider(int requestId, int courierId)
         {
-            var request = await _unitOfWork.RequestRepo.GetAsync(requestId);
+            var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(requestId);
             if (request == null) return NotFound("Request not found");
             if (request.Status != RequestStatus.Pending)
                 return BadRequest("Only pending requests can be assigned.");

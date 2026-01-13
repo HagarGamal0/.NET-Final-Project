@@ -240,7 +240,9 @@ public async Task<IActionResult> ConfirmReady(int requestId)
                 var courier = await _unitOfWork.CourierRepo
                     .GetByExpressionAsync(c => c.Id == dto.CourierId);
 
-                if (courier == null || !courier.IsOnline || courier.Status != CourierStatus.Approved)
+                Console.WriteLine(courier.IsAvailable);
+                Console.WriteLine(courier.Status);
+                if (courier == null || !courier.IsAvailable || courier.Status != CourierStatus.Approved)
                     return BadRequest("Courier is not available");
 
                 foreach (var pkg in request.Packages)
@@ -414,29 +416,38 @@ public async Task<IActionResult> ConfirmReady(int requestId)
 
         // -------------------- Explanation --------------------
         [HttpGet("Explanation/{requestId}")]
-        public async Task<IActionResult> GetExplanation(int requestId)
+public async Task<IActionResult> GetExplanation(int requestId)
+{
+    try
+    {
+        var supplier = await GetSupplier();
+
+        var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
+        if (request == null || request.SupplierId != supplier.Id)
+            return Unauthorized();
+
+        var obs = await _unitOfWork.AssignmentObservationRepo
+            .GetLatestForRequest(requestId);
+
+        if (obs == null)
+            return NotFound("No explanation found");
+
+        // ✅ SAFE PROJECTION (NO EF CYCLES)
+        return Ok(new
         {
-            try
-            {
-                var supplier = await GetSupplier();
+            obs.RequestId,
+            Explanation = obs.Explanation,
+            obs.DecisionSource,
+            obs.Timestamp
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, ex.Message);
+    }
+}
 
-                var request = await _unitOfWork.RequestRepo.GetByIdAsync(requestId);
-                if (request == null || request.SupplierId != supplier.Id)
-                    return Unauthorized();
 
-                var obs = await _unitOfWork.AssignmentObservationRepo
-                    .GetLatestForRequest(requestId);
-
-                if (obs == null)
-                    return NotFound("No explanation found");
-
-                return Ok(obs);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
 
         // -------------------- HELPER --------------------
         private async Task<Supplier> GetSupplier()
