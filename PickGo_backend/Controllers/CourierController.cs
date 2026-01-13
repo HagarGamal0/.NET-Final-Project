@@ -109,7 +109,9 @@ namespace PickGo_backend.Controllers
             var courier = await _unitOfWork.CourierRepo.GetByExpressionAsync(c => c.UserId == userId);
             if (courier == null) return NotFound("Courier not found");
 
-            var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+            var packages = await _unitOfWork.PackageRepo.GetAllWithIncludesAsync();
+
+            var result = packages
                 .Where(p => p.CourierID == courier.Id &&
                            (p.Status == PackageStatus.Assigned ||
                             p.Status == PackageStatus.OutForDelivery))
@@ -117,14 +119,34 @@ namespace PickGo_backend.Controllers
                 {
                     p.Id,
                     RequestId = p.RequestID,
+                    // Package data
+                    p.Description,
+                    p.Weight,
+                    p.ShipmentCost,
+                    Destination = p.Destination ?? "",
+                    ReceiverPhone = p.ReceiverPhone ?? "",
+                    p.Fragile,
+                    Notes = p.ShipmentNotes ?? "",
+                    // Request data (pickup info)
+                    Source = p.Request?.Source ?? "",
+                    PickupLat = p.Request?.PickupLat ?? 0,
+                    PickupLng = p.Request?.PickupLng ?? 0,
+                    IsUrgent = p.Request?.IsUrgent ?? false,
+                    Priority = (p.Request?.IsUrgent ?? false) ? "urgent" : "normal",
+                    // Package destination coords
+                    DestinationLat = p.Lat ?? 0,
+                    DestinationLng = p.Lang ?? 0,
                     Status = p.Status.ToString(),
-                    CODAmount = p.ShipmentCost,
-                    DestinationLat = p.Lat,
-                    DestinationLng = p.Lang
+                    // OTP info
+                    p.DeliveryOTP,
+                    p.OTPVerified,
+                    // Customer info
+                    CustomerName = p.Customer?.User?.UserName ?? "عميل",
+                    CustomerPhone = p.ReceiverPhone ?? ""
                 })
                 .ToList();
 
-            return Ok(packages);
+            return Ok(result);
         }
 
         //====================================== AcceptPackage ===========================
@@ -409,13 +431,28 @@ public async Task<IActionResult> GetAvailableJobs()
         .Select(p => new
         {
             p.Id,
-    RequestId = p.Request != null ? p.Request.Id : 0,
-    p.ShipmentCost,
-    pickupLat = p.Request?.PickupLat ?? 0,
-    pickupLng = p.Request?.PickupLng ?? 0,
-    DestinationLat = p.Lat ?? 0,
-    DestinationLng = p.Lang ?? 0,
-    Status = p.Status.ToString()
+            RequestId = p.Request != null ? p.Request.Id : 0,
+            // Package data
+            p.Description,
+            p.Weight,
+            p.ShipmentCost,
+            Destination = p.Destination ?? "",
+            ReceiverPhone = p.ReceiverPhone ?? "",
+            p.Fragile,
+            Notes = p.ShipmentNotes ?? "",
+            // Request data (pickup info)
+            Source = p.Request?.Source ?? "",
+            PickupLat = p.Request?.PickupLat ?? 0,
+            PickupLng = p.Request?.PickupLng ?? 0,
+            IsUrgent = p.Request?.IsUrgent ?? false,
+            Priority = (p.Request?.IsUrgent ?? false) ? "urgent" : "normal",
+            // Package destination coords
+            DestinationLat = p.Lat ?? 0,
+            DestinationLng = p.Lang ?? 0,
+            Status = p.Status.ToString(),
+            // Customer info if available
+            CustomerName = p.Customer?.User?.UserName ?? "عميل",
+            CustomerPhone = p.ReceiverPhone ?? ""
         })
         .ToList();
 
@@ -619,7 +656,9 @@ public async Task<IActionResult> GetActiveJobs()
     if (courier == null)
         return NotFound("Courier not found");
 
-    var packages = (await _unitOfWork.PackageRepo.GetAllAsync())
+    var packages = await _unitOfWork.PackageRepo.GetAllWithIncludesAsync();
+
+    var result = packages
         .Where(p =>
             p.CourierID == courier.Id &&
             (p.Status == PackageStatus.Assigned ||
@@ -627,14 +666,31 @@ public async Task<IActionResult> GetActiveJobs()
         .Select(p => new
         {
             p.Id,
-            p.Status,
+            RequestId = p.RequestID,
+            // Package data
+            p.Description,
+            p.Weight,
             p.ShipmentCost,
-            DestinationLat = p.Lat,
-            DestinationLng = p.Lang
+            Destination = p.Destination ?? "",
+            ReceiverPhone = p.ReceiverPhone ?? "",
+            // Request data (pickup info)
+            Source = p.Request?.Source ?? "",
+            PickupLat = p.Request?.PickupLat ?? 0,
+            PickupLng = p.Request?.PickupLng ?? 0,
+            IsUrgent = p.Request?.IsUrgent ?? false,
+            // Package destination coords
+            DestinationLat = p.Lat ?? 0,
+            DestinationLng = p.Lang ?? 0,
+            Status = p.Status.ToString(),
+            // OTP info
+            p.DeliveryOTP,
+            p.OTPVerified,
+            // Customer info
+            CustomerName = p.Customer?.User?.UserName ?? "عميل"
         })
         .ToList();
 
-    return Ok(packages);
+    return Ok(result);
 }
 
 

@@ -208,33 +208,49 @@ public async Task<IActionResult> GetMyPackages()
     if (customer == null)
         return NotFound("Customer not found");
 
-    // ✅ FIX 3: Fetch ONLY packages belonging to this customer
-    // ❌ Do NOT use GetAllAsync() then filter in memory
-    var packages = await _unitOfWork.PackageRepo
-        .FindAsync(p => p.CustomerID == customer.Id || p.ReceiverPhone == customer.PhoneNumber);
+    // ✅ FIX 3: Fetch packages with includes
+    var allPackages = await _unitOfWork.PackageRepo
+        .GetAllAsync(include: p => 
+            p.Include(pkg => pkg.Request)
+             .ThenInclude(r => r.Supplier)
+             .Include(pkg => pkg.Courier)
+             .ThenInclude(c => c.User));
 
-    // ✅ FIX 4: Shape response (safe null handling)
+    var packages = allPackages
+        .Where(p => p.CustomerID == customer.Id || p.ReceiverPhone == customer.PhoneNumber);
+
+    // ✅ FIX 4: Shape response with complete data
     var result = packages.Select(p => new
     {
         p.Id,
-        p.Status,
+        Status = p.Status.ToString(),
+        // Package info
         p.Description,
         p.Weight,
         p.ShipmentCost,
         p.Fragile,
-
-        PickupLat = p.Request?.PickupLat,
-        PickupLng = p.Request?.PickupLng,
-
-        DropLat = p.Lat,
-        DropLng = p.Lang,
-
-        Courier = p.Courier == null ? null : new
-        {
-            p.Courier.Id,
-            p.Courier.VehicleType,
-            p.Courier.Rating
-        }
+        Destination = p.Destination ?? "",
+        ReceiverPhone = p.ReceiverPhone ?? "",
+        Notes = p.ShipmentNotes ?? "",
+        // Request info (pickup/source)
+        Source = p.Request?.Source ?? "",
+        PickupLat = p.Request?.PickupLat ?? 0,
+        PickupLng = p.Request?.PickupLng ?? 0,
+        IsUrgent = p.Request?.IsUrgent ?? false,
+        CreatedAt = p.Request?.CreatedAt,
+        // Destination coords
+        DropLat = p.Lat ?? 0,
+        DropLng = p.Lang ?? 0,
+        // Supplier info
+        SupplierName = p.Request?.Supplier?.User?.UserName ?? "مورد",
+        // Courier info
+        CourierName = p.Courier?.User?.UserName ?? null,
+        CourierPhone = p.Courier?.User?.PhoneNumber ?? null,
+        CourierRating = p.Courier?.Rating ?? 0,
+        // OTP info
+        p.DeliveryOTP,
+        p.OTPVerified,
+        p.DeliveredAt
     }).ToList();
 
     return Ok(result);
