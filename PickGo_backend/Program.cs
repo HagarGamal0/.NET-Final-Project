@@ -158,6 +158,7 @@ var app = builder.Build();
 
 
 app.UseCors("AllowAll");
+app.UseStaticFiles();
 // Middleware pipeline
 // (app.Environment.IsDevelopment())
 //{
