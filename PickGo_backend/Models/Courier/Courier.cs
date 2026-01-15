@@ -41,7 +41,7 @@ namespace PickGo_backend.Models
         public virtual ICollection<Package>? Packages { get; set; }
         public virtual ICollection<DeliveryProof>? DeliveryProofs { get; set; }
         public virtual ICollection<CourierTransaction>? Transactions { get; set; }
-        public virtual ICollection<CourierSubscription>? CourierSubscriptions { get; set; } = new List<CourierSubscription>();
+        public virtual ICollection<CourierSubscription> CourierSubscriptions { get; set; } = new List<CourierSubscription>();
         public string IdPhotoUrl { get;  set; }
     }
 }

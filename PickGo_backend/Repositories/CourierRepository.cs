@@ -27,7 +27,22 @@ namespace PickGo_backend.Repositories
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<List<Courier>> GetAllWithUserAsync()
+{
+    return await _context.Couriers
+        .Include(c => c.User)
+        .ToListAsync();
+}
+
+        public async Task<Courier?> GetByUserIdAsync(string userId)
+        {
+            return await _context.Couriers
+                .Include(c => c.User)
+                .Include(c => c.Locations)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+        }
+
     }
-    }
+}
 
 

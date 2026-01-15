@@ -21,6 +21,9 @@ namespace PickGo_backend.Models
             // Primary Key
             // --------------------
             builder.HasKey(c => c.Id);
+            
+            // Map to existing database table name
+            builder.ToTable("Courier");
 
             // --------------------
             // One-to-One: Courier ↔ User

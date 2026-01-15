@@ -126,6 +126,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.CustomSchemaIds(type => type.ToString());
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -157,6 +158,7 @@ var app = builder.Build();
 
 
 app.UseCors("AllowAll");
+app.UseStaticFiles();
 // Middleware pipeline
 // (app.Environment.IsDevelopment())
 //{
@@ -176,6 +178,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<CourierLocationHub>("/hubs/courier");
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 
     // LYNX TALISMAN: Ensure DB Schema for AssignmentObservations exists (Manual Migration for Phase 2)

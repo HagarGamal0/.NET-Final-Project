@@ -25,84 +25,148 @@ namespace PickGo_backend.Controllers
             _lynxService = lynxService;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var supplier = await _unitOfWork.SupplierRepo.GetByExpressionAsync(s => s.UserId == userId);
-            if (supplier == null) return BadRequest("Supplier not found.");
+[HttpPost]
+public async Task<IActionResult> CreateRequest(RequestCreateDTO dto)
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var supplier = await _unitOfWork.SupplierRepo
+        .GetByExpressionAsync(s => s.UserId == userId);
 
-            var request = _mapper.Map<Request>(dto);
-            request.SupplierId = supplier.Id;
-            request.CreatedAt = DateTime.UtcNow;
-            request.Status = RequestStatus.Pending;
+    if (supplier == null)
+        return BadRequest("Supplier not found");
 
-            // Save request first to get Id
-            await _unitOfWork.RequestRepo.AddAsync(request);
-            await _unitOfWork.SaveAsync();
+    var request = _mapper.Map<Request>(dto);
+    request.SupplierId = supplier.Id;
+    request.CreatedAt = DateTime.UtcNow;
+    request.Status = RequestStatus.Pending;
 
-            // Map and save packages using foreach
-            var packages = dto.Packages.Select(p =>
-            {
-                var package = _mapper.Map<Package>(p);
-                package.RequestID = request.Id;
-                package.Status = PackageStatus.Pending;
-                return package;
-            }).ToList();
+    await _unitOfWork.RequestRepo.AddAsync(request);
+    await _unitOfWork.SaveAsync();
 
-            foreach (var package in packages)
-            {
-                await _unitOfWork.PackageRepo.AddAsync(package);
-            }
-            await _unitOfWork.SaveAsync();
+    foreach (var p in dto.Packages)
+    {
+        var package = _mapper.Map<Package>(p);
+        package.RequestID = request.Id;
+        package.Status = PackageStatus.Pending;
+        package.ReceiverPhone = p.ReceiverPhone;
 
-            // Auto-assign courier if non-urgent
-            if (!dto.IsUrgent)
-            {
-                var courier = await FindNearestAvailableCourier(request);
-                if (courier != null)
-                {
-                    foreach (var pkg in packages) pkg.CourierID = courier.Id;
-                    courier.IsAvailable = false;
-                    request.Status = RequestStatus.Accepted;
-                    await _unitOfWork.SaveAsync();
+        await _unitOfWork.PackageRepo.AddAsync(package);
+    }
 
-                    // Lynx Talisman Observation (SYSTEM)
-                    await _lynxService.ExplainAssignmentAsync(request.Id, courier.Id, "SYSTEM");
-                }
-            }
+    await _unitOfWork.SaveAsync();
 
-            return Ok(_mapper.Map<RequestReadDTO>(request));
-        }
+    var fullRequest = await _unitOfWork.RequestRepo.GetFullRequestAsync(request.Id);
+    return Ok(_mapper.Map<RequestReadDTO>(fullRequest));
+}
+
+
+
+
         [HttpGet]
-        public async Task<IActionResult> GetAll(string? search, string sortBy = "date", string sortDir = "desc")
-        {
-            var supplierId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplierId);
+public async Task<IActionResult> GetAll(
+    string? search,
+    string? status,
+    string sortBy = "date",
+    string sortDir = "desc"
+)
+{
+    // ✅ FIX 1: Correctly resolve Supplier from UserId (GUID-safe)
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var supplier = await _unitOfWork.SupplierRepo
+        .GetByExpressionAsync(s => s.UserId == userId);
 
-            if (!string.IsNullOrEmpty(search))
-                requests = requests.Where(r =>
-                    r.Source.Contains(search) ||
-                    r.Packages.Any(p => p.Description.Contains(search))
-                ).ToList();
+    if (supplier == null)
+        return Unauthorized("Supplier not found");
 
-            requests = sortBy switch
-            {
-                "status" => sortDir == "asc" ? requests.OrderBy(r => r.Status).ToList() : requests.OrderByDescending(r => r.Status).ToList(),
-                _ => sortDir == "asc" ? requests.OrderBy(r => r.CreatedAt).ToList() : requests.OrderByDescending(r => r.CreatedAt).ToList()
-            };
+    var requests = await _unitOfWork.RequestRepo.GetBySupplierAsync(supplier.Id);
 
-            return Ok(_mapper.Map<List<RequestReadDTO>>(requests));
-        }
+    // ✅ FIX 2: Multi-status filtering (?status=pending,assigned)
+    if (!string.IsNullOrEmpty(status))
+    {
+        var statuses = status
+    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+    .Select(s =>
+    {
+        if (Enum.TryParse<RequestStatus>(s, true, out var parsed))
+            return (RequestStatus?)parsed;
+
+        return null;
+    })
+    .Where(s => s.HasValue)
+    .Select(s => s!.Value)
+    .ToList();
+
+
+        requests = requests
+            .Where(r => statuses.Contains(r.Status))
+            .ToList();
+    }
+
+    // Existing search logic
+    if (!string.IsNullOrEmpty(search))
+    {
+        requests = requests.Where(r =>
+            r.Source.Contains(search) ||
+            r.Packages.Any(p => p.Description.Contains(search))
+        ).ToList();
+    }
+
+    // Existing sorting logic
+    requests = sortBy switch
+    {
+        "status" => sortDir == "asc"
+            ? requests.OrderBy(r => r.Status).ToList()
+            : requests.OrderByDescending(r => r.Status).ToList(),
+
+        _ => sortDir == "asc"
+            ? requests.OrderBy(r => r.CreatedAt).ToList()
+            : requests.OrderByDescending(r => r.CreatedAt).ToList()
+    };
+
+    return Ok(_mapper.Map<List<RequestReadDTO>>(requests));
+}
+
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(int id)
-        {
-            var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(id);
-            if (request == null) return NotFound();
+public async Task<IActionResult> GetOne(int id)
+{
+    var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(id);
+    if (request == null) return NotFound();
 
-            return Ok(_mapper.Map<RequestReadDTO>(request));
-        }
+    return Ok(new
+    {
+        request.Id,
+        request.Source,
+        request.CreatedAt,
+        request.Status,
+        request.IsUrgent,
+        request.ReadyForPickup,
+
+        Supplier = new
+        {
+            request.SupplierId
+        },
+
+        Packages = request.Packages.Select(p => new
+        {
+            p.Id,
+            p.Description,
+            p.Weight,
+            p.Status,
+            p.ShipmentCost,
+            p.Destination,
+            p.ReceiverPhone,
+
+            Courier = p.Courier == null ? null : new
+            {
+                p.Courier.Id,
+                p.Courier.VehicleType,
+                p.Courier.Rating
+            }
+        })
+    });
+}
+
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, RequestUpdateDTO dto)
@@ -129,7 +193,7 @@ namespace PickGo_backend.Controllers
         [HttpPut("{requestId}/assign/{courierId}")]
         public async Task<IActionResult> AssignRider(int requestId, int courierId)
         {
-            var request = await _unitOfWork.RequestRepo.GetAsync(requestId);
+            var request = await _unitOfWork.RequestRepo.GetFullRequestAsync(requestId);
             if (request == null) return NotFound("Request not found");
             if (request.Status != RequestStatus.Pending)
                 return BadRequest("Only pending requests can be assigned.");

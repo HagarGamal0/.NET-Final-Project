@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PickGo_backend.Context;
 
@@ -11,9 +12,11 @@ using PickGo_backend.Context;
 namespace PickGo_backend.Migrations
 {
     [DbContext(typeof(DelieveryAppContext))]
-    partial class DelieveryAppContextModelSnapshot : ModelSnapshot
+    [Migration("20260111113757_MakePackageCustomerNullable")]
+    partial class MakePackageCustomerNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -280,10 +283,6 @@ namespace PickGo_backend.Migrations
 
                     b.Property<bool>("OTPVerified")
                         .HasColumnType("bit");
-
-                    b.Property<string>("ReceiverPhone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RequestID")
                         .HasColumnType("int");
@@ -765,7 +764,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 1, 11, 14, 31, 5, 195, DateTimeKind.Utc).AddTicks(7767),
+                            CreatedAt = new DateTime(2026, 1, 11, 11, 37, 56, 768, DateTimeKind.Utc).AddTicks(7281),
                             Description = "Basic package for couriers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -776,7 +775,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 1, 11, 14, 31, 5, 195, DateTimeKind.Utc).AddTicks(7774),
+                            CreatedAt = new DateTime(2026, 1, 11, 11, 37, 56, 768, DateTimeKind.Utc).AddTicks(7286),
                             Description = "Standard package for couriers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -787,7 +786,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 1, 11, 14, 31, 5, 195, DateTimeKind.Utc).AddTicks(7781),
+                            CreatedAt = new DateTime(2026, 1, 11, 11, 37, 56, 768, DateTimeKind.Utc).AddTicks(7290),
                             Description = "Premium package for couriers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -798,7 +797,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 1, 11, 14, 31, 5, 195, DateTimeKind.Utc).AddTicks(7783),
+                            CreatedAt = new DateTime(2026, 1, 11, 11, 37, 56, 768, DateTimeKind.Utc).AddTicks(7291),
                             Description = "Basic package for suppliers with 5 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 5,
@@ -809,7 +808,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 1, 11, 14, 31, 5, 195, DateTimeKind.Utc).AddTicks(7786),
+                            CreatedAt = new DateTime(2026, 1, 11, 11, 37, 56, 768, DateTimeKind.Utc).AddTicks(7293),
                             Description = "Standard package for suppliers with 10 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 10,
@@ -820,7 +819,7 @@ namespace PickGo_backend.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 1, 11, 14, 31, 5, 195, DateTimeKind.Utc).AddTicks(7789),
+                            CreatedAt = new DateTime(2026, 1, 11, 11, 37, 56, 768, DateTimeKind.Utc).AddTicks(7294),
                             Description = "Premium package for suppliers with 20 allowed orders",
                             DurationInDays = 0,
                             MaxOrders = 20,
@@ -974,15 +973,15 @@ namespace PickGo_backend.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a35329e5-b435-4002-b540-ee48d126e912",
+                            ConcurrencyStamp = "61e68bec-7d14-4eb7-a282-ba0f7caa36c2",
                             Email = "admin@gmail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEI57g1zhtuLRhtDlzNvh/xHAEf7DJBL8CPkNErorVVNcgHo+6sV92dTwEwW9eoXoBw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEfp9yyquVKnJfqnGSWw2KF+xwKt+5RH7bTvN76LBXgOsZGc4tcAo3sTmEX8KX4xXg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "0a6541a0-d75a-4f0a-b865-4556f927d166",
+                            SecurityStamp = "cbec4825-d98e-4035-9aa7-aef27734fb2a",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

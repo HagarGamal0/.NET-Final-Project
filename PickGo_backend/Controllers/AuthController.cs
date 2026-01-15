@@ -26,15 +26,17 @@ namespace PickGo_backend.Controllers
         private readonly UnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public AuthController(UserManager<User> userManager, IMapper mapper, IEmailService emailService, UnitOfWork unitOfWork, IConfiguration configuration)
+        public AuthController(UserManager<User> userManager, IMapper mapper, IEmailService emailService, UnitOfWork unitOfWork, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _emailService = emailService;
-
+            _webHostEnvironment = webHostEnvironment;
+            Console.WriteLine("AuthController initialized."); 
         }
 
         // -------------------- Registration --------------------
@@ -74,7 +76,7 @@ namespace PickGo_backend.Controllers
         }
 
         [HttpPost("Register/Courier")]
-        public async Task<IActionResult> RegisterCourier([FromBody] CourierRegisterDTO dto)
+        public async Task<IActionResult> RegisterCourier([FromForm] CourierRegisterDTO dto)
         {
             var user = new User
             {
@@ -89,26 +91,50 @@ namespace PickGo_backend.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            if (!await _userManager.IsInRoleAsync(user, "Courier"))
-                await _userManager.AddToRoleAsync(user, "Courier");
-
-            var courier = new Courier
+            try
             {
-                UserId = user.Id,
-                VehicleType = dto.VehicleType,
-                LicenseNumber = dto.LicenseNumber,
-                MaxWeight = dto.MaxWeight,
-                IsAvailable = true,
-                IsOnline = false,
-                Rating = 0,
-                Status = CourierStatus.Pending
+                if (!await _userManager.IsInRoleAsync(user, "Courier"))
+                    await _userManager.AddToRoleAsync(user, "Courier");
 
-            };
+                // Save files
+                string? photoUrl = await SaveFileAsync(dto.PhotoUrl, "courier-profiles");
+                string? licenseFront = await SaveFileAsync(dto.LicensePhotoFront, "courier-licenses");
+                string? licenseBack = await SaveFileAsync(dto.LicensePhotoBack, "courier-licenses");
+                string? vehicleLicenseFront = await SaveFileAsync(dto.VehcelLicensePhotoFront, "vehicle-licenses");
+                string? vehicleLicenseBack = await SaveFileAsync(dto.VehcelLicensePhotoBack, "vehicle-licenses");
+                string? idPhotoUrl = await SaveFileAsync(dto.IdPhotoUrl, "courier-ids");
 
-            await _unitOfWork.CourierRepo.AddAsync(courier);
-            await _unitOfWork.SaveAsync();
+                var courier = new Courier
+                {
+                    UserId = user.Id,
+                    VehicleType = dto.VehicleType,
+                    LicenseNumber = dto.LicenseNumber,
+                    MaxWeight = dto.MaxWeight,
+                    IsAvailable = true,
+                    IsOnline = false,
+                    Rating = 0,
+                    Status = CourierStatus.Pending,
 
-            return Ok(new { userId = user.Id, role = "Courier" });
+                    PhotoUrl = photoUrl,
+                    LicensePhotoFront = licenseFront,
+                    LicensePhotoBack = licenseBack,
+                    VehcelLicensePhotoFront = vehicleLicenseFront,
+                    VehcelLicensePhotoBack = vehicleLicenseBack,
+                    IdPhotoUrl = idPhotoUrl ?? "", // Provide empty string if null to satisfy DB constraint
+                    address = dto.Address
+                };
+
+                await _unitOfWork.CourierRepo.AddAsync(courier);
+                await _unitOfWork.SaveAsync();
+
+                return Ok(new { userId = user.Id, role = "Courier" });
+            }
+            catch (Exception)
+            {
+                // Rollback: Delete the user if Courier profile creation failed
+                await _userManager.DeleteAsync(user);
+                throw; // Rethrow to show error to client
+            }
         }
 
 
@@ -390,6 +416,29 @@ public async Task<IActionResult> LoginCustomerWithOtp(
 
 
 
+
+
+        private async Task<string?> SaveFileAsync(IFormFile? file, string folderName)
+        {
+            if (file == null || file.Length == 0)
+                return null;
+
+            string webRootPath = _webHostEnvironment.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            string uploadsFolder = Path.Combine(webRootPath, "uploads", folderName);
+            
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            return $"/uploads/{folderName}/{uniqueFileName}";
+        }
 
     }
 }

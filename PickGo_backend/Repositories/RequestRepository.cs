@@ -18,12 +18,13 @@ namespace PickGo_backend.Repositories
         }
 
         public async Task<List<Request>> GetBySupplierAsync(int supplierId)
-        {
-            return await _context.Requests
-                .Where(r => r.SupplierId == supplierId)
-                .Include(r => r.Packages)
-                .ToListAsync();
-        }
+{
+    return await _context.Requests
+        .Include(r => r.Packages)
+        .Where(r => r.SupplierId == supplierId)
+        .ToListAsync();
+}
+
 
 
 
@@ -55,6 +56,9 @@ namespace PickGo_backend.Repositories
                 .Include(r => r.Packages)
                 .ThenInclude(p => p.Courier)
                 .ThenInclude(c => c.User)
+                .Include(r => r.Packages)
+                .ThenInclude(p => p.Courier)
+                .ThenInclude(c => c.Locations)
                 .FirstOrDefaultAsync(r => r.Id == id);
         }
 
@@ -64,6 +68,9 @@ namespace PickGo_backend.Repositories
                 .Include(r => r.Packages)
                 .ThenInclude(p => p.Courier)
                 .ThenInclude(c => c.User)
+                .Include(r => r.Packages)
+                .ThenInclude(p => p.Courier)
+                .ThenInclude(c => c.Locations)
                 .ToListAsync();
         }
 
