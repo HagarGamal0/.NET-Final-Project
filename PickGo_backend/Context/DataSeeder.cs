@@ -68,59 +68,57 @@ namespace PickGo_backend.Context
         public static void SeedSubscription(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Subscription>().HasData(
+
+                // ===== COURIER =====
                 new Subscription
                 {
                     Id = 1,
-                    Name = "Basic",
+                    Name = "Free Trial",
+                    Description = "5 free trips for 30 days",
                     Price = 0,
-                    UserType = "Courier",
-                    MaxOrders = 5,
-                    Description = "Basic package for couriers with 5 allowed orders"
+                    DurationInDays = 30,
+                    MaxTrips = 5,
+                    IsUnlimited = false,
+                    IsOneTimePayment = false,
+                    UserType = "Courier"
                 },
                 new Subscription
                 {
                     Id = 2,
-                    Name = "Standard",
-                    Price = 50,
-                    UserType = "Courier",
-                    MaxOrders = 10,
-                    Description = "Standard package for couriers with 10 allowed orders"
+                    Name = "Monthly Pro",
+                    Description = "20 trips per month",
+                    Price = 30,
+                    DurationInDays = 30,
+                    MaxTrips = 20,
+                    IsUnlimited = false,
+                    IsOneTimePayment = false,
+                    UserType = "Courier"
                 },
                 new Subscription
                 {
                     Id = 3,
-                    Name = "Premium",
+                    Name = "Yearly Unlimited",
+                    Description = "Unlimited trips for one year",
                     Price = 100,
-                    UserType = "Courier",
-                    MaxOrders = 20,
-                    Description = "Premium package for couriers with 20 allowed orders"
+                    DurationInDays = 365,
+                    MaxTrips = null,
+                    IsUnlimited = true,
+                    IsOneTimePayment = true,
+                    UserType = "Courier"
                 },
+
+                // ===== SUPPLIER (same logic if needed) =====
                 new Subscription
                 {
                     Id = 4,
-                    Name = "Basic",
+                    Name = "Free Trial",
+                    Description = "5 free orders for 30 days",
                     Price = 0,
-                    UserType = "Supplier",
-                    MaxOrders = 5,
-                    Description = "Basic package for suppliers with 5 allowed orders"
-                },
-                new Subscription
-                {
-                    Id = 5,
-                    Name = "Standard",
-                    Price = 50,
-                    UserType = "Supplier",
-                    MaxOrders = 10,
-                    Description = "Standard package for suppliers with 10 allowed orders"
-                },
-                new Subscription
-                {
-                    Id = 6,
-                    Name = "Premium",
-                    Price = 100,
-                    UserType = "Supplier",
-                    MaxOrders = 20,
-                    Description = "Premium package for suppliers with 20 allowed orders"
+                    DurationInDays = 30,
+                    MaxTrips = 5,
+                    IsUnlimited = false,
+                    IsOneTimePayment = false,
+                    UserType = "Supplier"
                 }
             );
         }

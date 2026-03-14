@@ -2,19 +2,19 @@
 {
     public class CourierSubscription : BaseModel
     {
-        // Foreign key to Courier
         public int CourierId { get; set; }
         public virtual Courier Courier { get; set; } = null!;
 
-        // Foreign key to Subscription
         public int SubscriptionId { get; set; }
         public virtual Subscription Subscription { get; set; } = null!;
 
-        // Subscription start and end
-        public DateTime StartDate { get; set; } = DateTime.UtcNow;
+        public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        // Is this subscription currently active
+        public int UsedTrips { get; set; } = 0;
+
         public bool IsActive { get; set; } = true;
+
+        public string? StripePaymentIntentId { get; set; }
     }
 }

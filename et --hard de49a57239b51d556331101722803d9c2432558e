@@ -1,0 +1,158 @@
+[33mcommit 832777a1f7f0b1d8d16352c4de391e09ae81d8f1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 6fcc2e5 de49a57
+Author: Ahmed Mohamed <tato42355@hmail.com>
+Date:   Mon Dec 29 14:48:47 2025 +0200
+
+    tesr
+
+[33mcommit 6fcc2e5c9990a4212a0556e8121e7b887759e004[m
+Author: Ahmed Mohamed <tato42355@hmail.com>
+Date:   Mon Dec 29 11:04:19 2025 +0200
+
+    Update Program and migrations
+
+[33mcommit de49a57239b51d556331101722803d9c2432558e[m
+Author: doaa <shazlydoaa2@gmail.com>
+Date:   Mon Dec 29 09:31:06 2025 +0200
+
+    edits courier
+
+[33mcommit 615d4c51a9377114b70f11edb4c634932eb1f663[m
+Author: alfaroukaljwely <aryar4321@gmail.com>
+Date:   Sun Dec 28 14:06:57 2025 +0200
+
+    testtt
+
+[33mcommit fdb5b8dd23244dd2ab1eda8df386b5c2eddfc4b4[m
+Author: alfaroukaljwely <aryar4321@gmail.com>
+Date:   Wed Dec 24 14:44:26 2025 +0200
+
+    Update customer creation defaults and enable open CORS policy
+    
+    - Set UserName to "Customer_{PhoneNumber}" and Email to "{PhoneNumber}@example.com" for new customers; default Address to "Aswan" if not provided.
+    - Replace restrictive CORS policy with "AllowAll" to permit any origin, header, and method.
+
+[33mcommit 0aeaa04aad63be436363fd8e6054f407416e5627[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Tue Dec 23 21:51:22 2025 +0200
+
+    fixing packages installed
+
+[33mcommit 72b40d1f49afead55265f2d42bddf96373647f41[m
+Merge: 4f7b4f9 5b71d57
+Author: Ahmed Karrar Omar <ahmedkarrar79@gmail.com>
+Date:   Mon Dec 22 21:41:01 2025 +0200
+
+    Merge pull request #7 from Kraken15th/karrar
+    
+    Karrar
+
+[33mcommit 5b71d575dedd0eb1f26e7ed2bed90629a37b9e2b[m
+Merge: 6cc4acd 4f7b4f9
+Author: Ahmed Karrar Omar <ahmedkarrar79@gmail.com>
+Date:   Mon Dec 22 21:40:48 2025 +0200
+
+    Merge branch 'master' into karrar
+
+[33mcommit 6cc4acd57d7759db7edd7e802bd73ab8cd60792e[m
+Author: kraken15th <ahmedkarrar79@gmail.com>
+Date:   Mon Dec 22 21:38:20 2025 +0200
+
+    Adding OTPStatus + Amend OTPVerification
+
+[33mcommit e00fefe4be59494bcd7e72a00cdf63b1013809c6[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Mon Dec 22 17:48:28 2025 +0200
+
+    snnjdv
+
+[33mcommit 53670c3fbb85189f5b80491f60c6ac491c3d3821[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Sat Dec 20 19:08:21 2025 +0200
+
+    fixingggggggggk
+
+[33mcommit 33b120304acb095af5c84bab0878567adc7cde6f[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Sat Dec 20 18:44:45 2025 +0200
+
+    fixinggggggggg
+
+[33mcommit 4f7b4f9bbc7f1656b267bef1bda12f827942fcc7[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Mon Dec 22 17:48:28 2025 +0200
+
+    snnjdv
+
+[33mcommit 31cc978c64be45953ffc787742a8fa424304605e[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Sat Dec 20 19:08:21 2025 +0200
+
+    fixingggggggggk
+
+[33mcommit 08a519c13a549f9027081cfb02324f93ddea75b2[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Sat Dec 20 18:44:45 2025 +0200
+
+    fixinggggggggg
+
+[33mcommit 4e3b755f14aa6ab5e9593293b8805987d2f80bd8[m
+Author: kraken15th <ahmedkarrar79@gmail.com>
+Date:   Tue Dec 16 18:21:17 2025 +0200
+
+    build: Remove duplicated line in csproj file "Microsoft.AspNetCore.Authentication.JwtBearer package reference"
+
+[33mcommit 574584a20f463a737116b60efbbc825cde8b26dd[m
+Author: kraken15th <ahmedkarrar79@gmail.com>
+Date:   Tue Dec 16 17:59:26 2025 +0200
+
+    chore: Ignore `obj` and `bin` build output directories in .gitignore.
+
+[33mcommit 709b41bbafea7fe7ed82463e7c2cd29af2355bc3[m
+Author: kraken15th <ahmedkarrar79@gmail.com>
+Date:   Tue Dec 16 17:58:31 2025 +0200
+
+    Ignore obj and bin folders
+
+[33mcommit 373b0879ea6dece6f4847244d5249daca7aabe82[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Sat Dec 20 00:31:57 2025 +0200
+
+    fixing db
+
+[33mcommit 5673e6a1b66f1e287c231da6b90ec03227c4ce99[m
+Merge: 904e5d8 9a3016e
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Fri Dec 19 00:45:51 2025 +0200
+
+    Resolve migration conflicts and clean repo
+
+[33mcommit 904e5d872fcfb6fe99273a0c173884ae344c9638[m
+Author: Hagar <Hagar.Gamal@technokit.net>
+Date:   Fri Dec 19 00:01:40 2025 +0200
+
+    adding new db
+
+[33mcommit 9a3016edd937f9fb5e2aea6e2576ccc2b13dacb1[m
+Author: HagarGamal0 <hagar00gamal@gmail.com>
+Date:   Wed Dec 17 18:29:26 2025 +0200
+
+    Modefication
+
+[33mcommit 58c625f8873d078524d6036499c2954c1e56c872[m
+Author: HagarGamal0 <hagar00gamal@gmail.com>
+Date:   Wed Dec 17 17:40:58 2025 +0200
+
+    Modefication
+
+[33mcommit 4ac205a55ea67a1b71695377c5fcd2f9a42b3c41[m
+Author: HagarGamal0 <hagar00gamal@gmail.com>
+Date:   Wed Dec 17 17:33:17 2025 +0200
+
+    fixingsss
+
+[33mcommit d5acaa89193d0f8d41bb1120d4c6622c0e17846b[m
+Author: HagarGamal0 <hagar00gamal@gmail.com>
+Date:   Wed Dec 17 17:10:20 2025 +0200
+
+    fixing
